@@ -3,8 +3,8 @@ import Footer from '../components/Footer'
 import Icons from '../components/Icons'
 import HomeWindow from '../components/windows/Home'
 import Head from 'next/head'
-import MBBWindow from '@/components/windows/MBB'
-import CurateWindow from '@/components/windows/Curate'
+import MaurerWindow from '@/components/windows/Maurer'
+import NoiseWindow from '@/components/windows/Noise'
 import CollectorWindow from '@/components/windows/Collector'
 
 export default function Home() {
@@ -33,8 +33,8 @@ export default function Home() {
           <Icons />
           {openMap[WINDOWS.HOME] ? <HomeWindow /> : null}
           {openMap[WINDOWS.COLLECTOR] ? <CollectorWindow/> : null}
-          {openMap[WINDOWS.MBB] ? <MBBWindow /> : null}
-          {openMap[WINDOWS.CURATE] ? <CurateWindow /> : null }
+          {openMap[WINDOWS.MAURER] ? <MaurerWindow /> : null}
+          {openMap[WINDOWS.NOISE] ? <NoiseWindow /> : null }
           {/* {openMap[WINDOWS.NODE_MONKEY] ? <NodeMonkeyWindow /> : null} */}
         </div>
         <Footer />

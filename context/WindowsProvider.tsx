@@ -29,17 +29,17 @@ export const useWindowsContext = () => useContext(WindowsContext)
 
 export const WINDOWS = {
   HOME: "Home",
+  NOISE: "it's just noise",
   COLLECTOR: "Collector",
-  MBB: "MBB",
-  CURATE: "Curate",
+  MAURER: "Maurer Expanse",
   // NODE_MONKEY: "Node Monkey",
 }
 
 export const ICONS = {
   [WINDOWS.HOME]: "/images/small-logo.png",
   [WINDOWS.COLLECTOR]: "/images/collector-logo.png",
-  [WINDOWS.MBB]: "/images/MBB-icon.png",
-  [WINDOWS.CURATE]: "/images/Curate-icon.png",
+  [WINDOWS.MAURER]: "/images/small-alt-logo.png",
+  [WINDOWS.NOISE]: "/images/Curate-icon.png",
   // [WINDOWS.NODE_MONKEY]: "/images/NodeMonkey-icon.png",
 }
 

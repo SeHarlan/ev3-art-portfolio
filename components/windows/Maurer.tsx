@@ -5,7 +5,7 @@ import Link from "next/link"
 import dynamic from "next/dynamic";
 const Maurer = dynamic(() => import('../p5/Maurer'), { ssr: false });
 
-const MBBWindow: FC = () => {
+const MaurerWindow: FC = () => {
   const initSize = {
     h: 800,
     w: 1100,
@@ -15,7 +15,7 @@ const MBBWindow: FC = () => {
     y: 80
   }
 
-  const link = "https://rarity.monkeybaby.business/"
+  const link = "exchange link"
 
   const visit = () => { 
     window?.open(link, "_blank")
@@ -23,18 +23,16 @@ const MBBWindow: FC = () => {
 
   const menu: WindowMenuItem[] = [
     {
-      label: "Visit Site",
+      label: "Trade",
       function: visit
     },
   ]
 
   return (
-    <Window windowKey={WINDOWS.MBB} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
-      
-        <Maurer className="" />
-  
+    <Window windowKey={WINDOWS.MAURER} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
+      <Maurer className="" />
     </Window>
   )
 }
 
-export default MBBWindow
+export default MaurerWindow

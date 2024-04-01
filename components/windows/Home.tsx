@@ -2,13 +2,12 @@ import Image from "next/image"
 import { FC, useState, useEffect, useRef } from "react"
 import { WINDOWS, useWindowsContext } from "../../context/WindowsProvider"
 import Window, { WindowMenuItem } from "../Window"
-import Maurer from "../p5/Maurer"
 import Links from "../Links"
 
 const web3Links = [
   {label: "Collector", windowKey: WINDOWS.COLLECTOR},
-  { label: "MBB Marketplace", windowKey: WINDOWS.MBB },
-  { label: "Curate", windowKey: WINDOWS.CURATE },
+  { label: "Maurer Expanse", windowKey: WINDOWS.MAURER },
+  { label: "it's just noise", windowKey: WINDOWS.NOISE },
   // { label: "Node Monkey", windowKey: WINDOWS.NODE_MONKEY },
 ]
 const personalLinks = [

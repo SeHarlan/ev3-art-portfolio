@@ -47,11 +47,10 @@ const Maurer = ({ className }) => {
 
     let graphics;
     let useShader = true;
-    //TODO
-    // see if there is a way to turn the shader on and off
+
     p5sketch.setup = () => {
 
-      useShader = false //isWebGLSupported()
+      useShader = isWebGLSupported()
 
       const mode = useShader ? p5sketch.WEBGL : p5sketch.P2D
       const windowWidth = containerRef.current.clientWidth
@@ -656,9 +655,11 @@ const Maurer = ({ className }) => {
       touchEndPos = null;
       return false;
     }
+
     p5sketch.touchEnded = (e) => { 
       touchEnded()
     }
+
     p5sketch.mouseReleased = (e) => {
       touchEnded()
     }
@@ -757,273 +758,268 @@ void main() {
 
   }
   return (
-    <div ref={containerRef} className={className} id="MaurerSketch">
-      {/* <div className="relative h-full"> */}
-        <P5Wrapper sketch={sketch} />
-        <div id="instructionContainer" className="out">
-          <div id="header">
-            <h1>Maurer Expanse</h1>
-          <button id="closeButton" className="classic-button p-1"><img src="/images/close.png" alt="close" /></button>
-          </div>
-
-          <div id="panelsContainer">
-            <div id="tabs">
-              <div>
-                <input
-                  id="guide-tab"
-                  type="radio"
-                  value="guide"
-                  name="tabs"
-                  defaultChecked
-              
-                  className="hidden-radio"
-                />
-                <label htmlFor="guide-tab" >
-                  Guide
-                </label>
-              </div>
-              <div>
-                <input
-                  id="shortcuts-tab"
-                  type="radio"
-                  value="shortcuts"
-                  name="tabs"
-                  className="hidden-radio"
-                />
-                <label htmlFor="shortcuts-tab">
-                  Shortcuts
-                </label>
-              </div>
-              <div>
-                <input
-                  id="controls-tab"
-                  type="radio"
-                  value="controls"
-                  name="tabs"
-                  className="hidden-radio"
-                />
-                <label htmlFor="controls-tab">
-                  Controls
-                </label>
-              </div>
-              <div>
-                <input
-                  id="about-tab"
-                  type="radio"
-                  value="about"
-                  name="tabs"
-                  className="hidden-radio"
-                />
-                <label
-                  htmlFor="about-tab"
-                
-                >
-                  About
-                </label>
-              </div>
-
-            </div>
-            <section id="guide" className="tab-active">
-
-              <h3 className="tab-content-title">Welcome to the Maurer Expanse!</h3>
-              <p>I could write a whole thing about how I fell in love with exploring the Expanse, but I think the best way to experience it is to dive in and explore yourself!</p>
-              <br />
-              <p>This menu and it's tabs are here to help if you want it:</p>
-              <p><strong>Shortcuts</strong> - to navigate without the menu</p>
-              <p><strong>Controls</strong> - to navigate with the menu</p>
-              <p><strong>About</strong> - to learn some technical details about how the Expanse is generated
-                and where it came from.</p>
-
-            </section>
-
-            <section id="shortcuts" className="tab-hidden">
-              <h3 className="tab-content-title">How to navigate</h3>
-              <div className="desktop">
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"m" toggles this menu</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"r" randomizes the coordinates</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"p" saves the currently rendered image</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>Arrow keys moves position</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>Double click to move to a pattern</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"-" and "+" decreases and increases the grids scale</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"[" and "]" decreases and increases the grids depth</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"a" to toggle animation mode</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"d" to toggle dance mode</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"c" to toggle constellation mode</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>"s" to toggle static mode</p>
-                </div>
-              </div>
-              <div className="mobile">
-                <div className="shortcut-row"><span>❖</span>
-                  <p>Swipe in from the top-right to open the menu</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>Swipe directionally to move position</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>Pinch out and in to increase and decrease the scale</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>Double tap to move to a pattern</p>
-                </div>
-                <div className="shortcut-row"><span>❖</span>
-                  <p>Tap and hold down to toggle dance mode</p>
-                </div>
-              </div>
-            </section>
-
-            <section id="controls" className="tab-hidden">
-              <h3 className="tab-content-title">Position</h3>
-              <div className="mb-16">
-                <div className="stepsContainer">
-                  <button id="leftButton" className="classic-button"><span>➔</span></button>
-                  <button id="rightButton" className="classic-button"><span>➔</span></button>
-
-                  <p>Horizontal step:</p>
-                  <span id="horizontalStep" className="step"></span>
-                </div>
-                <div className="stepsContainer">
-                  <button id="downButton" className="classic-button"><span>➔</span></button>
-                  <button id="upButton" className="classic-button"><span>➔</span></button>
-
-                  <p>Vertical step:</p>
-                  <span id="verticalStep" className="step"></span>
-                </div>
-              </div>
-
-              <h3 className="tab-content-title">Other Grid stuff</h3>
-              <label className="num-input-wraper">
-                Scale:
-                <input type="number" id="scaleNumberInput" min="1" />
-              </label>
-
-              <label className="num-input-wraper mb-16">
-                Depth:
-                <input type="number" id="depthNumberInput" step="0.1" />
-              </label>
-
-              <h3 className="tab-content-title">Display Mode</h3>
-              <label className="custom-checkbox">
-                <input
-                  defaultChecked
-                  value="animation"
-                  name="radio-mode"
-                  type="radio"
-                  id="animationCheckbox"
-                  className="hidden-checkbox"
-                />
-                  <span className="checkmark"></span>
-                  <p>
-                    <span className="underline">A</span>nimation
-                  </p>
-              </label>
-              <label className="custom-checkbox">
-                <input
-                  value="dance"
-                  name="radio-mode"
-                  type="radio"
-                  id="danceCheckbox"
-                  className="hidden-checkbox"
-                />
-                  <span className="checkmark"></span>
-                  <p>
-                    <span className="underline">D</span>ance
-                  </p>
-              </label>
-
-
-              <label className="custom-checkbox">
-                <input value="constellation" name="radio-mode" type="radio" id="constellationCheckbox" className="hidden-checkbox" />
-                  <span className="checkmark"></span>
-                  <p>
-                    <span className="underline">C</span>onstellation
-                  </p>
-              </label>
-
-              <label className="custom-checkbox">
-                <input
-                  value="static"
-                  name="radio-mode"
-                  type="radio"
-                  id="staticCheckbox"
-                  className="hidden-checkbox"
-                />
-                  <span className="checkmark"></span>
-                  <p>
-                    <span className="underline">S</span>tatic
-                  </p>
-              </label>
-
-            </section>
-
-            <section id="about" className="tab-hidden">
-
-              <h3 className="tab-content-title">How does it work?</h3>
-              <p>Maurer Expanse an exploration of the Maurer Rose, a geometric concept introduced by Peter M. Maurer. The core algorithm is
-                pretty compact and takes just two variables, "d" and "n":</p>
-              <div className="code-block">
-              // where theta is a number from 0 to 361
-                <br />
-                const k = theta * d * (PI / 180);
-                <br />
-                const r = 200 * sin(n * k);
-                <br />
-                const x = r * cos(k);
-                <br />
-                const y = r * sin(k);
-                <br />
-              </div>
-              <p>The Expanse is made by creating a grid where the x-axis is "d" and the y-axis "n".</p>
-              <br />
-              <p>Changing the scale changes how many patterns are displayed at once. <i>Careful here, displaying too many can drastically slow down the experience.</i></p>
-
-              <br />
-              <p>Changing the depth changes the amount of change between each row and column.</p>
-              <br />
-              <p>And that's pretty much it. Nearly infinite possibilities from just a few lines of code. Happy exploring!</p>
-            </section>
-          </div>
-
-
-          <div id="buttonContainer">
-            <button
-              id="cancelButton"
-              className="classic-button"
-            >Close</button>
-            <button
-              id="randomizeButton"
-              className="classic-button"
-            >Randomize</button>
-            <button
-              id="saveButton"
-              className="classic-button"
-            >Save</button>
-          </div>
+    <div ref={containerRef} className={className} id="MaurerSketch">   
+      <P5Wrapper sketch={sketch} />
+      <div id="instructionContainer" className="out">
+        <div id="header">
+          <h1>Maurer Expanse</h1>
+        <button id="closeButton" className="classic-button p-1"><img src="/images/close.png" alt="close" /></button>
         </div>
 
-      {/* </div> */}
+        <div id="panelsContainer">
+          <div id="tabs">
+            <div>
+              <input
+                id="guide-tab"
+                type="radio"
+                value="guide"
+                name="tabs"
+                defaultChecked
+            
+                className="hidden-radio"
+              />
+              <label htmlFor="guide-tab" >
+                Guide
+              </label>
+            </div>
+            <div>
+              <input
+                id="shortcuts-tab"
+                type="radio"
+                value="shortcuts"
+                name="tabs"
+                className="hidden-radio"
+              />
+              <label htmlFor="shortcuts-tab">
+                Shortcuts
+              </label>
+            </div>
+            <div>
+              <input
+                id="controls-tab"
+                type="radio"
+                value="controls"
+                name="tabs"
+                className="hidden-radio"
+              />
+              <label htmlFor="controls-tab">
+                Controls
+              </label>
+            </div>
+            <div>
+              <input
+                id="about-tab"
+                type="radio"
+                value="about"
+                name="tabs"
+                className="hidden-radio"
+              />
+              <label
+                htmlFor="about-tab"
+              
+              >
+                About
+              </label>
+            </div>
 
-      
+          </div>
+          <section id="guide" className="tab-active">
+
+            <h3 className="tab-content-title">Welcome to the Maurer Expanse!</h3>
+            <p>I could write a whole thing about how I fell in love with exploring the Expanse, but I think the best way to experience it is to dive in and explore yourself!</p>
+            <br />
+            <p>This menu and it's tabs are here to help if you want it:</p>
+            <p><strong>Shortcuts</strong> - to navigate without the menu</p>
+            <p><strong>Controls</strong> - to navigate with the menu</p>
+            <p><strong>About</strong> - to learn some technical details about how the Expanse is generated
+              and where it came from.</p>
+
+          </section>
+
+          <section id="shortcuts" className="tab-hidden">
+            <h3 className="tab-content-title">How to navigate</h3>
+            <div className="desktop">
+              <div className="shortcut-row"><span>❖</span>
+                <p>"m" toggles this menu</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"r" randomizes the coordinates</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"p" saves the currently rendered image</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>Arrow keys moves position</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>Double click to move to a pattern</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"-" and "+" decreases and increases the grids scale</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"[" and "]" decreases and increases the grids depth</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"a" to toggle animation mode</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"d" to toggle dance mode</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"c" to toggle constellation mode</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>"s" to toggle static mode</p>
+              </div>
+            </div>
+            <div className="mobile">
+              <div className="shortcut-row"><span>❖</span>
+                <p>Swipe in from the top-right to open the menu</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>Swipe directionally to move position</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>Pinch out and in to increase and decrease the scale</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>Double tap to move to a pattern</p>
+              </div>
+              <div className="shortcut-row"><span>❖</span>
+                <p>Tap and hold down to toggle dance mode</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="controls" className="tab-hidden">
+            <h3 className="tab-content-title">Position</h3>
+            <div className="mb-16">
+              <div className="stepsContainer">
+                <button id="leftButton" className="classic-button"><span>➔</span></button>
+                <button id="rightButton" className="classic-button"><span>➔</span></button>
+
+                <p>Horizontal step:</p>
+                <span id="horizontalStep" className="step"></span>
+              </div>
+              <div className="stepsContainer">
+                <button id="downButton" className="classic-button"><span>➔</span></button>
+                <button id="upButton" className="classic-button"><span>➔</span></button>
+
+                <p>Vertical step:</p>
+                <span id="verticalStep" className="step"></span>
+              </div>
+            </div>
+
+            <h3 className="tab-content-title">Other Grid stuff</h3>
+            <label className="num-input-wraper">
+              Scale:
+              <input type="number" id="scaleNumberInput" min="1" />
+            </label>
+
+            <label className="num-input-wraper mb-16">
+              Depth:
+              <input type="number" id="depthNumberInput" step="0.1" />
+            </label>
+
+            <h3 className="tab-content-title">Display Mode</h3>
+            <label className="custom-checkbox">
+              <input
+                defaultChecked
+                value="animation"
+                name="radio-mode"
+                type="radio"
+                id="animationCheckbox"
+                className="hidden-checkbox"
+              />
+                <span className="checkmark"></span>
+                <p>
+                  <span className="underline">A</span>nimation
+                </p>
+            </label>
+            <label className="custom-checkbox">
+              <input
+                value="dance"
+                name="radio-mode"
+                type="radio"
+                id="danceCheckbox"
+                className="hidden-checkbox"
+              />
+                <span className="checkmark"></span>
+                <p>
+                  <span className="underline">D</span>ance
+                </p>
+            </label>
+
+
+            <label className="custom-checkbox">
+              <input value="constellation" name="radio-mode" type="radio" id="constellationCheckbox" className="hidden-checkbox" />
+                <span className="checkmark"></span>
+                <p>
+                  <span className="underline">C</span>onstellation
+                </p>
+            </label>
+
+            <label className="custom-checkbox">
+              <input
+                value="static"
+                name="radio-mode"
+                type="radio"
+                id="staticCheckbox"
+                className="hidden-checkbox"
+              />
+                <span className="checkmark"></span>
+                <p>
+                  <span className="underline">S</span>tatic
+                </p>
+            </label>
+
+          </section>
+
+          <section id="about" className="tab-hidden">
+
+            <h3 className="tab-content-title">How does it work?</h3>
+            <p>Maurer Expanse an exploration of the Maurer Rose, a geometric concept introduced by Peter M. Maurer. The core algorithm is
+              pretty compact and takes just two variables, "d" and "n":</p>
+            <div className="code-block">
+            // where theta is a number from 0 to 361
+              <br />
+              const k = theta * d * (PI / 180);
+              <br />
+              const r = 200 * sin(n * k);
+              <br />
+              const x = r * cos(k);
+              <br />
+              const y = r * sin(k);
+              <br />
+            </div>
+            <p>The Expanse is made by creating a grid where the x-axis is "d" and the y-axis "n".</p>
+            <br />
+            <p>Changing the scale changes how many patterns are displayed at once. <i>Careful here, displaying too many can drastically slow down the experience.</i></p>
+
+            <br />
+            <p>Changing the depth changes the amount of change between each row and column.</p>
+            <br />
+            <p>And that's pretty much it. Nearly infinite possibilities from just a few lines of code. Happy exploring!</p>
+          </section>
+        </div>
+
+
+        <div id="buttonContainer">
+          <button
+            id="cancelButton"
+            className="classic-button"
+          >Close</button>
+          <button
+            id="randomizeButton"
+            className="classic-button"
+          >Randomize</button>
+          <button
+            id="saveButton"
+            className="classic-button"
+          >Save</button>
+        </div>
+      </div>
     </div>
   )
 }
