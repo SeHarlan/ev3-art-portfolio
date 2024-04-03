@@ -68,7 +68,7 @@ html, body {
   box-shadow: rgb(70 65 71) -1px -1px 0px 0px inset, white 1px 1px 0px 0px inset, rgb(160 153 161) -2px -2px 0px 0px inset, rgb(222 220 222) 2px 2px 0px 0px inset;
 }
 
-.classic-button:after {
+.classic-button:not(.disabled):after {
   content: "";
   position: absolute;
   inset: 2px 3px 2px 2px;

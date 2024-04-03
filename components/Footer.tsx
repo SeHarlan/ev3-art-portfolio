@@ -8,7 +8,7 @@ import Links from "./Links";
 
 
 const Footer: FC = () => {
-  const [time, setTime] = useState(new Date())
+  const [time, setTime] = useState<Date>()
   const { orderState, minimizedState, openState } = useWindowsContext()
   const [orderList, setOrderList] = orderState
   const [minimizedMap, setMinimizedMap] = minimizedState
@@ -16,7 +16,9 @@ const Footer: FC = () => {
 
   const { isMdScreen } = useWindowSize()
 
+
   useEffect(() => {
+    setTime(new Date())
     const id = setInterval(() => {
       setTime(new Date())
     }, 1000)
@@ -74,10 +76,10 @@ const Footer: FC = () => {
 
       <div className="relative flex">
         <div className="classic-divider h-full w-[1px] mr-1" />
-        <div className="px-4 classic-button active flex items-center justify-end gap-1">
-          <Links className="flex gap-1 items-center"/>
+        <div className="px-4 classic-button active disabled flex items-center justify-end gap-1">
+          <Links className="flex gap-2 items-center"/>
           <p className="ml-2">
-            {time.toLocaleString(undefined, {"hour": "numeric", minute: "2-digit"})}
+            {time?.toLocaleString(undefined, { "hour": "numeric", minute: "2-digit" }) || "0:00 PM"}
           </p>
         </div>
       </div>

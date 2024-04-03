@@ -20,7 +20,7 @@ const StartMenu: FC = () => {
         
           <Menu.Items className="absolute bottom-[100%] left-0 z-10 bg-windowsGray classic-border p-1 flex">
             <div className="bg-windowsDarkGray w-8 h-full min-h-[10rem] flex items-center justify-center">
-              <p className="text-windowsGray flex-shrink-0 w-[10rem] pl-3 -rotate-90">Scott Harlan</p>
+              <p className="text-windowsGray flex-shrink-0 w-[10rem] pl-3 -rotate-90">EV3</p>
             </div>
             <div>
               {Object.values(WINDOWS).map(windowKey => {

@@ -5,7 +5,7 @@ import HomeWindow from '../components/windows/Home'
 import Head from 'next/head'
 import MaurerWindow from '@/components/windows/Maurer'
 import NoiseWindow from '@/components/windows/Noise'
-import CollectorWindow from '@/components/windows/Collector'
+import DuetWindow from '@/components/windows/DUET'
 
 export default function Home() {
   const { openState } = useWindowsContext()
@@ -26,16 +26,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className='h-screen grid grid-rows-[1fr_auto]'>
-        <div className='absolute z-[1] w-full h-full flex items-center justify-center p-2 select-none'>
+        {/* <div className='absolute z-[1] w-full h-full flex items-center justify-center p-2 select-none'>
           <img src="/images/big-banner.png" width={1500} height={500} alt="" className='rotate-90 md:rotate-0'/>
-        </div>
+        </div> */}
         <div id="window-container" className='relative bg-windowsBG' >
           <Icons />
           {openMap[WINDOWS.HOME] ? <HomeWindow /> : null}
-          {openMap[WINDOWS.COLLECTOR] ? <CollectorWindow/> : null}
-          {openMap[WINDOWS.MAURER] ? <MaurerWindow /> : null}
           {openMap[WINDOWS.NOISE] ? <NoiseWindow /> : null }
-          {/* {openMap[WINDOWS.NODE_MONKEY] ? <NodeMonkeyWindow /> : null} */}
+          {openMap[WINDOWS.DUET] ? <DuetWindow/> : null}
+          {openMap[WINDOWS.MAURER] ? <MaurerWindow /> : null}
         </div>
         <Footer />
       </main>

@@ -15,19 +15,23 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch }) => {
   const initializeRef = useRef(false);
 
   useEffect(() => {
+    let cleanUp: any;
+
     if (containerRef && containerRef.current) {
       const enhancedSketch = (p: p5) => {
-        sketch(p);
+        cleanUp = sketch(p);
 
         function isTouchEventInside(event: any) {
+          event.preventDefault();
+          event.stopPropagation();
           if (!containerRef.current) return false;
           const { left, top } = containerRef.current.getBoundingClientRect();
           const width = containerRef.current.clientWidth
           const height = containerRef.current.clientHeight
           // const touchX = p.mouseX
           // const touchY = p.mouseY
-          const touchX = event?.clientX || event.touches[0].clientX;
-          const touchY = event?.clientY || event.touches[0].clientY;
+          const touchX = event?.clientX || event.touches?.[0].clientX;
+          const touchY = event?.clientY || event.touches?.[0].clientY;
           return touchX >= left && touchX <= left + width && touchY >= top && touchY <= top + height;
         }
 
@@ -85,6 +89,7 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch }) => {
       observer.observe(containerRef.current);
 
       return () => {
+        cleanUp && cleanUp();
         observer.disconnect();
         p5InstanceRef.current?.remove();
       };

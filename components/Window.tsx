@@ -33,12 +33,16 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
 
   const menuRef = useRef<HTMLDivElement | null>(null)
 
+  const invertIcon = [WINDOWS.MAURER].includes(windowKey)
+
+  
   const offsetHeight = menuRef.current && dragRef.current && resizeRef.current
-    ? menuRef.current.offsetHeight + dragRef.current.offsetHeight + resizeRef.current.offsetHeight
-    : 78 // estimate
+  ? menuRef.current.offsetHeight + dragRef.current.offsetHeight + resizeRef.current.offsetHeight
+  : 78 // estimate
   
   const isMin = minimizedMap[windowKey]
   const orderIndex = orderList.findIndex(item => item === windowKey);
+  const isActive = orderIndex === orderList.length - 1
 
   const changeOrder = () => {
     const newOrder = [...orderList]
@@ -87,19 +91,19 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
       className={clsx(
         "absolute flex flex-col",
         "bg-windowsGray classic-border",
-        // "select-none",
+        "select-none",
         isMin ? "animate-exit" : "animate-enter"
       )}
     >
       <div
         className={clsx(
           "p-1 cursor-grab active:cursor-grabbing flex justify-between items-center",
-          orderIndex === orderList.length-1 ? "bg-windowsHeader " : "bg-windowsDarkGray"
+          isActive ? "bg-windowsHeader " : "bg-windowsDarkGray"
         )}
         ref={dragRef}
       >
         <div className="flex items-center gap-2">
-          <img src={ICONS[windowKey]} alt="" className="w-5" style={{filter: windowKey === WINDOWS.HOME ? "invert(1)" : ""}} />
+          <img src={ICONS[windowKey]} alt="" className="w-5" style={{filter: invertIcon ? "invert(1)" : ""}} />
           <p className="text-white leading-none">{windowKey}</p>
         </div>
         <div className="flex items-center gap-1">
@@ -143,7 +147,11 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
           "bg-white relative"
         )} 
       style={{ height: `calc(100% - ${offsetHeight}px)` }}>
-        <div className={clsx("overflow-auto h-full", wrapperClassName)}>
+        <div className={clsx(
+          "overflow-auto h-full",
+          !isActive && "pointer-events-none",
+          wrapperClassName
+        )}>
           {children}
         </div>
       </div>

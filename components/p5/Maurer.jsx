@@ -40,6 +40,7 @@ const Maurer = ({ className }) => {
 
     let tabs = ["guide", "shortcuts", "controls", "about"]
     let tabRadioButtons
+    let paintShader;
 
     let instructionWindowHidden = true;
 
@@ -50,7 +51,7 @@ const Maurer = ({ className }) => {
 
     p5sketch.setup = () => {
 
-      useShader = isWebGLSupported()
+      useShader = p5sketch.isWebGLSupported()
 
       const mode = useShader ? p5sketch.WEBGL : p5sketch.P2D
       const windowWidth = containerRef.current.clientWidth
@@ -179,7 +180,7 @@ const Maurer = ({ className }) => {
       //Shader code
       if (useShader) {
         paintShader.setUniform("palette", Object.values(PALETTES).findIndex((pal) => pal === palette))
-        paintShader.setUniform("resolution", [width, height]);
+        paintShader.setUniform("resolution", [p5sketch.width, p5sketch.height]);
         paintShader.setUniform("rando", p5sketch.random())
         paintShader.setUniform("texture", graphics)
         p5sketch.rect(-p5sketch.width / 2, -p5sketch.height / 2, p5sketch.width, p5sketch.height);

@@ -17,12 +17,12 @@ const NoiseWindow: FC = () => {
   const link = "noise tensor"
 
   const visit = () => {
-    window?.open(link, "_blank")
+    window?.open("https://www.tensor.trade/trade/its_just_noise", "_blank")
   }
 
   const menu: WindowMenuItem[] = [
     {
-      label: "Visit Site",
+      label: "Trade",
       function: visit
     },
   ]

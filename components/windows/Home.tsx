@@ -5,52 +5,55 @@ import Window, { WindowMenuItem } from "../Window"
 import Links from "../Links"
 
 const web3Links = [
-  {label: "Collector", windowKey: WINDOWS.COLLECTOR},
-  { label: "Maurer Expanse", windowKey: WINDOWS.MAURER },
   { label: "it's just noise", windowKey: WINDOWS.NOISE },
-  // { label: "Node Monkey", windowKey: WINDOWS.NODE_MONKEY },
+  { label: "Maurer Expanse", windowKey: WINDOWS.MAURER },
 ]
 const personalLinks = [
   {label: "Cards Against Humanity", windowKey: "HAC"}
 ]
 
 const contentList = [
-  { text: "Hello and welcome to the developer portfolio of" },
-  { type: "delete", text: " the best developer ever!!!" },
-  { type: "delete", text: " . . . " },
-  { text:" Scott Harlan : )"},
+  { text: "Hello and welcome to the art portfolio of EV3" },
   { type: "break", text: "" },
   { type: "break", text: "" },
-  { text: "My favorite thing to do is get creative and create compelling experiences!"},
-  { text: " When I'm not coding for my day job, I'm coding generative art." },
-  { text: " (Click on the canvas for a new random pattern)" },
-  // { type: "element", text: "", element: <Maurer className="relative z-10 w-[200px] h-[200px] mx-auto cursor-pointer" /> },
-  { text: "The past few years I've been working as an independent contractor for various web3 startups." },
-  { text: " Currently I am the co-founder and lead developer for a digital art gallery platform called Collector." },
-  { type: "break", text: "" },
-  { type: "break", text: "" },
-  { text: "I code most projects from the ground up, sometimes helping design them as well." },
-  { text: " Always focusing on the smoothest user experience possible."},
-  { text: " Then I integrate them with various blockchain sdks so users can interact with smart contracts and send transactions."},
-  { type: "break", text: "" },
-  { type: "break", text: "" },
-  { text: "These are a few of my favorites so far: " },
-  { type: "links", text: "", links: web3Links },
-  { type: "break", text: "" },
-  { text: "Before that I worked for a company called BrandLive where I coded modular, customizable website components as well as the companion editor that helped users build their own customized streaming sites." },
-  { type: "break", text: "" },
-  { type: "break", text: "" },
-  { text: "So anyways, that's a little bit about my coding experience." },
-  { text: " I also love to play and write music, and I'm a huge fan of the outdoors, making terrariums and bouldering!" },
-  { type: "break", text: "" },
-  { type: "break", text: "" },
-  { type: "delete", text: "I hope you hire me!" },
-  { text: " " },
-  { type: "delete", text: "¯\\_(ツ)_/¯"},
-  { text: "Thank you for checking out my work." },
-  { text: " Please reach out to me via Email or LinkedIn anytime!" },
-  { type: "break", text: "" },
-  { type: "element", text: "", element: <Links className="p-2 flex gap-2 w-full justify-center"/> },
+  { text: "This site is currently still a work in progress but feel free to look around and enjoy!" },
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { type: "delete", text: " the best developer ever!!!" },
+  // { type: "delete", text: " . . . " },
+  // { text:" Scott Harlan : )"},
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { text: "My favorite thing to do is get creative and create compelling experiences!"},
+  // { text: " When I'm not coding for my day job, I'm coding generative art." },
+  // { text: " (Click on the canvas for a new random pattern)" },
+  // // { type: "element", text: "", element: <Maurer className="relative z-10 w-[200px] h-[200px] mx-auto cursor-pointer" /> },
+  // { text: "The past few years I've been working as an independent contractor for various web3 startups." },
+  // { text: " Currently I am the co-founder and lead developer for a digital art gallery platform called Collector." },
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { text: "I code most projects from the ground up, sometimes helping design them as well." },
+  // { text: " Always focusing on the smoothest user experience possible."},
+  // { text: " Then I integrate them with various blockchain sdks so users can interact with smart contracts and send transactions."},
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { text: "These are a few of my favorites so far: " },
+  // { type: "links", text: "", links: web3Links },
+  // { type: "break", text: "" },
+  // { text: "Before that I worked for a company called BrandLive where I coded modular, customizable website components as well as the companion editor that helped users build their own customized streaming sites." },
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { text: "So anyways, that's a little bit about my coding experience." },
+  // { text: " I also love to play and write music, and I'm a huge fan of the outdoors, making terrariums and bouldering!" },
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { type: "delete", text: "I hope you hire me!" },
+  // { text: " " },
+  // { type: "delete", text: "¯\\_(ツ)_/¯"},
+  // { text: "Thank you for checking out my work." },
+  // { text: " Please reach out to me via Email or LinkedIn anytime!" },
+  // { type: "break", text: "" },
+  // { type: "element", text: "", element: <Links className="p-2 flex gap-2 w-full justify-center"/> },
 ]
 
 
@@ -79,30 +82,30 @@ const HomeWindow: FC = () => {
       const newDisplay = [...display];
 
       switch (contentObj.type) {
-        case "element": { 
-          newDisplay[contentIndex] = <div key={makeKey(contentIndex)}>{contentObj.element}</div>
-          setDisplay(newDisplay)
+        // case "element": { 
+        //   newDisplay[contentIndex] = <div key={makeKey(contentIndex)}>{contentObj.element}</div>
+        //   setDisplay(newDisplay)
 
-          setTimeout(() => handleNextContent(), 2500)
-          break;
-        }
-        case "links": { 
-          if (!contentObj.links || textIndex > contentObj.links.length) elComplete.current = true;
-          else {
-            const el = (<WindowLinksWrapper key={makeKey(contentIndex)}>
-              {contentObj.links?.map((linkProps, index) => {
-                if (index > textIndex) return null
-                return <WindowLink key={linkProps.label} {...linkProps} />
-              })}
-            </WindowLinksWrapper>)
+        //   setTimeout(() => handleNextContent(), 2500)
+        //   break;
+        // }
+        // case "links": { 
+        //   if (!contentObj.links || textIndex > contentObj.links.length) elComplete.current = true;
+        //   else {
+        //     const el = (<WindowLinksWrapper key={makeKey(contentIndex)}>
+        //       {contentObj.links?.map((linkProps, index) => {
+        //         if (index > textIndex) return null
+        //         return <WindowLink key={linkProps.label} {...linkProps} />
+        //       })}
+        //     </WindowLinksWrapper>)
 
-            newDisplay[contentIndex] = el
-            setDisplay(newDisplay)
-            setTextIndex(prev => prev + 1)
-            delay.current = 400
-          }
-          break;
-        };
+        //     newDisplay[contentIndex] = el
+        //     setDisplay(newDisplay)
+        //     setTextIndex(prev => prev + 1)
+        //     delay.current = 400
+        //   }
+        //   break;
+        // };
         case "delete": { 
           const text = contentObj.text.slice(0, textIndex)
           const el = <span key={makeKey(contentIndex)}>{text}</span>
@@ -178,12 +181,12 @@ const HomeWindow: FC = () => {
     setDisplay([])
     const content: (JSX.Element | null)[] = contentList.map((contentObj) => {
       switch (contentObj.type) {
-        case "element": return <div key={makeKey(contentIndex)}>{contentObj.element}</div>;
-        case "links": return (
-          <WindowLinksWrapper key={makeKey(contentIndex)}>
-            {contentObj.links?.map((linkProps) => <WindowLink key={linkProps.label} {...linkProps} />)}
-          </WindowLinksWrapper>
-        );
+        // case "element": return <div key={makeKey(contentIndex)}>{contentObj.element}</div>;
+        // case "links": return (
+        //   <WindowLinksWrapper key={makeKey(contentIndex)}>
+        //     {contentObj.links?.map((linkProps) => <WindowLink key={linkProps.label} {...linkProps} />)}
+        //   </WindowLinksWrapper>
+        // );
         case "delete": return null;
         case "break": return <br key={makeKey(contentIndex)} />
         default: return <span key={makeKey(contentIndex)}>{contentObj.text}</span>

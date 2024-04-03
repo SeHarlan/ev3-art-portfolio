@@ -15,16 +15,29 @@ const MaurerWindow: FC = () => {
     y: 80
   }
 
-  const link = "exchange link"
 
-  const visit = () => { 
-    window?.open(link, "_blank")
+  const visitVoid = () => {
+    window?.open("https://exchange.art/editions/73TRBEAjF6LSTwwmyPwyNeMTruNyej99iqh339s1PWdy", "_blank")
+  }
+  const visitInk = () => { 
+    window?.open("https://exchange.art/editions/DZizSX75MZRqNtAnk3heJC2U726x3cq7W2VCvb7raJFb", "_blank")
+  }
+  const visitNeon = () => {
+    window?.open("https://exchange.art/editions/5YduTApZp1EQYe25xKgf3J2XoqdCQxddHP5wb6RNcVyn", "_blank")
   }
 
   const menu: WindowMenuItem[] = [
     {
-      label: "Trade",
-      function: visit
+      label: "Trade (Void)",
+      function: visitVoid
+    },
+    {
+      label: "Trade (Ink)",
+      function: visitInk
+    },
+    {
+      label: "Trade (Neon)",
+      function: visitNeon
     },
   ]
 

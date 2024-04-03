@@ -23,7 +23,7 @@ const Noise = ({ className }) => {
       // const windowHeight = containerRef.current.clientHeight
       const canvasWidth = canvasEl.width
       const scaleAmount = windowWidth / canvasWidth
-      canvasEl.style.transform = `scale(${ scaleAmount * 1.7 }) translate(-50%, -50%)`
+      canvasEl.style.transform = `scale(${ scaleAmount * 1.9 }) translate(-50%, -50%)`
     }
     p5sketch.setup = (cc = true) => {
       if (cc) {
@@ -48,7 +48,7 @@ const Noise = ({ className }) => {
       setDScale = p5sketch.random() < 0.75 ? undefined : nScales[p5sketch.floor(p5sketch.random(nScales.length))]
       canvasEl = document.getElementById("NoiseCanvas")
       resizeStuff()
-      window.onresize = () => resizeStuff()
+      // window.onresize = () => resizeStuff()
     }
     p5sketch.draw = () => {
       p5sketch.noLoop()
@@ -319,7 +319,7 @@ const Noise = ({ className }) => {
     <div ref={containerRef} className={className} id="NoiseSketch">   
       <P5Wrapper sketch={sketch} />
       <div id="loadingScreen">
-        <p>Your noise is being generated...</p>
+        <p className="animate-pulse">Your noise is being generated...</p>
       </div>
     </div>
   )
