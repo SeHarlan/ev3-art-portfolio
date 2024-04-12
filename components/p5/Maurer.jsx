@@ -4,10 +4,10 @@ import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 const P5Wrapper = dynamic(() => import('./P5Wrapper'), { ssr: false });
 
-const Maurer = ({ className }) => { 
+const Maurer = ({ className, menuOpen, seed, isActive }) => { 
   const containerRef = useRef(null);
 
-  const sketch = (p5sketch) => {
+  const sketch = (p5sketch, initSeed) => {
     if (typeof window === "undefined") return;
 
     let scl, initD, initN, depth, initDepth;
@@ -67,8 +67,7 @@ const Maurer = ({ className }) => {
       graphics = p5sketch.createGraphics(p5sketch.width, p5sketch.height);
       graphics.colorMode(p5sketch.HSL)
 
-      // const urlParams = new URLSearchParams(window.location.search);
-      const existingSeed = null//urlParams.get('maurerExpanseSeed');
+      const existingSeed = initSeed
       const seed = existingSeed ? existingSeed : p5sketch.floor(p5sketch.random() * 1000000000)
       p5sketch.noiseSeed(seed)
       p5sketch.randomSeed(seed)
@@ -493,6 +492,7 @@ const Maurer = ({ className }) => {
     }
 
     p5sketch.keyPressed = () => {
+      if (menuOpen.current || !isActive.current) return
       // If you hit the s key, save an image
       if (p5sketch.key == 'p') handleSave();
       if (p5sketch.key == "m" || p5sketch.keyCode === p5sketch.ESCAPE) handleMenuToggle()
@@ -510,7 +510,7 @@ const Maurer = ({ className }) => {
 
 
       // ignore arrow keys if typing in input
-      if (document.activeElement.tagName === "INPUT") return;
+      if (document.activeElement.tagName === "INPUT") return false;
 
       if (p5sketch.keyCode === p5sketch.LEFT_ARROW) handleMoveLeft();
       if (p5sketch.keyCode === p5sketch.RIGHT_ARROW) handleMoveRight();
@@ -760,7 +760,7 @@ void main() {
   }
   return (
     <div ref={containerRef} className={className} id="MaurerSketch">   
-      <P5Wrapper sketch={sketch} />
+      <P5Wrapper sketch={sketch} seed={seed} />
       <div id="instructionContainer" className="out">
         <div id="header">
           <h1>Maurer Expanse</h1>

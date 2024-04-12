@@ -1,38 +1,42 @@
-import { useRef, useEffect, FC, useState } from 'react';
+import { useRef, useEffect, FC, memo, MutableRefObject } from 'react';
 import p5, { Renderer } from 'p5';
 import debounce from 'lodash.debounce';
+import { useWindowsContext } from '@/context/WindowsProvider';
 
 interface P5WrapperProps {
-  sketch: (p: p5) => void;
+  sketch: (p: p5, seed?: string | null) => void;
+  seed: string | undefined;
 }
 
 
+const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
 
-const P5Wrapper: FC<P5WrapperProps> = ({ sketch }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5 | null>(null);
-
   const initializeRef = useRef(false);
 
   useEffect(() => {
     let cleanUp: any;
+    let observer: ResizeObserver;
 
     if (containerRef && containerRef.current) {
       const enhancedSketch = (p: p5) => {
-        cleanUp = sketch(p);
+        cleanUp = sketch(p, seed || null);
 
         function isTouchEventInside(event: any) {
-          event.preventDefault();
-          event.stopPropagation();
+    
           if (!containerRef.current) return false;
           const { left, top } = containerRef.current.getBoundingClientRect();
           const width = containerRef.current.clientWidth
           const height = containerRef.current.clientHeight
-          // const touchX = p.mouseX
-          // const touchY = p.mouseY
-          const touchX = event?.clientX || event.touches?.[0].clientX;
-          const touchY = event?.clientY || event.touches?.[0].clientY;
-          return touchX >= left && touchX <= left + width && touchY >= top && touchY <= top + height;
+          const touchX = event?.clientX || -10000;
+          const touchY = event?.clientY || -10000;
+          const isInside = touchX >= left && touchX <= left + width && touchY >= top && touchY <= top + height;
+          if (isInside) {
+            // event.preventDefault();
+            event.stopPropagation();
+          }
+          return isInside;
         }
 
         // Override p5's default mouse and touch event handlers
@@ -81,20 +85,22 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch }) => {
       }, 1000)
 
       const resizeDebounced = debounce(() => {
+        cleanUp && cleanUp();
         initializeRef.current && makeCanvas()
       }, 200);
    
       // Create a ResizeObserver to listen for changes in container size
-      const observer = new ResizeObserver(resizeDebounced);
+      observer = new ResizeObserver(resizeDebounced);
       observer.observe(containerRef.current);
 
-      return () => {
-        cleanUp && cleanUp();
-        observer.disconnect();
-        p5InstanceRef.current?.remove();
-      };
     }
-  }, [sketch]);
+
+    return () => {
+      cleanUp && cleanUp();
+      observer && observer.disconnect();
+      p5InstanceRef.current?.remove();
+    };
+  }, [sketch, seed]);
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 };

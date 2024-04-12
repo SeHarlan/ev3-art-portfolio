@@ -10,6 +10,7 @@ import useWindowSize from "@/hooks/useWindowSize";
 export interface WindowMenuItem {
   label: string;
   function: () => void;
+  component?: ReactNode;
 }
 interface WindowProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ interface WindowProps {
 }
 const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, inset = true, menu, wrapperClassName = "bg-windowsGray" }) => {
   const { dragRef, position, isDragging, resizeRef, containerRef, size, handleMaximize, isMax } = useDragResize(initPosition, initSize, windowKey)
-  const {orderState, minimizedState, openState} = useWindowsContext()
+  const {orderState, minimizedState, openState, activeWindow} = useWindowsContext()
   const [orderList, setOrderList] = orderState
   const [minimizedMap, setMinimizedMap] = minimizedState
   const [openMap, setOpenMap] = openState
@@ -42,7 +43,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
   
   const isMin = minimizedMap[windowKey]
   const orderIndex = orderList.findIndex(item => item === windowKey);
-  const isActive = orderIndex === orderList.length - 1
+  const isActive = activeWindow === windowKey
 
   const changeOrder = () => {
     const newOrder = [...orderList]
@@ -127,11 +128,15 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         </div>
       </div>
 
-      <div className="flex gap-2 px-1 text-stone-500" ref={menuRef}>
+      <div className="flex gap-3 px-1 text-stone-500" ref={menuRef}>
         {menu
           ? menu.map(item => {
             return (
-              <button key={item.label} className="text-black" onClick={item.function}><span className="underline">{item.label[0]}</span>{item.label.slice(1)}</button>
+              <button key={item.label} className="text-black relative" onClick={item.function}>
+                <span className="underline">{item.label[0]}</span>
+                {item.label.slice(1)}
+                {item.component}
+              </button>
             )
           })
         : <>

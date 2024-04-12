@@ -3,12 +3,12 @@ import { FC, memo, useRef, useState } from "react"
 import dynamic from "next/dynamic";
 const P5Wrapper = dynamic(() => import('./P5Wrapper'), { ssr: false });
 import * as Tone from 'tone'
+import { WINDOWS, useWindowsContext } from "@/context/WindowsProvider";
 
-const Duet = ({ className }) => { 
+const Duet = ({ className, menuOpen, seed, isActive }) => { 
   const containerRef = useRef(null);
-  const [mint, setMint] = useState(null);
 
-  const sketch = (p5sketch) => {
+  const sketch = (p5sketch, initSeed) => {
     if (typeof window === "undefined") return;
     
 
@@ -298,6 +298,22 @@ const Duet = ({ className }) => {
         if (useIt) console.log("Using Delay")
         this.delay.wet.value = useIt ? 0.25 : 0
       }
+
+      dispose() {
+        const sansDestination = this.fxChain.reverse().slice(1)
+        const destination = this.fxChain[this.fxChain.length - 1]
+        destination.disconnect()// no dispose
+
+        sansDestination.forEach((fx) => { 
+          fx.disconnect()
+          fx.dispose()
+        })
+        
+
+        this.synth.disconnect()
+        this.synth.dispose()
+        console.log("disposed")
+      }
     }
 
   // <!-- Rect -->
@@ -340,6 +356,7 @@ const Duet = ({ className }) => {
 
         synth.setBitcrusher(useBitcrusher)
         synth.setDelay(useDelay)
+        this.synthBase = synth
         this.synth = synth.synth
         this.waveType = synth.waveType
 
@@ -427,7 +444,7 @@ const Duet = ({ className }) => {
       }
 
       dispose() {
-        this.synth.dispose()
+        this.synthBase.dispose()
       }
 
       replay() {
@@ -770,11 +787,7 @@ const Duet = ({ className }) => {
       textBuff = p5sketch.createGraphics(p5sketch.width, p5sketch.height)
       textBuff.colorMode(p5sketch.HSL)
 
-
-      const params = new URL(document.location).searchParams;
-      const seedQuery = params.get("seed")
-      const d = new Date()
-      const seed = seedQuery ?? new Date().getTime();
+      const seed = initSeed || new Date().getTime();
       console.log("============================")
       console.log("SEED", seed)
       p5sketch.randomSeed(seed);
@@ -856,10 +869,6 @@ const Duet = ({ className }) => {
         console.log("All Complete")
 
         handleOpenMenu()
-
-        if (isRecording) {
-          setTimeout(stopRecording, 1000)
-        }
       }
 
       const secFunc = secRect.drawLine()
@@ -896,6 +905,8 @@ const Duet = ({ className }) => {
     }
 
     p5sketch.keyPressed = () => {
+      if (menuOpen.current || !isActive.current) return;
+
       if (p5sketch.key == " ") {
         if (playButton.className !== "hidden") handlePlayInit()
         else handlePlayToggle()
@@ -1362,18 +1373,18 @@ const Duet = ({ className }) => {
     //cleanup function
     return () => {
       if (focalRect?.synth) {
-        focalRect.synth.dispose()
-        focalRect.synth = null
+        focalRect.dispose()
+        // focalRect.synth = null
       }
       if (secRect?.synth) {
-        secRect.synth.dispose()
-        secRect.synth = null
+        secRect.dispose()
+        // secRect.synth = null        
       }
     }
   }
   return (
     <div ref={containerRef} className={className} id="DuetSketch">   
-      <P5Wrapper sketch={sketch} />
+      <P5Wrapper sketch={sketch} seed={seed} windowKey={WINDOWS.DUET}a />
       <main>
         <button
           id="play-button"
@@ -1387,8 +1398,8 @@ const Duet = ({ className }) => {
             <h1>DUET</h1>
             <button
               id="closeButton"
-              className="classic-button"
-            ><span>&#x2715;</span></button>
+              className="classic-button p-1"
+            ><img src="/images/close.png" alt="close" className=""/></button>
           </div>
           <div id="instructionsBody">
 

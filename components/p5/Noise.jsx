@@ -4,11 +4,10 @@ import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 const P5Wrapper = dynamic(() => import('./P5Wrapper'), { ssr: false });
 
-const Noise = ({ className }) => { 
+const Noise = ({ className, menuOpen, seed, isActive }) => { 
   const containerRef = useRef(null);
-  const [mint, setMint] = useState(null);
 
-  const sketch = (p5sketch) => {
+  const sketch = (p5sketch, initSeed) => {
     if (typeof window === "undefined") return;
 
     let scl = 3
@@ -195,6 +194,8 @@ const Noise = ({ className }) => {
       return [...noises, ...waves].sort(() => p5sketch.random([-1, 1]))
     }
     p5sketch.keyPressed = async () => {
+      if (menuOpen.current || !isActive.current) return;
+
       if (p5sketch.key === "s") {
         p5sketch.save(`its_just_noise${ usingBanner ? "_banner" : "" }${ iteration }.png`)
       }
@@ -308,7 +309,7 @@ const Noise = ({ className }) => {
       return y >>> 0;
     };
 
-    let generator = new MersenneTwister(mint);
+    let generator = new MersenneTwister(initSeed);
 
     function nfaRandom(min, max) {
       const randomValue = generator.genrand_int32();
@@ -317,7 +318,7 @@ const Noise = ({ className }) => {
   }
   return (
     <div ref={containerRef} className={className} id="NoiseSketch">   
-      <P5Wrapper sketch={sketch} />
+      <P5Wrapper sketch={sketch} seed={seed} />
       <div id="loadingScreen">
         <p className="animate-pulse">Your noise is being generated...</p>
       </div>

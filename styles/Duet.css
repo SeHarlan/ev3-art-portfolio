@@ -39,7 +39,7 @@
     }
 
     button {
-      font-family: 'W95FA';
+      /* font-family: 'W95FA'; */
       border: none;
       color: black;
       padding: 0;
@@ -54,7 +54,6 @@
     }
 
     .classic-button {
-      font-size: large;
       padding: 6px 14px;
       position: relative;
       transition: 100ms;
@@ -152,7 +151,7 @@
       align-items: center;
       background-color: var(--windowHeader);
       color: white;
-      font-size: 0.65rem;
+      /* font-size: 0.65rem; */
       line-height: 0;
       padding: 4px 3px 4px 5px;
     }
@@ -160,7 +159,7 @@
     #closeButton {
       flex-grow: 0;
       flex-shrink: 0;
-      padding: 0;
+      padding: 0.25rem;
       width: 20px;
       height: 18px;
       font-size: 24px;

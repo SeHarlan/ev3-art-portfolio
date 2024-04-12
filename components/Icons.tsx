@@ -13,6 +13,7 @@ const Icons: FC = () => {
             key={windowKey}
             className="custom-cursor select-none text-white flex flex-col items-center w-fit text-center"
             onDoubleClick={handleClick}
+            onTouchEnd={handleClick}
           >
             <Image width={56} height={56} src={ICONS[windowKey]} alt={`${windowKey} Icon`} className="w-14 mb-1 flex-shrink-0" />
             {windowKey}

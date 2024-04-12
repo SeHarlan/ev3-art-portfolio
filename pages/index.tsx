@@ -13,11 +13,11 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Art by EV3</title>
+        <title>EV3</title>
         <meta name="description" content="EV3's Art Portfolio" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <meta name="og:title" content="Art by EV3" />
+        <meta name="og:title" content="EV3" />
         <meta name="og:description" content="EV3's Art Portfolio" />
         <meta property="og:image" content="/images/big-banner-bg.png" />
         <meta property='twitter:image' content="/images/big-banner-bg.png" />

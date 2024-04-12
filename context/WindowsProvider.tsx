@@ -14,6 +14,7 @@ interface InitContext {
     Dispatch<SetStateAction<{ [key: string]: boolean; }>>
   ];
   handleOpen: (windowKey: string) => void;
+  activeWindow?: string;
 }
 
 const initContext: InitContext = {
@@ -28,7 +29,7 @@ export const WindowsContext = createContext(initContext)
 export const useWindowsContext = () => useContext(WindowsContext)
 
 export const WINDOWS = {
-  HOME: "Home",
+  HOME: "Introduction",
   NOISE: "it's just noise",
   DUET: "DUET",
   MAURER: "Maurer Expanse",
@@ -59,6 +60,8 @@ export default function WindowsProvider({ children }: { children: ReactNode }) {
   const [minimizedMap, setMinimizedMap] = minimizedState
   const [openMap, setOpenMap] = openState
 
+  const activeWindow = orderList[orderList.length - 1]
+
   const handleOpen = (windowKey: string) => { 
     const newOrder = [...orderList]
     const orderIndex = orderList.findIndex(item => item === windowKey);
@@ -83,7 +86,8 @@ export default function WindowsProvider({ children }: { children: ReactNode }) {
         orderState,
         minimizedState,
         openState,
-        handleOpen
+        handleOpen,
+        activeWindow
       }}
     >
       {children}
