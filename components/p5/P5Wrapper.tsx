@@ -15,11 +15,13 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
   const initializeRef = useRef(false);
   const initialDimensions = useRef({ width: 0, height: 0 });
 
+  const [initialized, setInitialized] = useState(false)
+
   useEffect(() => {
     let cleanUp: any;
     let observer: ResizeObserver;
 
-    if (containerRef && containerRef.current) {
+    if (containerRef?.current && initialized) {
       initialDimensions.current = {
         width: containerRef.current.clientWidth,
         height: containerRef.current.clientHeight,
@@ -88,9 +90,9 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
 
       makeCanvas();
 
-      setTimeout(() => {
-        initializeRef.current = true;
-      }, 1000)
+      // setTimeout(() => {
+      //   initializeRef.current = true;
+      // }, 1000)
 
       const resizeDebounced = debounce(() => {
         // cleanUp && cleanUp();
@@ -112,15 +114,16 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
       observer = new ResizeObserver(resizeDebounced);
       observer.observe(containerRef.current);
 
-    }
+    } 
+
+    setInitialized(true)
 
     return () => {
       cleanUp && cleanUp();
       observer && observer.disconnect();
       p5InstanceRef.current?.remove();
-      console.log("CLEANED")
     };
-  }, [sketch, seed]);
+  }, [sketch, seed, initialized]);
 
   return <div ref={containerRef} style={{
     width: '100%',

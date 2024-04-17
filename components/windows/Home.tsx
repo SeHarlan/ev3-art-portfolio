@@ -69,7 +69,7 @@ const HomeWindow: FC = () => {
   const [isSkipping, setIsSkipping] = useState(false)
 
   const delay = useRef(50);
-  const delayBuffer = 0.85
+  const delayBuffer = 0.8
   const elComplete = useRef(false);
   const reverse = useRef(false);
   const myDivRef = useRef<HTMLDivElement>(null);
@@ -130,14 +130,14 @@ const HomeWindow: FC = () => {
             delay.current = 50
             // middle condition (start the delete)
             if (textIndex > contentObj.text.length) {
-              delay.current = 500
+              delay.current = 450
               reverse.current = true;
             }
           }
           break;
         };
         case "break": { 
-          delay.current = 100
+          delay.current = 80
           const el = <br key={makeKey(contentIndex)} />
           newDisplay[contentIndex] = el
           setDisplay(newDisplay)    
@@ -160,7 +160,7 @@ const HomeWindow: FC = () => {
       }
 
       function handleNextContent() {
-        delay.current = 400;
+        delay.current = 300;
         setTextIndex(0)
         setContentIndex(prev => prev + 1)
       }
