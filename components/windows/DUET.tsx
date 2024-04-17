@@ -50,6 +50,13 @@ const DuetWindow: FC = () => {
 
   const menu: WindowMenuItem[] = [
     {
+      label: "Refresh",
+      function: () => {
+        setActiveContent(100)
+        setTimeout(() => setActiveContent(0), 10)
+      },
+    },
+    {
       label: "Seed",
       function: handleDropDown,
       component: <SeedDropdown onUseSeed={useSeed} seedOpen={seedOpen} setSeedOpen={setSeedOpen} />,

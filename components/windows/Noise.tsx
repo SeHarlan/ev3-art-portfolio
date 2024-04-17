@@ -49,6 +49,13 @@ const NoiseWindow: FC = () => {
 
   const menu: WindowMenuItem[] = [
     {
+      label: "Refresh",
+      function: () => {
+        setActiveContent(100)
+        setTimeout(() => setActiveContent(0), 10)
+      },
+    },
+    {
       label: "Seed",
       function: handleDropDown,
       component: <SeedDropdown onUseSeed={useSeed} seedOpen={seedOpen} setSeedOpen={setSeedOpen} />,
@@ -77,7 +84,7 @@ const NoiseWindow: FC = () => {
           <p>Please enjoy and remember, it's just noise.</p>
           <ul className="list-disc list-inside">
             <li>Press "s" to download the current output</li>
-            <li>Press "b" to re-generate in an banner aspect ratio</li>
+            <li>Press "b" to re-generate in a banner aspect ratio</li>
             <li>Press "n" to generate brand new noise</li>
           </ul>
           <br />

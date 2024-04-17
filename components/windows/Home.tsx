@@ -69,6 +69,7 @@ const HomeWindow: FC = () => {
   const [isSkipping, setIsSkipping] = useState(false)
 
   const delay = useRef(50);
+  const delayBuffer = 0.85
   const elComplete = useRef(false);
   const reverse = useRef(false);
   const myDivRef = useRef<HTMLDivElement>(null);
@@ -159,14 +160,14 @@ const HomeWindow: FC = () => {
       }
 
       function handleNextContent() {
-        delay.current = 400
+        delay.current = 400;
         setTextIndex(0)
         setContentIndex(prev => prev + 1)
       }
 
       if (elComplete.current) handleNextContent();
       if (myDivRef.current) myDivRef.current.scrollTop = myDivRef?.current.scrollHeight;
-    }, delay.current)
+    }, delay.current * delayBuffer)
 
 
     return () => clearTimeout(timerId.current)

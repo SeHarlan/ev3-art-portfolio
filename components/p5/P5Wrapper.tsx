@@ -1,4 +1,4 @@
-import { useRef, useEffect, FC, memo, MutableRefObject } from 'react';
+import { useRef, useEffect, FC, memo, MutableRefObject, useState } from 'react';
 import p5, { Renderer } from 'p5';
 import debounce from 'lodash.debounce';
 import { useWindowsContext } from '@/context/WindowsProvider';
@@ -10,16 +10,22 @@ interface P5WrapperProps {
 
 
 const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
-
   const containerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5 | null>(null);
   const initializeRef = useRef(false);
+  const initialDimensions = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
     let cleanUp: any;
     let observer: ResizeObserver;
 
     if (containerRef && containerRef.current) {
+      initialDimensions.current = {
+        width: containerRef.current.clientWidth,
+        height: containerRef.current.clientHeight,
+      };
+      
+
       const enhancedSketch = (p: p5) => {
         cleanUp = sketch(p, seed || null);
 
@@ -75,6 +81,8 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
           p5InstanceRef.current?.remove();
           const p5Instance = new p5(enhancedSketch, containerRef.current);
           p5InstanceRef.current = p5Instance;
+
+          
         }
       };
 
@@ -85,8 +93,19 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
       }, 1000)
 
       const resizeDebounced = debounce(() => {
-        cleanUp && cleanUp();
-        initializeRef.current && makeCanvas()
+        // cleanUp && cleanUp();
+        // initializeRef.current && makeCanvas()
+
+        const canvas = containerRef.current?.querySelector('canvas')
+        if (canvas && containerRef.current) {
+          const width = containerRef.current.clientWidth
+          const height = containerRef.current.clientHeight
+          const widthScale = width / initialDimensions.current.width;
+          const heightScale = height / initialDimensions.current.height;
+          const scale = Math.min(widthScale, heightScale);
+          canvas.style.transformOrigin = 'top left';
+          canvas.style.transform = `scale(${scale*100}%)`
+        }
       }, 200);
    
       // Create a ResizeObserver to listen for changes in container size
@@ -99,10 +118,14 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
       cleanUp && cleanUp();
       observer && observer.disconnect();
       p5InstanceRef.current?.remove();
+      console.log("CLEANED")
     };
   }, [sketch, seed]);
 
-  return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
+  return <div ref={containerRef} style={{
+    width: '100%',
+    height: '100%',
+  }} />;
 };
 
 
