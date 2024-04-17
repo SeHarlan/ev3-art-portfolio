@@ -100,7 +100,7 @@ const NoiseWindow: FC = () => {
     <Window windowKey={WINDOWS.NOISE} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
       {/* {content} */}
       <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>
-        <Noise className="" menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
+        <Noise className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
       </div>
 
       <div className={clsx("p-4 absolute top-0 left-0", activeContent === 1 ? "block" : "hidden")}>
