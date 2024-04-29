@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import '@/styles/Maurer.css'
 import '@/styles/Noise.css'
 import '@/styles/Duet.css'
+import '@/styles/drifting.css'
 import type { AppProps } from 'next/app'
 
 import { Analytics } from "@vercel/analytics/react"

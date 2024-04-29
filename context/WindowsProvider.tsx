@@ -1,4 +1,5 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
+import { useRouter } from "next/router";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
 
 interface InitContext {
   orderState: [
@@ -33,6 +34,15 @@ export const WINDOWS = {
   NOISE: "it's just noise",
   DUET: "DUET",
   MAURER: "Maurer Expanse",
+  DRIFTING: "Drifting"
+}
+
+type WINDOWS = {
+  HOME: string;
+  NOISE: string;
+  DUET: string;
+  MAURER: string;
+  DRIFTING: string;
 }
 
 export const ICONS = {
@@ -40,6 +50,7 @@ export const ICONS = {
   [WINDOWS.DUET]: "/images/DUET-icon.png",
   [WINDOWS.MAURER]: "/images/small-alt-logo.png",
   [WINDOWS.NOISE]: "/images/its_just_noise-icon.png",
+  [WINDOWS.DRIFTING]: "/images/drifting-icon.png",
 }
 
 const defaultMin = Object.values(WINDOWS).reduce((acc: {[key:string]: boolean}, curr) => {
@@ -52,6 +63,7 @@ defaultOpen[WINDOWS.HOME] = true
 const defaultOrder = Object.entries(defaultOpen).filter(([key, open]) => open).map(([key, open]) => key)
 
 export default function WindowsProvider({ children }: { children: ReactNode }) {
+  const router = useRouter()
   const orderState = useState(defaultOrder)
   const minimizedState = useState(defaultMin)
   const openState = useState(defaultOpen)
@@ -61,6 +73,21 @@ export default function WindowsProvider({ children }: { children: ReactNode }) {
   const [openMap, setOpenMap] = openState
 
   const activeWindow = orderList[orderList.length - 1]
+
+  const openWindow = (router.query.window as string)?.toUpperCase() as keyof WINDOWS;
+
+
+  useEffect(() => {
+    if (openWindow && Object.keys(WINDOWS).includes(openWindow)) {
+      const windowKey = WINDOWS[openWindow] as string;
+      const defaultOpen = { ...defaultMin }
+      defaultOpen[windowKey] = true
+      const defaultOrder = Object.entries(defaultOpen).filter(([key, open]) => open).map(([key, open]) => key)
+
+      setOpenMap(defaultOpen)
+      setOrderList(defaultOrder)
+    }
+  }, [openWindow])
 
   const handleOpen = (windowKey: string) => { 
     const newOrder = [...orderList]

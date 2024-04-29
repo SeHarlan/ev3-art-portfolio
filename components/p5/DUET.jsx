@@ -1384,7 +1384,7 @@ const Duet = ({ className, menuOpen, seed, isActive }) => {
   }
   return (
     <div ref={containerRef} className={className} id="DuetSketch">   
-      <P5Wrapper sketch={sketch} seed={seed} windowKey={WINDOWS.DUET}a />
+      <P5Wrapper sketch={sketch} seed={seed} windowKey={WINDOWS.DUET} />
       <main>
         <button
           id="play-button"

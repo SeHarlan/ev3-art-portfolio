@@ -104,7 +104,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         ref={dragRef}
       >
         <div className="flex items-center gap-2">
-          <img src={ICONS[windowKey]} alt="" className="w-5" style={{filter: invertIcon ? "invert(1)" : ""}} />
+          <img src={ICONS[windowKey]} alt="" className="w-5 h-5 object-contain" style={{filter: invertIcon ? "invert(1)" : ""}} />
           <p className="text-white leading-none">{windowKey}</p>
         </div>
         <div className="flex items-center gap-1">

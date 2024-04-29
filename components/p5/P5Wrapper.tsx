@@ -125,10 +125,13 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
     };
   }, [sketch, seed, initialized]);
 
-  return <div ref={containerRef} style={{
-    width: '100%',
-    height: '100%',
-  }} />;
+  return <div ref={containerRef}
+    style={{
+      width: '100%',
+      height: '100%',
+    }}
+    className='overflow-hidden'
+  />;
 };
 
 

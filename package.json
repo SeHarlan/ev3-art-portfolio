@@ -17,6 +17,7 @@
     "@vercel/analytics": "^1.2.2",
     "autoprefixer": "10.4.14",
     "clsx": "^1.2.1",
+    "h264-mp4-encoder": "^1.0.12",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "next": "13.3.1",
