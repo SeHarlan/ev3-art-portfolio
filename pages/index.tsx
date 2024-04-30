@@ -6,7 +6,7 @@ import Head from 'next/head'
 import MaurerWindow from '@/components/windows/Maurer'
 import NoiseWindow from '@/components/windows/Noise'
 import DuetWindow from '@/components/windows/DUET'
-import DriftingWindow from '@/components/windows/Drifting'
+import SomeDaysWindow from '@/components/windows/SomeDays'
 
 export default function Home() {
   const { openState } = useWindowsContext()
@@ -36,7 +36,7 @@ export default function Home() {
           {openMap[WINDOWS.NOISE] ? <NoiseWindow /> : null }
           {openMap[WINDOWS.DUET] ? <DuetWindow/> : null}
           {openMap[WINDOWS.MAURER] ? <MaurerWindow /> : null}
-          {openMap[WINDOWS.DRIFTING] ? <DriftingWindow /> : null}
+          {openMap[WINDOWS.SOMEDAYS] ? <SomeDaysWindow /> : null}
         </div>
         <Footer />
       </main>

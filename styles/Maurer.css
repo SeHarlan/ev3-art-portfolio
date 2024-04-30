@@ -164,16 +164,7 @@ canvas {
 
 
 /* WARNING STUFF */
-#warning {
-  position: fixed;
-  left: 0;
-  color: #858585;
-  padding: 2rem;
-  width: 100%;
-  text-align: center;
-  animation: pulse 2s infinite;
-  transition: bottom 2s;
-}
+
 .hide-warning {
   bottom: -5rem;
 }

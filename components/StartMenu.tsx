@@ -31,7 +31,7 @@ const StartMenu: FC = () => {
                     key={windowKey}
                   >
                     <div
-                      className="px-2 py-1 w-28 select-none hover:bg-windowsHeader hover:text-white"
+                      className="px-2 py-1 w-36 select-none hover:bg-windowsHeader hover:text-white"
                       onClick={handleClick}
                     >
                       <span className="underline">{label[0]}</span>{label.slice(1)}

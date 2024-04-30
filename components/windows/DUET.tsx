@@ -71,38 +71,6 @@ const DuetWindow: FC = () => {
     },
   ]
 
-  // const content = useMemo(() => {
-  //   switch (activeContent) { 
-  //     case 0: // Sketch
-  //       return <Duet className="" menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
-  //     case 1: // About
-  //       return <div className="p-4">
-  //         <p>DUET is an audio-visual art algorithm.</p>
-  //         <br/>
-  //         <p>Each visual element corresponds to a musical one. Line length determines note value, rhythms correlate with line opacity, and each color palette belongs to a specific musical scale.</p>
-  //         <br />
-  //         <p>The arrangement of lines is an exploration and mutation of Epicycloid patterns. Because the lines' placement and distance come from mathematic formulas, more often than not, it leads to repeating patterns in the notes. </p>
-  //         <br />
-  //         <p>The line/note patterns combine with rhythms to form endless motifs and melodies generated in real time.</p>
-  //         <br />
-  //         <p>Tap the "Click Me" button to begin the DUET.</p>
-  //         <ul className="list-disc list-inside">
-  //           <li>"m" or swipe up/down from the bottom to toggle the menu</li>
-  //           <li>Space bar or double tap to play/pause</li>
-  //           <li>"e" to play the extended version</li>
-  //           <li>"f" to fast forward</li>
-  //           <li>"s" to save a screenshot</li>
-  //           <li>"r" to replay</li>
-  //           <li>"n" to generate a new DUET</li>
-  //         </ul>
-  //         <br />
-  //         <button className="classic-button px-2" onClick={() => setActiveContent(0)}>
-  //           Go back
-  //         </button>
-  //       </div>
-  //   }
-  // }, [activeContent, seed])
-
   return (
     <Window windowKey={WINDOWS.DUET} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
       {/* {content} */}
@@ -110,7 +78,7 @@ const DuetWindow: FC = () => {
         <Duet className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
       </div>
 
-      <div className={clsx("p-4 absolute top-0 left-0", activeContent === 1 ? "block" : "hidden")}>
+      <div className={clsx("p-4 absolute top-0 left-0 h-full w-full overflow-auto", activeContent === 1 ? "block" : "hidden")}>
         <p>DUET is an audio-visual art algorithm.</p>
         <br />
         <p>Each visual element corresponds to a musical one. Line length determines note value, rhythms correlate with line opacity, and each color palette belongs to a specific musical scale.</p>

@@ -71,30 +71,6 @@ const NoiseWindow: FC = () => {
     },
   ]
 
-  // const content = useMemo(() => {
-  //   switch (activeContent) { 
-  //     case 0: // sketch
-  //       return <Noise className="" menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
-  //     case 1: // about
-  //       return <div className="p-4">
-  //         <p>“it's just noise” started as a personal challenge to make a long-form algorithm in under 100 lines of code.</p>
-  //         <br />
-  //         <p>This constraint meant that I had to rely on basic building blocks, mainly multiple layers of Perlin noise (known as domain warping) with some simple trigonometric functions for extra variation.</p>
-  //         <p>As I got serious about fine-tuning and adding additional functionality like “banner mode” it ended up at around 200 lines of code, so not quite my original goal, but I'm gonna say it still qualifies as code minimalism ¯\_(ツ)_/¯ </p>
-  //         <br />
-  //         <p>Please enjoy and remember, it's just noise.</p>
-  //         <ul className="list-disc list-inside">
-  //           <li>Press "s" to download the current output</li>
-  //           <li>Press "b" to re-generate in a banner aspect ratio</li>
-  //           <li>Press "n" to generate brand new noise</li>
-  //         </ul>
-  //         <br />
-  //         <button className="classic-button px-2" onClick={() => setActiveContent(0)}>
-  //           Go back
-  //         </button>
-  //       </div>
-  //   }
-  // }, [activeContent, seed])
 
   return (
     <Window windowKey={WINDOWS.NOISE} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
@@ -103,7 +79,7 @@ const NoiseWindow: FC = () => {
         <Noise className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
       </div>
 
-      <div className={clsx("p-4 absolute top-0 left-0", activeContent === 1 ? "block" : "hidden")}>
+      <div className={clsx("p-4 absolute top-0 left-0 h-full w-full overflow-auto", activeContent === 1 ? "block" : "hidden")}>
         <p>“it's just noise” started as a personal challenge to make a long-form algorithm in under 100 lines of code.</p>
         <br />
         <p>This constraint meant that I had to rely on basic building blocks, mainly multiple layers of Perlin noise (known as domain warping) with some simple trigonometric functions for extra variation.</p>

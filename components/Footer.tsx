@@ -65,7 +65,7 @@ const Footer: FC = () => {
               className={clsx("px-2 w-36 py-1 text-start flex items-center gap-2", { active })}
               onClick={handleClick}
             >
-              <img src={ICONS[windowKey]} alt="" className="w-5" />
+              <img src={ICONS[windowKey]} alt="" className="w-5 h-5 object-contain" />
               {windowKey}
             </Button>
           )

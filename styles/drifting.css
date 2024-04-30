@@ -89,11 +89,11 @@
     height: 0.5rem;
     border-radius: 50%;
     background-color: red;
-    animation: pulse 2s infinite;
+    animation: dotPulse 2s infinite;
     transition-duration: 500ms;
   }
 
-  @keyframes pulse {
+  @keyframes dotPulse {
     0% {
       transform: scale(0.75);
       box-shadow: 0 0 10px red;
