@@ -1,0 +1,73 @@
+#RMX-dithered-sky-Sketch {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: rgb(22, 9, 43);
+
+  font-smooth: never;
+  -webkit-font-smoothing : none;
+
+
+  canvas {
+    display: block;
+  }
+
+
+
+  #RMX-dithered-sky-loading { 
+    margin: 0;
+    padding: 0;
+  
+    font-family:  VT323, monospace;
+    font-size: 3rem;  
+    color: rgb(245,66,111);
+    background: -webkit-linear-gradient(rgb(86,29,144), rgb(245,66,111));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  } 
+  #RMX-dithered-sky-loadingBg {
+    background: rgb(22, 9, 43);
+    padding: 0.5rem 1rem;
+  }
+  #RMX-dithered-sky-loadingBorder {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    /* background: linear-gradient( 45deg, rgb(245,66,111), rgb(86,29,144)); */
+    padding: 0.5rem;
+    animation: spinningBorder 1.5s linear infinite;
+  }
+
+  #p5_loading {
+    display: none;
+  }
+
+
+
+
+  @keyframes spinningBorder {
+    0% {
+      background: linear-gradient( 0deg, rgb(245,66,111), rgb(86,29,144));
+    }
+    25% {
+      background: linear-gradient( 90deg, rgb(245,66,111), rgb(86,29,144));
+    }
+    50% {
+      background: linear-gradient( 180deg, rgb(245,66,111), rgb(86,29,144));
+    }
+    75% {
+      background: linear-gradient( 270deg, rgb(245,66,111), rgb(86,29,144));
+    } 
+    100% {
+      background: linear-gradient( 360deg, rgb(245,66,111), rgb(86,29,144));
+    }
+  }
+}

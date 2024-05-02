@@ -34,7 +34,8 @@ export const WINDOWS = {
   NOISE: "it's just noise",
   DUET: "DUET",
   MAURER: "Maurer Expanse",
-  SOMEDAYS: "some days"
+  SOMEDAYS: "some days",
+  R3MIX: "R3MIX"
 }
 
 type WINDOWS = {
@@ -43,6 +44,7 @@ type WINDOWS = {
   DUET: string;
   MAURER: string;
   SOMEDAYS: string;
+  R3MIX: string;
 }
 
 export const ICONS = {
@@ -51,6 +53,8 @@ export const ICONS = {
   [WINDOWS.MAURER]: "/images/small-alt-logo.png",
   [WINDOWS.NOISE]: "/images/its_just_noise-icon.png",
   [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
+  [WINDOWS.R3MIX]: "/images/r3mix-icon.png"
+
 }
 
 const defaultMin = Object.values(WINDOWS).reduce((acc: {[key:string]: boolean}, curr) => {

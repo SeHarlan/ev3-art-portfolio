@@ -7,6 +7,7 @@ import MaurerWindow from '@/components/windows/Maurer'
 import NoiseWindow from '@/components/windows/Noise'
 import DuetWindow from '@/components/windows/DUET'
 import SomeDaysWindow from '@/components/windows/SomeDays'
+import R3MIX_Window from '@/components/windows/R3MIX'
 
 export default function Home() {
   const { openState } = useWindowsContext()
@@ -37,6 +38,8 @@ export default function Home() {
           {openMap[WINDOWS.DUET] ? <DuetWindow/> : null}
           {openMap[WINDOWS.MAURER] ? <MaurerWindow /> : null}
           {openMap[WINDOWS.SOMEDAYS] ? <SomeDaysWindow /> : null}
+          {openMap[WINDOWS.R3MIX] ? <R3MIX_Window /> : null}
+          
         </div>
         <Footer />
       </main>

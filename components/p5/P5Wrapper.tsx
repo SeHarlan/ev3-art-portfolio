@@ -6,10 +6,17 @@ import { useWindowsContext } from '@/context/WindowsProvider';
 interface P5WrapperProps {
   sketch: (p: p5, seed?: string | null) => void;
   seed: string | undefined;
+  className?: string;
+  transformOrigin?: string;
 }
 
 
-const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
+const P5Wrapper: FC<P5WrapperProps> = ({
+  sketch,
+  seed,
+  className = 'overflow-hidden w-full h-full',
+  transformOrigin = "top left",
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5 | null>(null);
   const initializeRef = useRef(false);
@@ -104,8 +111,8 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
           const height = containerRef.current.clientHeight
           const widthScale = width / initialDimensions.current.width;
           const heightScale = height / initialDimensions.current.height;
-          const scale = Math.min(widthScale, heightScale);
-          canvas.style.transformOrigin = 'top left';
+          const scale =Math.min(widthScale, heightScale);
+          canvas.style.transformOrigin = transformOrigin;
           canvas.style.transform = `scale(${scale*100}%)`
         }
       }, 200);
@@ -126,11 +133,7 @@ const P5Wrapper: FC<P5WrapperProps> = ({ sketch, seed }) => {
   }, [sketch, seed, initialized]);
 
   return <div ref={containerRef}
-    style={{
-      width: '100%',
-      height: '100%',
-    }}
-    className='overflow-hidden'
+    className={className}
   />;
 };
 
