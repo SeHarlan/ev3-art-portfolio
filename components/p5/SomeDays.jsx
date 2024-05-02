@@ -120,6 +120,7 @@ const Drifting = ({ className, menuOpen, seed, isActive }) => {
 
 
     p5sketch.keyPressed = () => {
+      if (menuOpen.current || !isActive.current) return
       if (p5sketch.key == "s" || p5sketch.key == "S") {
         p5sketch.save("drifting")
       }

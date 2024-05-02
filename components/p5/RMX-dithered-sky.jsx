@@ -145,7 +145,8 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
       timeCounter += 1 / FR;
     }
 
-    p5sketch.keyPressed =() =>{
+    p5sketch.keyPressed = () => {
+      if (menuOpen.current || !isActive.current) return
       if (p5sketch.key == "c") {
         clearGlitch = !clearGlitch;
         return false
