@@ -34,7 +34,7 @@ const contentList = [
   { type: "break", text: "" },
   { text: "This website showcases a few of my long-form and interactive generative art pieces." },
   { type: "break", text: "" },
-  { text: "Each long-from generative algorithm is meant to be enjoyed as a whole collection with multiple viewings, where each iteration is part of a greater composition." },
+  { text: "Each long-form generative algorithm is meant to be enjoyed as a whole collection with multiple viewings, where each iteration is part of a greater composition." },
   { type: "break", text: "" },
   { type: "break", text: "" },
   { text: "The algorithm itself is the art." },
