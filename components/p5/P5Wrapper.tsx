@@ -111,7 +111,7 @@ const P5Wrapper: FC<P5WrapperProps> = ({
           const height = containerRef.current.clientHeight
           const widthScale = width / initialDimensions.current.width;
           const heightScale = height / initialDimensions.current.height;
-          const scale =Math.min(widthScale, heightScale);
+          const scale = Math.min(widthScale, heightScale);
           canvas.style.transformOrigin = transformOrigin;
           canvas.style.transform = `scale(${scale*100}%)`
         }

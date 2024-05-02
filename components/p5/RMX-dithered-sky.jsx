@@ -1455,7 +1455,7 @@ void main() {
   }
   return (
     <div ref={containerRef} className={className} id="RMX-dithered-sky-Sketch">   
-      <P5Wrapper sketch={sketch} seed={seed} className="overflow-hidden h-full" transformOrigin="top center"/>
+      <P5Wrapper sketch={sketch} seed={seed} className="h-full" transformOrigin="top center"/>
       <div id="RMX-dithered-sky-loadingBorder">
         <div id="RMX-dithered-sky-loadingBg">
           <div id="RMX-dithered-sky-loading">
