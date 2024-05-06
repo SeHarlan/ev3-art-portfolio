@@ -14,7 +14,7 @@ const Noise = ({ className, menuOpen, seed, isActive }) => {
     let scl = 3
 
     if (windowWidth < 800) {
-      scl = 2
+      scl = 1.5
     }
 
 
