@@ -10,7 +10,15 @@ const Noise = ({ className, menuOpen, seed, isActive }) => {
   const sketch = (p5sketch, initSeed) => {
     if (typeof window === "undefined") return;
 
+    const windowWidth = containerRef.current.clientWidth
     let scl = 3
+
+    if (windowWidth < 760) {
+      scl = 1
+    }
+
+
+
     let zoom = 1
     let usingBanner = false
     let margin = scl * 125
@@ -20,9 +28,10 @@ const Noise = ({ className, menuOpen, seed, isActive }) => {
     const resizeStuff = () => {
       const windowWidth = containerRef.current.clientWidth
       // const windowHeight = containerRef.current.clientHeight
-      const canvasWidth = canvasEl.width
+      const canvasWidth = p5sketch.width
       const scaleAmount = windowWidth / canvasWidth
-      canvasEl.style.transform = `scale(${ scaleAmount * 1.9 }) translate(-50%, -50%)`
+
+      canvasEl.style.transform = `scale(${ scaleAmount }) translate(-50%, -50%)`
     }
     p5sketch.setup = (cc = true) => {
       if (cc) {
@@ -47,7 +56,6 @@ const Noise = ({ className, menuOpen, seed, isActive }) => {
       setDScale = p5sketch.random() < 0.75 ? undefined : nScales[p5sketch.floor(p5sketch.random(nScales.length))]
       canvasEl = document.getElementById("NoiseCanvas")
       resizeStuff()
-      // window.onresize = () => resizeStuff()
     }
     p5sketch.draw = () => {
       p5sketch.noLoop()
@@ -320,7 +328,7 @@ const Noise = ({ className, menuOpen, seed, isActive }) => {
     <div ref={containerRef} className={className} id="NoiseSketch">   
       <P5Wrapper sketch={sketch} seed={seed} />
       <div id="loadingScreen">
-        <p className="animate-pulse">Your noise is being generated...</p>
+        <p className="animate-pulse text-sm md:text-lg">Your noise is being generated...</p>
       </div>
     </div>
   )

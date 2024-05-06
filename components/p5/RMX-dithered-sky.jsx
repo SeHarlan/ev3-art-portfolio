@@ -3,12 +3,17 @@ import { FC, memo, useRef, useState } from "react"
 import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 const P5Wrapper = dynamic(() => import('./P5Wrapper'), { ssr: false });
+import { loadLargeImage } from "./utils";
+
+p5.prototype.loadImage = loadLargeImage;
 
 const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => { 
   const containerRef = useRef(null);
 
   const sketch = (p5sketch, initSeed) => {
     if (typeof window === "undefined") return;
+
+    
 
     let seed, img;
     let fxShader, feedbackShader;
@@ -17,34 +22,35 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
     let timeCounter = 0;
     let clearGlitch = false;
     let font
+    let setupComplete = false;
+
 
     const EV3binary = '01000101 01010110 00110011'
 
-    const imageUrl = "https://arweave.net/RIWEFemW90nlHEc0kqfImQCGl7-Blh12tapOonzUB2E?ext=png"
-    // const imageUrl = "https://arweave.net/uy98BPJn7Ezew4XU31yAvDLrl8J7O437olAIdZBj3tc?ext=jpg"
+    // const imageUrl = "https://arweave.net/RIWEFemW90nlHEc0kqfImQCGl7-Blh12tapOonzUB2E?ext=png"
+    const imageUrl = "https://res.cloudinary.com/dukxp13zq/image/upload/v1706242375/nft-9/HJVmcP9hBySpXgweagJC2Z1o2dgpR1HYjBH72aAfajrn.png"
 
-    p5sketch.preload = () => {
-      try {
-        document.getElementById("RMX-dithered-sky-loadingBorder").style.display = "block";
+    p5sketch.preload = async () => {
 
-        fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
-        feedbackShader = new p5.Shader(p5sketch._renderer, vertex, feedbackFrag);
-        img = p5sketch.loadImage(imageUrl)
-        font = '"Kode Mono", monospace'
+      document.getElementById("RMX-dithered-sky-loadingBorder").style.display = "block";
 
-      } catch (error) {
-        console.error(error)
-      }
+      fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
+      feedbackShader = new p5.Shader(p5sketch._renderer, vertex, feedbackFrag);
+      img = p5sketch.loadImage(imageUrl)
+           
+      font = '"Kode Mono", monospace'
+
     }
 
-    p5sketch.setup = () => {
+    p5sketch.setup = async () => {
       document.getElementById("RMX-dithered-sky-loadingBorder").style.display = "none";
       const windowWidth = containerRef.current.clientWidth;
       const windowHeight = containerRef.current.clientHeight
       let windowRatio = windowWidth / windowHeight;
       let imgRatio = img.width / img.height;
+      
       let canvWidth, canvHeight;
-
+      
       if (windowRatio > imgRatio) {
         // Window is wider than image needs
         canvHeight = windowHeight;
@@ -54,7 +60,7 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
         canvWidth = windowWidth;
         canvHeight = canvWidth / imgRatio;
       }
-
+      
       img.resize(canvWidth, canvHeight)
 
       p5sketch.createCanvas(canvWidth, canvHeight);
@@ -88,10 +94,15 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
       p5sketch.randomSeed(seed);
       p5sketch.noiseSeed(seed);
 
-      currentBuffer.image(img, -p5sketch.width / 2, -p5sketch.height / 2, p5sketch.width, p5sketch.height);
+
+      currentBuffer.rect(-p5sketch.width / 2, -p5sketch.height / 2, p5sketch.width, p5sketch.height);
+      // currentBuffer.image(img, -p5sketch.width / 2, -p5sketch.height / 2, p5sketch.width, p5sketch.height);
+
+      // setupComplete =true
     }
 
     p5sketch.draw = () => {
+
       const spacer = p5sketch.height / 60;
       const margin = spacer * 4
 
@@ -136,11 +147,12 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
       // Display the result on the main canvas
       fxBuffer.shader(fxShader);
       fxBuffer.rect(-p5sketch.width / 2, -p5sketch.height / 2, p5sketch.width, p5sketch.height);
+
       p5sketch.image(fxBuffer, 0, 0, p5sketch.width, p5sketch.height);
 
       // Swap buffers
       currentBuffer.image(previousBuffer, -p5sketch.width / 2, -p5sketch.height / 2, p5sketch.width, p5sketch.height);
-      previousBuffer.clear();
+      // previousBuffer.clear();/
 
       timeCounter += 1 / FR;
     }
@@ -687,14 +699,11 @@ void main() {
   bool useReset = snoise(noiseBlock + timeBlock + 100.0) < 0.33;
 
   float rate = u_resolution.x * .00001;
+
   if(useSweep) {
     float xOff = rate;
     float yOff = rate * noiseNegNeutralPos(noiseBlock + timeBlock + 200.);
 
-    // float cosX = cos(posBlockOffset.y * PI * 3.);
-    // float sinY = sin(posBlockOffset.x * PI * 3.);
-    // xOff += cos(cosX) * rate ;
-    // yOff += sin(sinY) * rate;
     posBlockOffset.x -= xOff;
     posBlockOffset.y += yOff;
 
@@ -1463,6 +1472,7 @@ void main() {
           </div>
         </div>
       </div>
+      <img src="https://arweave.net/RIWEFemW90nlHEc0kqfImQCGl7-Blh12tapOonzUB2E?ext=png" id="RMX-dithered-sky-Image" className="hidden"/>
     </div>
   )
 }

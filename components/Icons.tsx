@@ -5,7 +5,7 @@ import { FC } from "react";
 const Icons: FC = () => {
   const { handleOpen } = useWindowsContext()
   return (
-    <div className="flex z-[2] flex-col gap-5 relative top-10 left-10 items-center w-24">
+    <div className="flex z-[2] flex-col flex-wrap h-[90%] gap-5 relative top-10 left-10 items-center w-24">
       {Object.values(WINDOWS).map(windowKey => {
         const handleClick = () => handleOpen(windowKey);
         return (
@@ -15,7 +15,7 @@ const Icons: FC = () => {
             onDoubleClick={handleClick}
             onTouchEnd={handleClick}
           >
-            <Image width={56} height={56} src={ICONS[windowKey]} alt={`${windowKey} Icon`} className="w-14 mb-1 flex-shrink-0" />
+            <Image width={56} height={56} src={ICONS[windowKey]} alt={`${windowKey} Icon`} className="w-14 h-14 object-contain mb-1 flex-shrink-0" />
             {windowKey}
           </div>
         )

@@ -1,7 +1,6 @@
 import { useRef, useEffect, FC, memo, MutableRefObject, useState } from 'react';
 import p5, { Renderer } from 'p5';
 import debounce from 'lodash.debounce';
-import { useWindowsContext } from '@/context/WindowsProvider';
 
 interface P5WrapperProps {
   sketch: (p: p5, seed?: string | null) => void;
@@ -139,3 +138,5 @@ const P5Wrapper: FC<P5WrapperProps> = ({
 
 
 export default P5Wrapper;
+
+
