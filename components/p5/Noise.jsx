@@ -13,8 +13,8 @@ const Noise = ({ className, menuOpen, seed, isActive }) => {
     const windowWidth = containerRef.current.clientWidth
     let scl = 3
 
-    if (windowWidth < 760) {
-      scl = 1
+    if (windowWidth < 800) {
+      scl = 2
     }
 
 
