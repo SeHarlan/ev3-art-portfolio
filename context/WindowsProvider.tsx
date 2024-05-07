@@ -31,7 +31,7 @@ export const useWindowsContext = () => useContext(WindowsContext)
 
 export const WINDOWS = {
   HOME: "Introduction",
-  ITB: "in the beginning",
+  ITB: "ITB",
   R3MIX: "R3MIX",
   SOMEDAYS: "some days",
   NOISE: "it's just noise",
