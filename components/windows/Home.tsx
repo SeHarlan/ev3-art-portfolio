@@ -11,52 +11,55 @@ const web3Links = [
 const personalLinks = [
   {label: "Cards Against Humanity", windowKey: "HAC"}
 ]
-
+// as an artist i aim to disassemble and reconstruct the filters we place on reality
+//  
+// allowing myself and the viewer to reexamine the ordinary and cliche as well as confront the challenging or ignored
+//  
+// finding beauty
+// evoking emotion
+// exploring ideas
+//  
+// hoping this helps us in our journey to better the internal and external worlds we live in
 const contentList = [
-  { text: "Hello my name is EV3 and I like playing with code." },
+  { text: "hello my name is EV3" },
+  { type: "break", text: "" },
+  { text: "i like "},
+  { type: "delete", text: "experimenting and pushing boundaries" },
+  { type: "delete", text: "finding beauty in the chaos" },
+  { type: "delete", text: "exploring emotion" },
+  { text: "playing with code :)" },
   { type: "break", text: "" },
   { type: "break", text: "" },
-  { text: "I like " },
-  { type: "delete", text: "playing with new technology and techniques" },
-  { type: "delete", text: "going down unknown and untrodden paths" },
-  { text: "experimenting and pushing boundaries." },
-  { type: "break", text: "" },
-  { text: "I like " },
-  { type: "delete", text: "revealing unspoken thoughts" },
-  { type: "delete", text: "exploring the shadow and light in our souls" },
-  { text: "evoking emotions." },
-  { type: "break", text: "" },
-  { text: "I like " },
-  { type: "delete", text: "creating beauty from chaos" },
-  { type: "delete", text: "showcasing beauty in the mundane" },
-  { text: "making the world a more beautiful place." },
+
+
+  { text: "as an artist i aim to disassemble and reconstruct the filters we place on reality" },
   { type: "break", text: "" },
   { type: "break", text: "" },
-  { text: "This website showcases a few of my long-form and interactive generative art pieces." },
+  { text: "to reexamine the ordinary and cliche"},
   { type: "break", text: "" },
-  { text: "Each long-form generative algorithm is meant to be enjoyed as a whole collection with multiple viewings, where each iteration is part of a greater composition." },
+  {text : "to confront the challenging or ignored"},
   { type: "break", text: "" },
+  { text: "to evoke emotion" },
   { type: "break", text: "" },
-  { text: "The algorithm itself is the art." },
-  // { type: "break", text: "" },
-  // { type: "break", text: "" },
-  // { text: "Double click an icon or tap the 'Start' menu to choose a piece to view." },
-  // { type: "break", text: "" },
-  // { text: "For collections minted as individual NFTs you can input the mint address in the 'Seed' field to view and interact with your art." },
-  // { type: "break", text: "" },
-  // { text: "You can learn more about each piece by clicking 'About' in the window menu." },
-  // { type: "break", text: "" },
-  // { text: "Some pieces are available for trade on secondary marketplaces, links for these are also found in the window menu." },
-  
+  { text: "to find beauty" },
   { type: "break", text: "" },
   { type: "break", text: "" },
-  { text: "Thank you for visiting and viewing my art, it really means so much to me." },
+
+  { text: "hoping this helps us on our journey to better the internal and external worlds we live in" },
   { type: "break", text: "" },
-  { text: "Please enjoy and feel free to reach out any time!" },
+  { type: "break", text: "" },
+  { text: "- - -"},
+  { type: "break", text: "" },
+
+  { text: "thank you for visiting and viewing my art" },
+  { type: "break", text: "" },
+  { text: "it really means so much to me"},
+  { type: "break", text: "" },
+  { text: "please enjoy and feel free to reach out any time" },
 
   { type: "break", text: "" },
   { type: "break", text: "" },
-  { text: "You can follow me on social media below as well as check out my Collector gallery page which houses all of my other artworks." },
+  // { text: "you can follow me on social media below as well as check out my Collector gallery page which houses all of my other artworks." },
   { type: "element", text: "", element: <Links className="p-2 flex gap-2 w-full justify-center" /> },
 ]
 
@@ -130,7 +133,7 @@ const HomeWindow: FC = () => {
             delay.current = 50
             // middle condition (start the delete)
             if (textIndex > contentObj.text.length) {
-              delay.current = 450
+              delay.current = 550
               reverse.current = true;
             }
           }
