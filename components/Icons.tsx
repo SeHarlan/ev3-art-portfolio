@@ -5,7 +5,7 @@ import { FC } from "react";
 const Icons: FC = () => {
   const { handleOpen } = useWindowsContext()
   return (
-    <div className="flex z-[2] flex-col flex-wrap h-[90%] gap-5 relative top-10 left-10 items-center w-24">
+    <div className="flex z-[2] flex-col flex-wrap h-[90svh] gap-5 relative top-10 left-10 items-center w-24">
       {Object.values(WINDOWS).map(windowKey => {
         const handleClick = () => handleOpen(windowKey);
         return (

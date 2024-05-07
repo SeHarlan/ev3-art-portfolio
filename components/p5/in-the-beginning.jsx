@@ -102,11 +102,11 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
     p5sketch.mousePressed = () => {
       drawCircle()
     }
-
     
     p5sketch.mouseDragged = () => {
       drawCircle()
     }
+
 
     function drawCircle() {
       currentBuffer.strokeWeight(60)

@@ -31,12 +31,12 @@ export const useWindowsContext = () => useContext(WindowsContext)
 
 export const WINDOWS = {
   HOME: "Introduction",
+  ITB: "in the beginning",
+  R3MIX: "R3MIX",
+  SOMEDAYS: "some days",
   NOISE: "it's just noise",
   DUET: "DUET",
   MAURER: "Maurer Expanse",
-  SOMEDAYS: "some days",
-  R3MIX: "R3MIX",
-  ITB: "in the beginning"
 }
 
 type WINDOWS = {

@@ -12,9 +12,12 @@ module.exports = {
         windowsGray: "#C4C4C4",
         windowsDarkGray: "#7D8583"
       },
-      height: { screen: 'calc(var(--vh) * 100)' },
-      maxHeight: { screen: 'calc(var(--vh) * 100)' },
-      minHeight: { screen: 'calc(var(--vh) * 100)' },
+      // height: { screen: 'calc(var(--vh) * 100)' },
+      // maxHeight: { screen: 'calc(var(--vh) * 100)' },
+      // minHeight: { screen: 'calc(var(--vh) * 100)' },
+      height: { screen: '100svh' },
+      maxHeight: { screen: '100svh' },
+      minHeight: { screen: '100svh' },
       
       keyframes: {
         enter: {
