@@ -35,7 +35,8 @@ export const WINDOWS = {
   DUET: "DUET",
   MAURER: "Maurer Expanse",
   SOMEDAYS: "some days",
-  R3MIX: "R3MIX"
+  R3MIX: "R3MIX",
+  ITB: "in the beginning"
 }
 
 type WINDOWS = {
@@ -45,6 +46,7 @@ type WINDOWS = {
   MAURER: string;
   SOMEDAYS: string;
   R3MIX: string;
+  ITB: string
 }
 
 export const ICONS = {
@@ -53,7 +55,8 @@ export const ICONS = {
   [WINDOWS.MAURER]: "/images/small-alt-logo.png",
   [WINDOWS.NOISE]: "/images/its_just_noise-icon.png",
   [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
-  [WINDOWS.R3MIX]: "/images/r3mix-icon.png"
+  [WINDOWS.R3MIX]: "/images/r3mix-icon.png",
+  [WINDOWS.ITB]: "/images/ITB-icon.png"
 
 }
 
