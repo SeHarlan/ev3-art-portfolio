@@ -12,6 +12,9 @@ const Links: FC<{className?: string}> = ({className}) => {
       <Link href="https://twitter.com/EV3_art" target="_blank">
         <TwitterIcon colorClass="fill-black" />
       </Link>
+      <Link href="mailto:ev3reth@gmail.com" target="_blank">
+        <EmailIcon colorClass="stroke-black fill-none stroke-[1.5]" />
+      </Link>
       <Link href="https://collector.sh/EV3" target="_blank">
         <Image src="/images/collector-logo.png" width={18} height={18} alt="collector" className="flex-shrink-0"/>
         
