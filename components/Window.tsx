@@ -128,7 +128,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         </div>
       </div>
 
-      <div className="flex gap-3 px-1 text-stone-500" ref={menuRef}>
+      <div className="flex flex-wrap gap-3 px-1 text-stone-500" ref={menuRef}>
         {menu
           ? menu.map(item => {
             return (

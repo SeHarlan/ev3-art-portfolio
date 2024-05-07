@@ -35,8 +35,8 @@ const NoiseWindow: FC = () => {
     w: 1300,
   }
   const initPos = {
-    x: 100,
-    y: 60
+    x: 120,
+    y: 20
   }
 
 

@@ -19,8 +19,8 @@ const StartMenu: FC = () => {
           </Menu.Button>
         
           <Menu.Items className="absolute bottom-[100%] left-0 z-10 bg-windowsGray classic-border p-1 flex">
-            <div className="bg-windowsDarkGray w-8 h-full min-h-[12rem] flex items-center justify-center">
-              <p className="text-windowsGray flex-shrink-0 w-[12rem] pl-3 -rotate-90">EV3</p>
+            <div className="bg-windowsDarkGray w-8 h-full min-h-[14rem] flex items-center justify-center">
+              <p className="text-windowsGray flex-shrink-0 w-[14rem] pl-3 -rotate-90">EV3</p>
             </div>
             <div>
               {Object.values(WINDOWS).map(windowKey => {

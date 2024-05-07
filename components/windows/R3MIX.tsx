@@ -36,7 +36,7 @@ const R3MIX_Window: FC = () => {
     w: 800,
   }
   const initPos = {
-    x: 120,
+    x: 130,
     y: 30
   }
 

@@ -31,12 +31,12 @@ const ITBWindow: FC = () => {
   }
   
   const initSize = {
-    h: 800,
-    w: 800,
+    h: 900,
+    w: 1600,
   }
   const initPos = {
-    x: 100,
-    y: 100
+    x: 60,
+    y: 30
   }
 
 
