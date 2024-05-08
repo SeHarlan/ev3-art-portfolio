@@ -108,14 +108,14 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
 
 
       //DOT GRID
-      currentBuffer.fill(65, 80, 93, 0.2);
+      currentBuffer.fill(65, 80, 93, 0.1);
       currentBuffer.noStroke()
 
 
       textBuffer.fill(65, 80, 93, 0.2);
       textBuffer.textSize(spacer * 0.6);
 
-      if ((timeCounter * 2) % 3 < 0.1) {
+      if ((timeCounter * 2) % 4 < 0.1) {
         for (let y = margin; y < p5sketch.height - margin; y += spacer * 2) {
           for (let x = margin; x < p5sketch.width - margin; x += spacer * 2) {
             const xOff = x - p5sketch.width / 2;
@@ -1386,7 +1386,7 @@ void main() {
   float staticFuzzTime = fract(u_time * .0004);
   vec2 staticSt = floor(orgSt*u_resolution);
   vec2 staticLines = vec2(staticSt.x * .0000045 - staticLineTime, staticSt.y * 0.00005);
-  vec2 staticFuzz = floor(st * u_resolution * 0.66) - staticFuzzTime;
+  vec2 staticFuzz = floor(st * u_resolution * 1.) - staticFuzzTime;
   float tvRan = mix(random(staticLines) * randomNegPos(staticLines) , random(staticFuzz),0.5);
 
   //Mouse clear effect
@@ -1419,7 +1419,7 @@ void main() {
   //rays
   float xTimeMult = 0.00007;
   vec2 rayRandom = orgSt * u_resolution * vec2(xTimeMult - fract(u_time*0.1) * xTimeMult*-0.4, 0.00005); //+ sin(u_time*0.0002)*0.01) ;
-  float rayMult = 0.3 * (st.x - 0.3);
+  float rayMult = 0.2 * (st.x - 0.4);
   color.r *= 1.0 - random(rayRandom) * rayMult;
   color.g *= 1.0 - random(rayRandom + 100.) * rayMult;
   color.b *= 1.0 - random(rayRandom + 200.) * rayMult;
@@ -1433,7 +1433,7 @@ void main() {
   // }
 
   //rct noise
-  color.rgb += (tvRan * 0.12) ;
+  color.rgb += (tvRan * 0.08) ;
 
   float distFromCenter = distance(orgSt, vec2(0.5));
   color.rgb *= 1.0-smoothstep(0.5, .8, distFromCenter);
