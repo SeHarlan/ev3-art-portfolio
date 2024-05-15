@@ -7,6 +7,8 @@ import '@/styles/Duet.css'
 import '@/styles/drifting.css'
 import '@/styles/RMX-dithered-sky.css'
 import '@/styles/ITB.css'
+import '@/styles/RMX-degen-dollar.css'
+import '@/styles/RMX-seeing-beyond.css'
 import type { AppProps } from 'next/app'
 
 import { Analytics } from "@vercel/analytics/react"

@@ -7,6 +7,7 @@ interface P5WrapperProps {
   seed: string | undefined;
   className?: string;
   transformOrigin?: string;
+  useLandscapeScale?: boolean;
 }
 
 
@@ -15,6 +16,7 @@ const P5Wrapper: FC<P5WrapperProps> = ({
   seed,
   className = 'overflow-hidden w-full h-full',
   transformOrigin = "top left",
+  useLandscapeScale = false
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5 | null>(null);
@@ -33,7 +35,6 @@ const P5Wrapper: FC<P5WrapperProps> = ({
         height: containerRef.current.clientHeight,
       };
       
-
       const enhancedSketch = (p: p5) => {
         cleanUp = sketch(p, seed || null);
 
@@ -47,7 +48,6 @@ const P5Wrapper: FC<P5WrapperProps> = ({
           const touchY = event?.clientY || -10000;
           const isInside = touchX >= left && touchX <= left + width && touchY >= top && touchY <= top + height;
           if (isInside) {
-            // event.preventDefault();
             event.stopPropagation();
           }
           return isInside;
@@ -96,21 +96,28 @@ const P5Wrapper: FC<P5WrapperProps> = ({
 
       makeCanvas();
 
-      // setTimeout(() => {
-      //   initializeRef.current = true;
-      // }, 1000)
 
       const resizeDebounced = debounce(() => {
-        // cleanUp && cleanUp();
-        // initializeRef.current && makeCanvas()
 
         const canvas = containerRef.current?.querySelector('canvas')
         if (canvas && containerRef.current) {
           const width = containerRef.current.clientWidth
           const height = containerRef.current.clientHeight
+        
+
+      
           const widthScale = width / initialDimensions.current.width;
           const heightScale = height / initialDimensions.current.height;
-          const scale = Math.min(widthScale, heightScale);
+          let scale 
+          
+          if (useLandscapeScale) {
+            scale = widthScale
+          } else {
+            scale = Math.min(widthScale, heightScale);
+          }
+
+          
+
           canvas.style.transformOrigin = transformOrigin;
           canvas.style.transform = `scale(${scale*100}%)`
         }

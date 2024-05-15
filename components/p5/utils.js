@@ -31,7 +31,7 @@ export function loadLargeImage(path, successCallback, failureCallback) {
         let height = img.height;
         const maxDim = 4096;
         if (width > maxDim || height > maxDim) {
-          if (ratio > 1) {
+          if (ratio >= 1) {
             width = maxDim;
             height = width / ratio;
           } else {
@@ -56,6 +56,7 @@ export function loadLargeImage(path, successCallback, failureCallback) {
       img.onerror = e => {
         p5._friendlyFileLoadError(0, img.src);
         if (typeof failureCallback === 'function') {
+          console.log('error', e);
           failureCallback(e);
           self._decrementPreload();
         } else {
@@ -87,3 +88,12 @@ export function loadLargeImage(path, successCallback, failureCallback) {
     });
   return pImg;
 }
+
+
+export const bindMethods = (p5sketch, methods) => {
+  return methods.reduce((boundMethods, method) => {
+    boundMethods[method] = p5sketch[method].bind(p5sketch);
+    return boundMethods;
+  }, {});
+};
+

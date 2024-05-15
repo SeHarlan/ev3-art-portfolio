@@ -1,0 +1,81 @@
+#RMX-DEGEN_DOLLAR-Sketch {
+
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: hsl(240, 18%, 7%);
+
+  font-smooth: never;
+  -webkit-font-smoothing : none;
+
+
+  canvas {
+    display: block;
+  }
+
+
+
+  #RMX-DEGEN_DOLLAR-loading { 
+    margin: 0;
+    padding: 0;
+    position: relative;
+    font-family:  VT323, monospace;
+    font-size: 3rem;  
+  
+    background: -webkit-linear-gradient(hsl(6,72%,55%), hsl(35,47%,83%));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  } 
+  #RMX-DEGEN_DOLLAR-loadingBg {
+    background: hsl(240, 18%, 7%);
+    padding: 0.5rem 1rem;
+  }
+  #RMX-DEGEN_DOLLAR-loadingBorder {
+    padding: 0.5rem;
+    animation: spinningBorderDegenDollar 1.5s linear infinite;
+
+    position: absolute;
+  }
+
+    #RMX-DEGEN_DOLLAR-resetText { 
+      padding: 0;
+      display: none;
+      text-align: center;
+      font-family:  VT323, monospace;
+      color: white;
+      font-size: 1.5rem;
+
+    }
+
+
+  #p5_loading {
+    display: none;
+  }
+
+
+
+
+  @keyframes spinningBorderDegenDollar {
+    0% {
+      background: linear-gradient( 0deg, hsl(6,72%,55%), hsl(35,47%,83%));
+    }
+    25% {
+      background: linear-gradient( 90deg, hsl(6,72%,55%), hsl(35,47%,83%));
+    }
+    50% {
+      background: linear-gradient( 180deg, hsl(6,72%,55%), hsl(35,47%,83%));
+    }
+    75% {
+      background: linear-gradient( 270deg, hsl(6,72%,55%), hsl(35,47%,83%));
+    } 
+    100% {
+      background: linear-gradient( 360deg, hsl(6,72%,55%), hsl(35,47%,83%));
+    }
+  }
+
+}

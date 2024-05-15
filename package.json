@@ -27,7 +27,8 @@
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
     "tone": "^14.7.77",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "webpack-glsl-loader": "^1.0.1"
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.7",

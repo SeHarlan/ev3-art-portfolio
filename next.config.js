@@ -9,6 +9,11 @@ const nextConfig = {
         // Add other modules here if needed
       };
     }
+  
+    config.module.rules.push({
+      test: /\.(glsl|vs|fs)$/,
+      loader: 'webpack-glsl-loader',
+    });
 
     // Return the modified config
     return config;

@@ -5,7 +5,9 @@ import dynamic from "next/dynamic";
 import SeedDropdown from "../SeedDropdown";
 import clsx from "clsx";
 import Link from "next/link";
-const RMX_dithered_sky = dynamic(() => import('../p5/RMX-dithered-sky'), { ssr: false });
+const RMX_dithered_sky = dynamic(() => import('../p5/RMX-dithered-sky/RMX-dithered-sky'), { ssr: false });
+const RMX_degen_dollar = dynamic(() => import('../p5/RMX-DEGEN-DOLLAR/RMX-DEGEN-DOLLAR'), { ssr: false });
+const RMX_seeing_beyond = dynamic(() => import('../p5/RMX-Seeing-beyond/RMX-Seeing-beyond'), { ssr: false });
 
 const contentOptions = ["sketch", "about"]
 
@@ -15,6 +17,7 @@ const R3MIX_Window: FC = () => {
   const seedOpenRef = useRef(seedOpen)
   const [activeContent, setActiveContent] = useState(0)
   const [sketchCounter, setSketchCounter] = useState(1)
+  const [activeRemix, setActiveRemix] = useState("dithered_sky")
 
   const { activeWindow } = useWindowsContext()
   const isActiveRef = useRef(false)
@@ -66,18 +69,36 @@ const R3MIX_Window: FC = () => {
       label: "About",
       function: () => setActiveContent(prev => (prev + 1) % contentOptions.length)
     },
-    // {
-    //   label: "Trade",
-    //   function: visit
-    // },
+    {
+      label: "dithered sky 11",
+      function: () => setActiveRemix("dithered_sky")
+    },
+    {
+      label: "DEGEN DOLLAR",
+      function: () => setActiveRemix("degen_dollar")
+    },
+    {
+      label: "Seeing Beyond this Moment",
+      function: () => setActiveRemix("seeing-beyond")
+    }
   ]
+
+  const content = useMemo(() => { 
+    switch (activeRemix) {
+      case "dithered_sky":
+        return <RMX_dithered_sky key="dithered-sky" className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />;
+      case "degen_dollar":
+        return <RMX_degen_dollar key="degen-dollar" className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />;
+      case "seeing-beyond":
+        return <RMX_seeing_beyond key="seeing-beyond" className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />;
+    }
+  }, [activeRemix, sketchCounter, seed, isActiveRef, seedOpenRef])
 
 
   return (
     <Window windowKey={WINDOWS.R3MIX} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
-      {/* {content} */}
       <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>
-        <RMX_dithered_sky className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
+        {content}
       </div>
 
       <div className={clsx("p-4 absolute top-0 left-0 h-full w-full overflow-auto", activeContent === 1 ? "block" : "hidden")}>

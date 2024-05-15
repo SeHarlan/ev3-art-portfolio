@@ -1,0 +1,80 @@
+#RMX-Seeing_beyond-Sketch {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: hsl(97, 60%, 6%);
+
+  font-smooth: never;
+  -webkit-font-smoothing : none;
+
+
+  canvas {
+    display: block;
+  }
+
+
+
+  #RMX-Seeing_beyond-loading { 
+    margin: 0;
+    padding: 0;
+    position: relative;
+    font-family:  VT323, monospace;
+    font-size: 3rem;  
+    color: rgb(245,66,111);
+    background: -webkit-linear-gradient(hsl(39,64%,73%), hsl(10,100%,39%));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  } 
+  #RMX-Seeing_beyond-loadingBg {
+    background: hsl(97, 60%, 6%);
+    padding: 0.5rem 1rem;
+  }
+  #RMX-Seeing_beyond-loadingBorder {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.5rem;
+    animation: spinningBorderSeeingBeyond 1.5s linear infinite;
+  }
+
+  #RMX-Seeing_beyond-resetText { 
+    padding: 0;
+    display: none;
+    text-align: center;
+    font-family:  VT323, monospace;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  #p5_loading {
+    display: none;
+  }
+
+
+
+
+  @keyframes spinningBorderSeeingBeyond {
+    0% {
+      background: linear-gradient( 0deg, hsl(39,64%,73%), hsl(10,100%,39%));
+    }
+    25% {
+      background: linear-gradient( 90deg, hsl(39,64%,73%), hsl(10,100%,39%));
+    }
+    50% {
+      background: linear-gradient( 180deg, hsl(39,64%,73%), hsl(10,100%,39%));
+    }
+    75% {
+      background: linear-gradient( 270deg, hsl(39,64%,73%), hsl(10,100%,39%));
+    } 
+    100% {
+      background: linear-gradient( 360deg, hsl(39,64%,73%), hsl(10,100%,39%));
+    }
+  }
+}
