@@ -78,7 +78,12 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       p5sketch.noiseSeed(seed);
       p5sketch.randomSeed(seed);
 
-      shape = p5sketch.random(Object.values(SHAPES))
+      shape = (() => {
+        const chance = p5sketch.random();
+        if (chance < 0.3) return SHAPES.circular
+        if (chance < 0.6) return SHAPES.noise
+        return p5sketch.random(Object.values(SHAPES))
+      })();
     }
 
 
@@ -106,23 +111,34 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
     p5sketch.mouseDragged = () => {
       drawCircle()
     }
+    p5sketch.touchStarted = () => {
+      eraseMode = !eraseMode;
+      drawCircle()
+    }
+    p5sketch.touchMoved = () => {
+      drawCircle()
+    }
 
 
     function drawCircle() {
-      currentBuffer.strokeWeight(60)
+      const posX = p5sketch.mouseX || p5sketch.touches[0]?.x;
+      const posY = p5sketch.mouseY || p5sketch.touches[0]?.y;
+
       if (eraseMode) {
         currentBuffer.fill(255, 255, 0)
-        currentBuffer.circle(p5sketch.mouseX - p5sketch.width / 2, p5sketch.mouseY - p5sketch.height / 2, 60)
+        currentBuffer.circle(posX - p5sketch.width / 2, posY - p5sketch.height / 2, 60)
       } else {
         circleFade()
       }
     }
 
     function circleFade(col = p5sketch.color(0, 0, 255)) {
+      const posX = p5sketch.mouseX || p5sketch.touches[0]?.x;
+      const posY = p5sketch.mouseY || p5sketch.touches[0]?.y;
       for (let i = 0; i < 10; i++) {
         col.setAlpha(255 - i * 25.5)
         currentBuffer.fill(col)
-        currentBuffer.circle(p5sketch.mouseX - p5sketch.width / 2, p5sketch.mouseY - p5sketch.height / 2, 30 + i * 5)
+        currentBuffer.circle(posX - p5sketch.width / 2, posY - p5sketch.height / 2, 30 + i * 5)
       }
     }
 
@@ -387,7 +403,8 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
         if (u_shape == 3) {
           // stripes
           float numStripes = floor(4.0 + random(vec2(u_seed)) * 6.);
-          if(mod((st.y + st.x) * numStripes, 2.0) < 1.5) {
+          float directionMult = randomNegPos(vec2(u_seed));
+          if(mod((st.y + st.x * directionMult) * numStripes, 2.0) < 1.5) {
             color.r = 1.0;
           } else {
             color.b = 1.0;
@@ -587,10 +604,6 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       }
 
       vec4 color = vec4(val, 1.0);
-
-    //debug
-      // vec4 color = image;
-
     //tv static
       float staticLineTime = fract(u_time * 0.01);
       float staticFuzzTime = fract(u_time * .0001);
@@ -600,7 +613,7 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       float tvRan = mix(random(staticLines) * randomNegPos(staticLines) , random(staticFuzz),0.4);
 
       //tv static
-      color.rgb += (tvRan * 0.25) ;
+      color.rgb += (tvRan * 0.15) ;
 
       //vignette
       float distFromCenter = distance(st, vec2(0.5));
