@@ -69,19 +69,19 @@ const P5Wrapper: FC<P5WrapperProps> = ({
           if (isTouchEventInside(...args)) return originalMouseDragged?.apply(p, args);
         }
 
-        const originalTouchStarted = p.touchStarted;
-        p.touchStarted = (...args) => {
-          if (isTouchEventInside(...args)) return originalTouchStarted?.apply(p, args);
-        };
-        const originalTouchEnded = p.touchEnded;
-        p.touchEnded = (...args) => {
-          if (isTouchEventInside(...args)) return originalTouchEnded?.apply(p, args);
-        };
+        // const originalTouchStarted = p.touchStarted;
+        // p.touchStarted = (...args) => {
+        //   if (isTouchEventInside(...args)) return originalTouchStarted?.apply(p, args);
+        // };
+        // const originalTouchEnded = p.touchEnded;
+        // p.touchEnded = (...args) => {
+        //   if (isTouchEventInside(...args)) return originalTouchEnded?.apply(p, args);
+        // };
 
-        const originalTouchMoved = p.touchMoved;
-        p.touchMoved = (...args) => {
-          if (isTouchEventInside(...args)) return originalTouchMoved?.apply(p, args);
-        };
+        // const originalTouchMoved = p.touchMoved;
+        // p.touchMoved = (...args) => {
+        //   if (isTouchEventInside(...args)) return originalTouchMoved?.apply(p, args);
+        // };
       };
 
       const makeCanvas = () => {
