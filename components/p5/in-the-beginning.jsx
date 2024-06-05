@@ -22,20 +22,6 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
     let eraseMode = false
     let FR = 30
 
-    let reactionParams = {
-      dA_1: 1.01,
-      dB_1: .9,
-      feed_1: 0.125,
-      k_1: 0.012,
-      t_1: 1.0,
-
-      dA_2: 0.45,
-      dB_2: 1.295,
-      feed_2: 0.21,
-      k_2: 0.01,
-      t_2: 1
-    }
-
     const SHAPES = {
       circular: 0,
       square: 1,
@@ -46,6 +32,24 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       waves: 6,
     }
     let shape
+
+    function shift_hash(inscription_id) {
+      let b = inscription_id;
+      const intshift = parseInt(b.split("i")[1]);
+      let barr = b.split("");
+      for (let v = 0; v < intshift; v++) {
+        const newb = barr.shift();
+        barr.push(newb);
+      }
+      b = barr.join("");
+      const maxValue = 10000;
+      let hash = 0;
+      const prime = 31;
+      for (let i = 0; i < b.length; i++) {
+        hash = (hash * prime + b.charCodeAt(i)) % Number.MAX_SAFE_INTEGER;
+      }
+      return hash % maxValue;
+    }
 
 
     p5sketch.preload = () => {
@@ -73,16 +77,25 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       currentBuffer.noStroke();
       previousBuffer.noStroke();
 
-      seed = initSeed || Math.random() * 2000;
+      if (initSeed) {
+        seed = shift_hash(initSeed);
+      } else {
+        const randomHash =
+          "999c15ada7b915a62b310ceaaf11e971f391409acf012012115a9a1511c05ec0i1"
+            .split("")
+            .sort(() => Math.random() - 0.5)
+            .join("");
+        
+        seed = shift_hash(randomHash);
+      }
 
       p5sketch.noiseSeed(seed);
       p5sketch.randomSeed(seed);
 
       shape = (() => {
         const chance = p5sketch.random();
-        if (chance < 0.3) return SHAPES.circular
-        if (chance < 0.6) return SHAPES.noise
-        return p5sketch.random(Object.values(SHAPES))
+        if (chance < 0.3) return SHAPES.noise;
+        return p5sketch.random(Object.values(SHAPES));
       })();
     }
 
@@ -152,18 +165,6 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
 
       reactionShader.setUniform('u_shape', shape)
 
-      reactionShader.setUniform('dA_1', reactionParams.dA_1);
-      reactionShader.setUniform('dB_1', reactionParams.dB_1);
-      reactionShader.setUniform('feed_1', reactionParams.feed_1);
-      reactionShader.setUniform('k_1', reactionParams.k_1);
-      reactionShader.setUniform('t_1', reactionParams.t_1);
-
-      reactionShader.setUniform('dA_2', reactionParams.dA_2);
-      reactionShader.setUniform('dB_2', reactionParams.dB_2);
-      reactionShader.setUniform('feed_2', reactionParams.feed_2);
-      reactionShader.setUniform('k_2', reactionParams.k_2);
-      reactionShader.setUniform('t_2', reactionParams.t_2);
-
       previousBuffer.shader(reactionShader);
       previousBuffer.rect(-p5sketch.width / 2, -p5sketch.height / 2, p5sketch.width, p5sketch.height);
 
@@ -215,31 +216,17 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       gl_Position = positionVec4;
     }
     `
-    const reaction = `
+      const reaction = `
     #ifdef GL_ES
     precision mediump float;
     #endif
 
-    uniform sampler2D u_texture; // input image texture
-    uniform float u_time;       // for animations if you want
-    uniform vec2 u_resolution;  // size of the canvas
+    uniform sampler2D u_texture; 
+    uniform float u_time;
+    uniform vec2 u_resolution;
     uniform float u_seed;
     uniform int u_shape;
     uniform bool kill;
-
-    uniform float dA_1;
-    uniform float dB_1;
-    uniform float feed_1;
-    uniform float k_1;
-    uniform float t_1;
-
-    uniform float dA_2;
-    uniform float dB_2;
-    uniform float feed_2;
-    uniform float k_2;
-    uniform float t_2;
-
-
 
     varying vec2 vTexCoord;
 
@@ -251,7 +238,7 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       return fract(sin(dot(st.xy + vec2(u_seed), vec2(12.9898, 78.233))) * 43758.5453);
     }
     float random(in float x){
-        return fract(sin(x + u_seed)*43758.5453);
+      return fract(sin(x + u_seed)*43758.5453);
     }
 
     float randomNegPos(vec2 st) {
@@ -279,14 +266,13 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
         vec2 f = fract(st);
 
         // vec2 u = f*f*(3.0-2.0*f);
-        vec2 u = f*f*f*(f*(f*6.-15.)+10.); //improved smoothstep
+        vec2 u = f*f*f*(f*(f*6.-15.)+10.);
 
         float n = mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
                         dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
                     mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
                         dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
 
-        // return n;
         return 0.5 + 0.5 * n;
     }
 
@@ -366,12 +352,8 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
 
       vec4 image = texture2D(u_texture, st);
 
-
-
       if (u_time < .1) {
         vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-
-        //MAIN SHAPE
 
         if (u_shape == 0) {
           // circular
@@ -437,36 +419,27 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
         }
         if (u_shape == 6) {
           // waves
+          float directionMult = randomNegPos(vec2(u_seed));
+
           float xMult = floor(2.0 + random(vec2(u_seed)) * 6.);
-          float yMult = floor(2.0 + random(vec2(u_seed+100.)) * 6.);
+          float yMult = floor(2.0 + random(vec2(u_seed+100.)) * 6.) * directionMult;
           float xCurve = st.y*yMult*5. + cos(st.x * PI * xMult);
           float yCurve = st.x*xMult*5. + sin(st.y * PI * yMult);
-          if(mod((xCurve + yCurve) * .5, 2.0) < 1.5) {
+
+
+          if(mod((xCurve + yCurve ) * .5, 2.0) < 1.5) {
             color.r = 1.0;
           } else {
             color.b = 1.0;
           }
         }
 
-
-
-
-
-        //add outline
         vec2 margin = u_resolution * 0.00001;
         bool inOutline = st.x < margin.y || st.x > 1.0-margin.y || st.y < margin.x || st.y > 1.0-margin.x;
         if(inOutline) {
           color.b = 1.0;
         }
 
-        //SUB reaction SPLIT
-
-        //  sine wave split
-        // float amp = 4.0;
-        // float sineX = (amp + sin(st.x*TWO_PI*2.))/(amp*2.);
-        // float base = (sineX+st.y)/2.;
-
-        //random sun reaction split
         float base;
         bool noReaction = color.b ==0.;
         if( noReaction && random(blockPos + u_seed + 100.) > 0.5){
@@ -487,11 +460,11 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
         interp = 1.0 - interp;
       }
 
-      float dA = mix(dA_1, dA_2,interp);
-      float dB = mix(dB_1, dB_2,interp);
-      float feed = mix(feed_1, feed_2,interp);
-      float k = mix(k_1, k_2,interp);
-      float t  = mix(t_1, t_2,interp);
+      float dA = mix(1.01, 0.45,interp);
+      float dB = mix(0.9, 1.295,interp);
+      float feed = mix(0.125, 0.21,interp);
+      float k = mix(0.012, 0.01,interp);
+      float t  = mix(1., 1.,interp);
 
       float a = image.r;
       float b = image.b;
@@ -507,8 +480,6 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       float cA = 1.3;
       float g = interp;
 
-      // float cFeed = k * .99;
-      // float cK = feed * 1.01;
       float cFeed = k * 1.1;
       float cK = feed * .99;
       float bK = b*a*a;
@@ -516,7 +487,6 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       float fd = cFeed*(1.0-b);
       float kl = (cK+cFeed)*a;
 
-      // g = g + (cA * lapVec.g - bK + kl - fd); //distrubute the interpolation value
       g = g + (cA * lapVec.g - bK + kl - fd);
 
       vec4 color = vec4(a, g, b, 1.0);
@@ -524,19 +494,18 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       gl_FragColor = color;
     }
 
-    `
+    `;
 
-
-    const render = `
+      const render = `
     #ifdef GL_ES
     precision mediump float;
     #endif
 
-    uniform sampler2D u_texture; // input image texture
-    uniform float u_time;       // for animations if you want
-    uniform vec2 u_resolution;  // size of the canvas
+    uniform sampler2D u_texture; 
+    uniform float u_time; 
+    uniform vec2 u_resolution; 
     uniform float u_seed;
-    uniform vec2 u_mouse;       // mouse position in screen coordinates
+    uniform vec2 u_mouse;
 
     varying vec2 vTexCoord;
 
@@ -562,22 +531,7 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       float a = 0.5*pow(2.0*((x<0.5)?x:1.0-x), k);
       return (x<0.5)?a:1.0-a;
     }
-    // a: easing direction and power, (ease out < 0.5 linear < ease in)
-    float exponentialEasing(float x, float a){
-      a = max(min_param_a, min(max_param_a, a));
 
-      if (a < 0.5){
-        // emphasis
-        a = 2.0*(a);
-        float y = pow(x, a);
-        return y;
-      } else {
-        // de-emphasis
-        a = 2.0 * ( a - 0.5);
-        float y = pow(x, 1.0/(1.0-a));
-        return y;
-      }
-    }
     void main() {
       vec2 st = vTexCoord;
 
@@ -604,7 +558,6 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       }
 
       vec4 color = vec4(val, 1.0);
-    //tv static
       float staticLineTime = fract(u_time * 0.01);
       float staticFuzzTime = fract(u_time * .0001);
       vec2 staticSt = floor(st*u_resolution);
@@ -624,8 +577,7 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
       gl_FragColor = color;
     }
 
-    `
-    
+    `;
   }
   return (
     <div ref={containerRef} className={className} id="in-the-beginning-Sketch">   
