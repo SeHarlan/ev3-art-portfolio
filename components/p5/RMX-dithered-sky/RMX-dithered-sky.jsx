@@ -46,15 +46,35 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
 
     function preload() {
       try {
-        document.getElementById("RMX-dithered-sky-loadingBorder").style.display = "block";
+        document.getElementById(
+          "RMX-dithered-sky-loadingBorder"
+        ).style.display = "block";
 
-        if (resetting) document.getElementById("RMX-dithered-sky-resetText").style.display = "block";
+        document.documentElement.style.setProperty(
+          "--rmx-bg-color",
+          "rgb(22, 9, 43)"
+        );
+        document.documentElement.style.setProperty(
+          "--rmx-color1",
+          "rgb(86,29,144)"
+        );
+        document.documentElement.style.setProperty(
+          "--rmx-color2",
+          "rgb(245,66,111)"
+        )
+
+        if (resetting)
+          document.getElementById("RMX-dithered-sky-resetText").style.display =
+            "block";
 
         fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
-        feedbackShader = new p5.Shader(p5sketch._renderer, vertex, feedbackFrag);
-        img = p5sketch.loadImage(imageUrl)
-        font = '"Kode Mono", monospace'
-
+        feedbackShader = new p5.Shader(
+          p5sketch._renderer,
+          vertex,
+          feedbackFrag
+        );
+        img = p5sketch.loadImage(imageUrl);
+        font = '"Kode Mono", monospace';
       } catch (error) {
         console.error(error)
       }
@@ -214,16 +234,17 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
 
   }
   return (
-    <div ref={containerRef} className={className} id="RMX-dithered-sky-Sketch">
+    <div ref={containerRef} className={className + " RMX-Sketch"} >
       <P5Wrapper sketch={sketch} seed={seed} className="h-full" transformOrigin="top center" />
-      <div id="RMX-dithered-sky-loadingBorder">
-        <div id="RMX-dithered-sky-loadingBg">
-          <div id="RMX-dithered-sky-loading">
+      <div id="RMX-dithered-sky-loadingBorder" className="RMX-loadingBorder">
+        <div className="RMX-loadingBg">
+          <div className="RMX-loading">
             R3MIX
           </div>
         </div>
       </div>
-      <p id="RMX-dithered-sky-resetText" style={{
+      <p id="RMX-dithered-sky-resetText" className="RMX-resetText"
+      style={{
         display: lowframeRate ? "block" : "none",
         position: "absolute",
         bottom: "30%",

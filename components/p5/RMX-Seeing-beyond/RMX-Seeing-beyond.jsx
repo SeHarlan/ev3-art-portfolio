@@ -42,6 +42,19 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
       try {
         document.getElementById(CSS_RMX_PREFIX + "loadingBorder").style.display = "block";
 
+        document.documentElement.style.setProperty(
+          "--rmx-bg-color",
+          "hsl(97, 60%, 6%)"
+        );
+        document.documentElement.style.setProperty(
+          "--rmx-color1",
+          "hsl(39,64%,73%)"
+        );
+        document.documentElement.style.setProperty(
+          "--rmx-color2",
+          "hsl(10,100%,39%)"
+        );
+
         fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
         feedbackShader = new p5.Shader(p5sketch._renderer, vertex, feedbackFrag);
         img = p5sketch.loadImage(imageUrl)
@@ -224,24 +237,31 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
 
   }
   return (
-    <div ref={containerRef} className={className} id={CSS_RMX_PREFIX + "Sketch"}>
-      <P5Wrapper sketch={sketch} seed={seed} className="h-full" transformOrigin="top center" />
-      <div id={CSS_RMX_PREFIX + "loadingBorder"}>
-        <div id={CSS_RMX_PREFIX+ "loadingBg"}>
-          <div id={CSS_RMX_PREFIX + "loading"}>
-            R3MIX
-          </div>
+    <div ref={containerRef} className={className + " RMX-Sketch"}>
+      <P5Wrapper
+        sketch={sketch}
+        seed={seed}
+        className="h-full"
+        transformOrigin="top center"
+      />
+      <div id={CSS_RMX_PREFIX + "loadingBorder"} className="RMX-loadingBorder">
+        <div className="RMX-loadingBg">
+          <div className="RMX-loading">R3MIX</div>
         </div>
       </div>
-      <p id={CSS_RMX_PREFIX + "resetText"} style={{
-        display: lowframeRate ? "block" : "none",
-        position: "absolute",
-        bottom: "30%",
-      }}>
+      <p
+        id={CSS_RMX_PREFIX + "resetText"}
+        className="RMX-resetText"
+        style={{
+          display: lowframeRate ? "block" : "none",
+          position: "absolute",
+          bottom: "30%",
+        }}
+      >
         Low framerate detected. Resetting with lower image quality...
       </p>
     </div>
-  )
+  );
 }
 
 export default memo(RMX_dithered_sky)

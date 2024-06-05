@@ -1,4 +1,4 @@
-#RMX-dithered-sky-Sketch {
+.RMX-Sketch {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -9,7 +9,7 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  background-color: rgb(22, 9, 43);
+  background-color: var(--rmx-bg-color);
 
   font-smooth: never;
   -webkit-font-smoothing : none;
@@ -19,37 +19,36 @@
     display: block;
   }
 
-  #RMX-dithered-sky-loading { 
+  .RMX-loading { 
     margin: 0;
     padding: 0;
   
     font-family:  VT323, monospace;
     font-size: 3rem;  
-    color: rgb(245,66,111);
-    background: -webkit-linear-gradient(rgb(86,29,144), rgb(245,66,111));
+    color: var(--rmx-color2);
+    background: -webkit-linear-gradient(var(--rmx-color1), var(--rmx-color2));
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   } 
-  #RMX-dithered-sky-loadingBg {
-    background: rgb(22, 9, 43);
+  .RMX-loadingBg {
+    background: var(--rmx-bg-color);
     padding: 0.5rem 1rem;
   }
-  #RMX-dithered-sky-loadingBorder {
+  .RMX-loadingBorder {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    /* background: linear-gradient( 45deg, rgb(245,66,111), rgb(86,29,144)); */
     padding: 0.5rem;
-    animation: spinningBorderDitheredSky 1.5s linear infinite;
+    animation: spinningBorder 1.5s linear infinite;
   }
 
   #p5_loading {
     display: none;
   }
 
-  #RMX-dithered-sky-resetText { 
+  .RMX-resetText { 
     padding: 0;
     display: none;
     text-align: center;
@@ -60,21 +59,21 @@
   }
 
 
-  @keyframes spinningBorderDitheredSky {
+  @keyframes spinningBorder {
     0% {
-      background: linear-gradient( 0deg, rgb(86,29,144), rgb(245,66,111));
+      background: linear-gradient( 0deg, var(--rmx-color1), var(--rmx-color2));
     }
     25% {
-      background: linear-gradient( 90deg, rgb(86,29,144), rgb(245,66,111));
+      background: linear-gradient( 90deg, var(--rmx-color1), var(--rmx-color2));
     }
     50% {
-      background: linear-gradient( 180deg, rgb(86,29,144), rgb(245,66,111));
+      background: linear-gradient( 180deg, var(--rmx-color1), var(--rmx-color2));
     }
     75% {
-      background: linear-gradient( 270deg, rgb(86,29,144), rgb(245,66,111));
+      background: linear-gradient( 270deg, var(--rmx-color1), var(--rmx-color2));
     } 
     100% {
-      background: linear-gradient( 360deg, rgb(86,29,144), rgb(245,66,111));
+      background: linear-gradient( 360deg, var(--rmx-color1), var(--rmx-color2));
     }
   }
 }

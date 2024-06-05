@@ -3,9 +3,9 @@ import { FC, memo, useRef, useState } from "react"
 import dynamic from "next/dynamic";
 const P5Wrapper = dynamic(() => import('../P5Wrapper'), { ssr: false });
 import { bindMethods, loadLargeImage } from "../utils";
-import vertex from "../vertex.glsl";
-import fxFrag from "./fxFrag.glsl";
-import feedbackFrag from "./feedbackFrag.glsl";
+// import vertex from "../vertex.glsl";
+// import fxFrag from "./fxFrag.glsl";
+// import feedbackFrag from "./feedbackFrag.glsl";
 
 p5.prototype.loadImage = loadLargeImage;
 
@@ -34,10 +34,24 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
 
     function preload() {
       try {
+
+        document.documentElement.style.setProperty(
+          "--rmx-bg-color",
+          "rgb(22, 9, 43)"
+        );
+        document.documentElement.style.setProperty(
+          "--rmx-color1",
+          "rgb(86,29,144)"
+        );
+        document.documentElement.style.setProperty(
+          "--rmx-color2",
+          "rgb(245,66,111)"
+        );
+
         document.getElementById(CSS_RMX_PREFIX + "loadingBorder").style.display = "block";
 
-        fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
-        feedbackShader = new p5.Shader(p5sketch._renderer, vertex, feedbackFrag);
+        // fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
+        // feedbackShader = new p5.Shader(p5sketch._renderer, vertex, feedbackFrag);
         img = p5sketch.loadImage(imageUrl)
         font = '"Kode Mono", monospace'
 
@@ -126,25 +140,34 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
     }
 
   }
+  
   return (
-    <div ref={containerRef} className={className} id={CSS_RMX_PREFIX + "Sketch"}>
-      <P5Wrapper sketch={sketch} seed={seed} className="h-full" transformOrigin="top center" />
-      <div id={CSS_RMX_PREFIX + "loadingBorder"}>
-        <div id={CSS_RMX_PREFIX+ "loadingBg"}>
-          <div id={CSS_RMX_PREFIX + "loading"}>
-            R3MIX
-          </div>
+    <div ref={containerRef} className={className} id={"RMX-Sketch"}>
+      <P5Wrapper
+        sketch={sketch}
+        seed={seed}
+        className="h-full"
+        transformOrigin="top center"
+      />
+      <div id={CSS_RMX_PREFIX + "loadingBorder"} className="RMX-loadingBoarder">
+        <div className="RMX-loadingBg">
+          <div className="RMX-loading">R3MIX</div>
         </div>
       </div>
-      <p id={CSS_RMX_PREFIX + "resetText"} style={{
-        display: lowframeRate ? "block" : "none",
-        position: "absolute",
-        bottom: "30%",
-      }}>
+      <p
+        id={CSS_RMX_PREFIX + "resetText"}
+        className="RMX-resetText"
+        style={{
+          display: lowframeRate ? "block" : "none",
+          position: "absolute",
+          bottom: "30%",
+        }}
+      >
         Low framerate detected. Resetting with lower image quality...
       </p>
     </div>
-  )
+  );
 }
 
 export default memo(RMX_dithered_sky)
+
