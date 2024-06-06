@@ -24,7 +24,7 @@ const InTheBeginning = ({ className, menuOpen, seed, isActive }) => {
 
     const SHAPES = {
       circular: 0,
-      square: 1,
+      // square: 1,
       noise: 2,
       stripes: 3,
       dots: 4,
