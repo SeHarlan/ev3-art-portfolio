@@ -144,7 +144,7 @@ const R3MIX_Window: FC = () => {
       </div>
 
       <div className={clsx("p-4 absolute top-0 left-0 h-full w-full overflow-auto", activeContent === 1 ? "block" : "hidden")}>
-        <p>R3MIX is a series of studies. Existing works reimagined as constantly evolving glitch art.</p>
+        <p>R3MIX is a series of glitch studies. Existing still art reimagined with constantly evolving movement.</p>
         <br />
         <p>Press "c" to clear the glitch effects and view the original piece</p>        
         <br />
