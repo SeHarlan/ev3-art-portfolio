@@ -5,13 +5,31 @@ import dynamic from "next/dynamic";
 import clsx from "clsx";
 import Link from "next/link";
 import MenuDropdown from "../MenuDropdown";
-const RMX_dithered_sky = dynamic(() => import('../p5/RMX/RMX-dithered-sky/RMX-dithered-sky.jsx'), { ssr: false });
-const RMX_degen_dollar = dynamic(() => import('../p5/RMX/RMX-DEGEN-DOLLAR/RMX-DEGEN-DOLLAR.jsx'), { ssr: false });
-const RMX_seeing_beyond = dynamic(() => import('../p5/RMX/RMX-Seeing-beyond/RMX-Seeing-beyond.jsx'), { ssr: false });
-const RMX_7_years = dynamic(() => import('../p5/RMX/RMX-7years/RMX-7years.jsx'), { ssr: false });
-const RMX_FRAME35 = dynamic(() => import('../p5/RMX/RMX-Frame35/RMX-Frame35.jsx'), { ssr: false });
-const RMX_The_Monitor = dynamic(() => import('../p5/RMX/RMX-The-Monitor/RMX-the-monitor.jsx'), { ssr: false });
-const RMX_Bloom = dynamic(() => import('../p5/RMX/RMX-Bloom/RMX-bloom.jsx'), { ssr: false });
+const RMX_dithered_sky = dynamic(
+  () => import("../p5/RMX/RMX-dithered-sky/RMX-dithered-sky"),
+  { ssr: false }
+) as any;
+const RMX_degen_dollar = dynamic(
+  () => import("../p5/RMX/RMX-DEGEN-DOLLAR/RMX-DEGEN-DOLLAR"),
+  { ssr: false }
+) as any;
+const RMX_seeing_beyond = dynamic(
+  () => import("../p5/RMX/RMX-Seeing-beyond/RMX-Seeing-beyond"),
+  { ssr: false }
+) as any;
+const RMX_7_years = dynamic(() => import("../p5/RMX/RMX-7years/RMX-7years"), {
+  ssr: false,
+}) as any;
+const RMX_FRAME35 = dynamic(() => import("../p5/RMX/RMX-Frame35/RMX-Frame35"), {
+  ssr: false,
+}) as any;
+const RMX_The_Monitor = dynamic(
+  () => import("../p5/RMX/RMX-The-Monitor/RMX-the-monitor"),
+  { ssr: false }
+) as any;
+const RMX_Bloom = dynamic(() => import("../p5/RMX/RMX-Bloom/RMX-bloom"), {
+  ssr: false,
+}) as any;
 
 const contentOptions = ["sketch", "about"]
 
