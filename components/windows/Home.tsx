@@ -27,7 +27,7 @@ const contentList = [
   { type: "delete", text: "experimenting and pushing boundaries" },
   { type: "delete", text: "finding beauty in the chaos" },
   { type: "delete", text: "exploring emotion" },
-  { text: "playing with code :)" },
+  { text: "making art with code" },
   { type: "break", text: "" },
   { type: "break", text: "" },
 
@@ -45,20 +45,20 @@ const contentList = [
   { type: "break", text: "" },
   { type: "break", text: "" },
 
-  { text: "hoping this helps us on our journey to better the internal and external worlds we live in" },
-  { type: "break", text: "" },
-  { type: "break", text: "" },
-  { text: "- - -"},
-  { type: "break", text: "" },
+  // { text: "hoping this helps us on our journey to better the internal and external worlds we live in" },
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { text: "- - -"},
+  // { type: "break", text: "" },
 
-  { text: "thank you for visiting and viewing my art" },
-  { type: "break", text: "" },
-  { text: "it really means so much to me"},
-  { type: "break", text: "" },
-  { text: "please enjoy and feel free to reach out any time" },
+  // { text: "thank you for visiting and viewing my art" },
+  // { type: "break", text: "" },
+  // { text: "it really means so much to me"},
+  // { type: "break", text: "" },
+  // { text: "please enjoy and feel free to reach out any time" },
 
-  { type: "break", text: "" },
-  { type: "break", text: "" },
+  // { type: "break", text: "" },
+  // { type: "break", text: "" },
   // { text: "you can follow me on social media below as well as check out my Collector gallery page which houses all of my other artworks." },
   { type: "element", text: "", element: <Links className="p-2 flex gap-2 w-full justify-center" /> },
 ]
@@ -221,8 +221,8 @@ const HomeWindow: FC = () => {
   ]
 
   const initSize = {
-    h: 600,
-    w: 800,
+    h: 420,
+    w: 420,
   }
   const initPos = {
     x: 150,

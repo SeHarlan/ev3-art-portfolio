@@ -1,9 +1,9 @@
 import p5 from "p5"
 import { FC, memo, useRef, useState } from "react"
 import dynamic from "next/dynamic";
-const P5Wrapper = dynamic(() => import('../P5Wrapper'), { ssr: false });
-import { bindMethods, loadLargeImage } from "../utils";
-import vertex from "../vertex.glsl";
+const P5Wrapper = dynamic(() => import('../../P5Wrapper'), { ssr: false });
+import { bindMethods, loadLargeImage } from "../../utils";
+import vertex from "../../vertex.glsl";
 import fxFrag from "./fxFrag.glsl";
 import feedbackFrag from "./feedbackFrag.glsl";
 
@@ -17,6 +17,7 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
 
   const sketch = (p5sketch, initSeed) => {
     if (typeof window === "undefined") return;
+    if (!containerRef.current) return;
 
     const methodsToBind = ['createCanvas', 'createGraphics', 'colorMode', 'frameRate', 'random', 'randomSeed', 'noiseSeed', 'image', 'pixelDensity'];
     const { createCanvas, createGraphics, colorMode, frameRate, random, randomSeed, noiseSeed, image, pixelDensity } = bindMethods(p5sketch, methodsToBind);
@@ -67,10 +68,13 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
     p5sketch.preload = preload
 
     function setup() {
+      const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
+      if (loadingBorder) loadingBorder.style.display = "none";
+  
+      const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
+      if (resetText) resetText.style.display = "none";
+      
       const { mouseX, mouseY, width, height } = p5sketch;
-
-      document.getElementById(CSS_RMX_PREFIX + "loadingBorder").style.display = "none";
-      document.getElementById(CSS_RMX_PREFIX + "resetText").style.display = "none";
 
       const windowWidth = containerRef.current.clientWidth;
       const windowHeight = containerRef.current.clientHeight
@@ -214,6 +218,12 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
     }
 
     function resetThings() {
+      const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
+      if (resetText) resetText.style.display = "block";
+
+      const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
+      if (loadingBorder) loadingBorder.style.display = "block";
+
       setLowframeRate(true);
     }
 
@@ -249,15 +259,7 @@ const RMX_dithered_sky = ({ className, menuOpen, seed, isActive }) => {
           <div className="RMX-loading">R3MIX</div>
         </div>
       </div>
-      <p
-        id={CSS_RMX_PREFIX + "resetText"}
-        className="RMX-resetText"
-        style={{
-          display: lowframeRate ? "block" : "none",
-          position: "absolute",
-          bottom: "30%",
-        }}
-      >
+      <p id={CSS_RMX_PREFIX + "resetText"} className="RMX-resetText" >
         Low framerate detected. Resetting with lower image quality...
       </p>
     </div>
