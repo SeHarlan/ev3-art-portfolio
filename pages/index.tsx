@@ -39,7 +39,7 @@ export default function Home() {
           {openMap[WINDOWS.NOISE] ? <NoiseWindow /> : null }
           {openMap[WINDOWS.DUET] ? <DuetWindow/> : null}
           {openMap[WINDOWS.MAURER] ? <MaurerWindow /> : null}
-          {/* {openMap[WINDOWS.SOMEDAYS] ? <SomeDaysWindow /> : null} */}
+          {openMap[WINDOWS.SOMEDAYS] ? <SomeDaysWindow /> : null}
           {openMap[WINDOWS.R3MIX] ? <R3MIX_Window /> : null}
           {openMap[WINDOWS.ITB] ? <ITBWindow /> : null}
           {openMap[WINDOWS.STEV3] ? <STEV3_Window /> : null}
