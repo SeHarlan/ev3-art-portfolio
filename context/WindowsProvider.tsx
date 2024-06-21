@@ -35,8 +35,9 @@ export const WINDOWS = {
   ITB: "ITB",
   R3MIX: "R3MIX",
   NOISE: "it's just noise",
-  SOMEDAYS: "some days",
+  // SOMEDAYS: "some days",
   MAURER: "Maurer Expanse",
+  STEV3: "wip" //currently Stev3
 }
 
 type WINDOWS = {
@@ -44,9 +45,10 @@ type WINDOWS = {
   NOISE: string;
   DUET: string;
   MAURER: string;
-  SOMEDAYS: string;
+  // SOMEDAYS: string;
   R3MIX: string;
-  ITB: string
+  ITB: string;
+  STEV3: string;
 }
 
 export const ICONS = {
@@ -54,10 +56,14 @@ export const ICONS = {
   [WINDOWS.DUET]: "/images/DUET-icon.png",
   [WINDOWS.MAURER]: "/images/small-alt-logo.png",
   [WINDOWS.NOISE]: "/images/its_just_noise-icon.png",
-  [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
+  // [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
   [WINDOWS.R3MIX]: "/images/r3mix-icon.png",
-  [WINDOWS.ITB]: "/images/ITB-icon.png"
+  [WINDOWS.ITB]: "/images/ITB-icon.png",
+  [WINDOWS.STEV3]: "/images/small-alt-logo.png",
+};
 
+export const filterOutFromMenu = (windowKey: string) => { 
+  return windowKey !== WINDOWS.STEV3
 }
 
 const defaultMin = Object.values(WINDOWS).reduce((acc: {[key:string]: boolean}, curr) => {

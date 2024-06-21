@@ -9,6 +9,7 @@ import DuetWindow from '@/components/windows/DUET'
 import SomeDaysWindow from '@/components/windows/SomeDays'
 import R3MIX_Window from '@/components/windows/R3MIX'
 import ITBWindow from '@/components/windows/InTheBeginning'
+import STEV3_Window from '@/components/windows/STEV3'
 
 export default function Home() {
   const { openState } = useWindowsContext()
@@ -38,9 +39,10 @@ export default function Home() {
           {openMap[WINDOWS.NOISE] ? <NoiseWindow /> : null }
           {openMap[WINDOWS.DUET] ? <DuetWindow/> : null}
           {openMap[WINDOWS.MAURER] ? <MaurerWindow /> : null}
-          {openMap[WINDOWS.SOMEDAYS] ? <SomeDaysWindow /> : null}
+          {/* {openMap[WINDOWS.SOMEDAYS] ? <SomeDaysWindow /> : null} */}
           {openMap[WINDOWS.R3MIX] ? <R3MIX_Window /> : null}
           {openMap[WINDOWS.ITB] ? <ITBWindow /> : null}
+          {openMap[WINDOWS.STEV3] ? <STEV3_Window /> : null}
           
         </div>
         <Footer />
