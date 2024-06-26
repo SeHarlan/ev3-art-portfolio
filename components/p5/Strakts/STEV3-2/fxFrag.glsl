@@ -205,41 +205,54 @@ void main() {
   vec2 posBlockOffset = fract(st / blockSize) ;
 
   vec2 norm_mouse = u_mouse / u_resolution;
-  float screenAspectRatio = u_resolution.x / u_resolution.y;
-
-  vec2 correctedMousePos = vec2(norm_mouse.x * screenAspectRatio, norm_mouse.y );
-  vec2 correctedUV = vec2(st.x * screenAspectRatio, st.y );
+  vec2 correctedMousePos = vec2(norm_mouse.x, norm_mouse.y ) * u_aspectRatio;
+  vec2 correctedUV = vec2(st.x, st.y ) * u_aspectRatio;
  
   vec4 originalColor = texture2D(u_originalImage, st);
 
   vec4 color = texture2D(u_texture, orgSt);
 
-  bool leftBlock = orgSt.x <= 0.2 && orgSt.y <= 0.8;
+  if(u_clear) {
+    gl_FragColor = originalColor;
+    return;
+  }
 
-  bool topBlock= orgSt.x > 0.2 && orgSt.y <= 0.2;
+  float leftPoint = 0.2;
+  float centerPoint = 0.2 + .8 * 0.3333 ;
+  float centerRightPoint = 0.2 + .8 * 0.6666;
+  float rightPoint = 0.8;
+  float topPoint = 0.4 * u_aspectRatio.x/u_aspectRatio.y;
+  float bottomPoint = 1.0 - 0.2 * u_aspectRatio.x/u_aspectRatio.y;
 
-  bool rightBlock = orgSt.x > 0.8 && orgSt.y > 0.2;
+  bool topCenterLeftBlock = orgSt.x > leftPoint && orgSt.x <= centerPoint && orgSt.y <= topPoint;
+  bool topCenterBlock = orgSt.x > centerPoint && orgSt.x <= centerRightPoint && orgSt.y <= topPoint;
+  bool topCenterRightBlock = orgSt.x > centerRightPoint && orgSt.y <= topPoint;
+  bool topBlock = topCenterLeftBlock || topCenterBlock || topCenterRightBlock;
 
-  bool bottomBlock = orgSt.x <= 0.8 && orgSt.y > 0.8;
+  bool leftBlock = orgSt.x <= leftPoint && orgSt.y <= bottomPoint;
+  bool rightBlock = orgSt.x > rightPoint && orgSt.y > topPoint;
+  bool bottomBlock = orgSt.x <= rightPoint && orgSt.y > bottomPoint;
 
-  bool center = !leftBlock && !topBlock && !rightBlock && !bottomBlock;
+  bool center = !leftBlock && !rightBlock && !bottomBlock && !topCenterBlock && !topCenterLeftBlock && !topCenterRightBlock;
 
   bool blockOn = false;
   float blockOnRan = random((floor(u_time * 2.)/2.) * 10000.);
-  if(blockOnRan < 0.25) blockOn = topBlock;
-  else if(blockOnRan < 0.5) blockOn = rightBlock;
-  else if(blockOnRan < 0.75) blockOn = bottomBlock;
-  else blockOn = leftBlock;
+  if(blockOnRan < 1./6.) blockOn = topCenterLeftBlock;
+  else if(blockOnRan < 2./6.) blockOn = topCenterBlock;
+  else if(blockOnRan < 3./6.) blockOn = topCenterRightBlock;
+  else if(blockOnRan < 4./6.) blockOn = leftBlock;
+  else if(blockOnRan < 5./6.) blockOn = rightBlock;
+  else blockOn = bottomBlock;
 
   blockOn = blockOn && u_stage == 2;
 
-  if(u_stage == 1) {
+  if(u_stage == 1 && !center) {
     st -= random(posBlockFloor + u_centerTime) * 0.002;
   }
 
-
+  //Clip
   if(blockOn) {
-    float clipBuffer = 0.45;
+    float clipBuffer = .5;
 
     float direction = st.y;
     if(topBlock) direction = -st.x;
@@ -249,73 +262,73 @@ void main() {
 
     float clipT = sin(u_time * 100. + direction * PI * 5.) * clipBuffer + clipBuffer + 0.5;
 
-    // if(topBlock || bottomBlock || leftBlock) color.r = step(clipT, color.r);
-    // if(rightBlock || bottomBlock || topBlock) color.b = step(clipT, color.b);
-    // if(leftBlock || bottomBlock || rightBlock) color.g = step(clipT, color.g);
-
     color.r = step(clipT, color.r);
     color.b = step(clipT, color.b);
     color.g = step(clipT, color.g);
   }
 
   if((!center) && (u_stage != 2 || !blockOn)) { 
-    float edgeInsensity = 0.5;//0.5 + sin(u_time * 2.) * 0.5 + 0.5;
+    float edgeInsensity = 0.5;
     color = edgeDetection(color, st, edgeInsensity);
   }
 
-  if(!center) {
-    float stMult = 0.1;
-
-    if(leftBlock) stMult = 0.5;
-    if(topBlock) stMult = 10000.1;
-    if(rightBlock) stMult = 5000.5;
-
-    color.rgb -= (random(stMult * st + fract(u_time)) * 0.5) - .3;
-
-    // vec3 bgTint = vec3(46./255., 37./255., 65./255.); //dark blue
-    vec3 bgTint = vec3(117./255., 77./255., 61./255.);
-    color.rgb = mix(color.rgb, bgTint, 0.33);
-  }
-
   if(center) {
-    float staticMult = 0.5;
+    float staticMult = 0.15;
     float stMult = 10.1;
     color.r += (random((st + fract(u_centerTime)) * stMult) * staticMult) - staticMult * .5;
     color.g += (random((st + fract(u_centerTime)) * stMult + 100.) * staticMult)  - staticMult * .5;
     color.b += (random((st + fract(u_centerTime)) * stMult + 200.) * staticMult)  - staticMult * .5;
 
-    color.rgb += 0.1;
+    color.rgb *= 1.1;
   }
+
+  // vec3 bgTint = vec3(46./255., 37./255., 65./255.); //dark blue
+  vec3 bgTint = vec3(117./255., 77./255., 61./255.); //brown
+  bool isDark = color.r < 0.1 && color.g < 0.1 && color.b < 0.1;
+
+  if(!center || isDark) {
+    float stMult = 0.1;
+
+    if(leftBlock) stMult = 0.5;
+    if(topCenterLeftBlock) stMult = 10000.1;
+    if(topCenterBlock) stMult = 500.;
+    if(topCenterRightBlock) stMult = 1000.1;
+    if(rightBlock) stMult = 5000.5;
+
+    //static
+    color.rgb -= (random(stMult * st + fract(u_time)) * 0.5) - .31;
+
+    //tint
+    float tintAmount = .2 + (st.y) * 0.25;
+    color.rgb = mix(color.rgb, bgTint, tintAmount);
+  } 
+
+
+  if(center && u_stage == 1) {
+    vec4  edg = edgeDetection(color, st, 0.5) * 0.66;
+    color = max(edg, color);
+  }
+
 
 
   bool flicker = random(st * 10. + fract(u_time)) < 0.75 && !center  && random(u_time) < 0.9 && u_stage == 1;
   if(flicker) {
-    vec2 offset = vec2(-0.01, -0.01);
+    vec2 offset = vec2(-0.01, 0.005);
 
 
-    float offsetMult = 1.;
-    if(bottomBlock) offsetMult = 2.;
-    if(leftBlock) offsetMult = 1.;
-    if(topBlock) offsetMult = 0.5;
-    if(rightBlock) offsetMult = .25;
+    float offsetMult = 0.5;
+    if(topCenterLeftBlock) offsetMult = 1.;
+    if(topCenterBlock) offsetMult = 2.;
+    if(topCenterRightBlock) offsetMult = 3.;
 
     offset *= offsetMult;
 
-    color.r = texture2D(u_originalImage, st - offset).r;
-    color.g = texture2D(u_originalImage, st + offset).g;
-
-    //or
-    // color.r = texture2D(u_originalImage, st - offset).r;
-    // color.b = texture2D(u_originalImage, st + offset).b;
+    color.r = texture2D(u_originalImage, st + offset).r;
+    color.g = texture2D(u_originalImage, st - offset).g;
   }
 
 
-  float intensity = 1.0;
-  if(u_clear) {
-    intensity = 0.0;
-  }
-
-  gl_FragColor = mix(originalColor, color, intensity );
+  gl_FragColor = color;
 }
 
 

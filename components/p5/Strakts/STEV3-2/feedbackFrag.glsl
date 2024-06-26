@@ -65,76 +65,14 @@ float noise(vec2 _st) {
                 mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
                      dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
 
-    // return n;
-    return 0.5 + 0.5 * n;
-}
-
-float snoise(vec2 _v) { //simplex
-
-    vec2 v = _v + u_seed;
-    // Precompute values for skewed triangular grid
-    const vec4 C = vec4(0.211324865405187,
-                        // (3.0-sqrt(3.0))/6.0
-                        0.366025403784439,
-                        // 0.5*(sqrt(3.0)-1.0)
-                        -0.577350269189626,
-                        // -1.0 + 2.0 * C.x
-                        0.024390243902439);
-                        // 1.0 / 41.0
-
-    // First corner (x0)
-    vec2 i  = floor(v + dot(v, C.yy));
-    vec2 x0 = v - i + dot(i, C.xx);
-
-    // Other two corners (x1, x2)
-    vec2 i1 = vec2(0.0);
-    i1 = (x0.x > x0.y)? vec2(1.0, 0.0):vec2(0.0, 1.0);
-    vec2 x1 = x0.xy + C.xx - i1;
-    vec2 x2 = x0.xy + C.zz;
-
-    // Do some permutations to avoid
-    // truncation effects in permutation
-    i = mod289(i);
-    vec3 p = permute(
-            permute( i.y + vec3(0.0, i1.y, 1.0))
-                + i.x + vec3(0.0, i1.x, 1.0 ));
-
-    vec3 m = max(0.5 - vec3(
-                        dot(x0,x0),
-                        dot(x1,x1),
-                        dot(x2,x2)
-                        ), 0.0);
-
-    m = m*m ;
-    m = m*m ;
-
-    // Gradients:
-    //  41 pts uniformly over a line, mapped onto a diamond
-    //  The ring size 17*17 = 289 is close to a multiple
-    //      of 41 (41*7 = 287)
-
-    vec3 x = 2.0 * fract(p * C.www) - 1.0;
-    vec3 h = abs(x) - 0.5;
-    vec3 ox = floor(x + 0.5);
-    vec3 a0 = x - ox;
-
-    // Normalise gradients implicitly by scaling m
-    // Approximation of: m *= inversesqrt(a0*a0 + h*h);
-    m *= 1.79284291400159 - 0.85373472095314 * (a0*a0+h*h);
-
-    // Compute final noise value at P
-    vec3 g = vec3(0.0);
-    g.x  = a0.x  * x0.x  + h.x  * x0.y;
-    g.yz = a0.yz * vec2(x1.x,x2.x) + h.yz * vec2(x1.y,x2.y);
-    float n =  130.0 * dot(m, g);
     return 0.5 + 0.5 * n;
 }
 
 float noiseNegNeutralPos(vec2 st) {
   float r = noise(st);
-  if (r < 0.33) {
+  if (r < 0.45) {
     return -1.0;
-  } else if (r < 0.66) {
+  } else if (r < 0.55) {
     return 0.0;
   } else {
     return 1.0;
@@ -146,7 +84,7 @@ float randomNegNeutralPos(vec2 st) {
   if (r < 0.33) {
     return -1.0;
   } else if (r < 0.66) {
-    return 0.0;
+    return .0;
   } else {
     return 1.0;
   }
@@ -173,8 +111,9 @@ void main() {
   float timeBlock = floor(u_time * .3);
   float timeFract = fract(u_time * .3);
 
+  float centerTimeBlock = floor(u_centerTime * .15);
 
-  float chunk = 5.0 + sin(u_centerTime * 0.2) * 4.;
+  float chunk = floor(8.0 + sin(PI * 1.33 + u_centerTime * 0.13) * 7.);
   vec2 blockSize = vec2(chunk / u_resolution.x, chunk / u_resolution.y);
 
   vec2 posBlockFloor = floor(st / blockSize) ;
@@ -183,45 +122,74 @@ void main() {
   vec4 color = texture2D(u_texture, st);
 
 
-  bool leftBlock = orgSt.x <= 0.2 && orgSt.y <= 0.8;
+  float leftPoint = 0.2;
+  float centerPoint = 0.2 + .8 * 0.3333 ;
+  float centerRightPoint = 0.2 + .8 * 0.6666;
+  float rightPoint = 0.8;
+  float topPoint = 0.4 * u_aspectRatio.x/u_aspectRatio.y;
+  float bottomPoint = 1.0 - 0.2 * u_aspectRatio.x/u_aspectRatio.y;
 
-  bool topBlock= orgSt.x > 0.2 && orgSt.y <= 0.2;
+  bool topCenterLeftBlock = orgSt.x > leftPoint && orgSt.x <= centerPoint && orgSt.y <= topPoint;
+  bool topCenterBlock = orgSt.x > centerPoint && orgSt.x <= centerRightPoint && orgSt.y <= topPoint;
+  bool topCenterRightBlock = orgSt.x > centerRightPoint && orgSt.y <= topPoint;
+  bool topBlock = topCenterLeftBlock || topCenterBlock || topCenterRightBlock;
 
-  bool rightBlock = orgSt.x > 0.8 && orgSt.y > 0.2;
+  bool leftBlock = orgSt.x <= leftPoint && orgSt.y <= bottomPoint;
+  bool rightBlock = orgSt.x > rightPoint && orgSt.y > topPoint;
+  bool bottomBlock = orgSt.x <= rightPoint && orgSt.y > bottomPoint;
 
-  bool bottomBlock = orgSt.x <= 0.8 && orgSt.y > 0.8;
+  bool center = !leftBlock && !rightBlock && !bottomBlock && !topCenterBlock && !topCenterLeftBlock && !topCenterRightBlock;
 
-  bool center = !leftBlock && !topBlock && !rightBlock && !bottomBlock;
+  bool useTopBlock = false;
 
-  if(center) {
+  float topRan = random(centerTimeBlock);
+  if(topRan < 1./20.) {
+    useTopBlock = topCenterLeftBlock;
+  } else if(topRan < 2./20.) {
+    useTopBlock = topCenterBlock;
+  } else  if(topRan < 3./20.) {
+    useTopBlock = topCenterRightBlock;
+  } else if(topRan < 4./20.) {
+    useTopBlock = leftBlock;
+  } else if(topRan <5./20.) {
+    useTopBlock = rightBlock;
+  } 
+
+
+  if(true) {
     vec2 noiseSt = posBlockFloor;
     noiseSt.x -= sin(u_centerTime * 0.75) * 4.;
     noiseSt.y += cos(u_centerTime * 0.75) * 8.;
 
-    float noiseTime = u_centerTime * .25 ;
+    float noiseTime = u_centerTime * .2 ;
+
+    float chunkBuffer = ( chunk);
    
 
-    vec2 noiseMult = vec2(.025, 0.05) * 0.5;
-    noiseMult.y -= noise(vec2(posBlockFloor * 0.005 + 100. - noiseTime * .15)) * 0.2;
+    vec2 noiseMult = vec2(.01, 0.005) * chunkBuffer;
 
-    vec2 flowMult = vec2(.1, 0.05) * 0.5;
+    float waveMultAmp = (20. - (noise(chunkBuffer * posBlockFloor * .005 + noiseTime + 100.) * 10.)) / chunkBuffer;
+    float waveMultFreq = (0.2 - (noise(chunkBuffer * posBlockFloor * .001 - noiseTime * 0.5) * 0.2));
+    float wave = sin(chunkBuffer*posBlockFloor.x * waveMultFreq) * waveMultAmp;
 
 
-    float darkerThresh = 1.8;
-    bool darker = color.r < darkerThresh && color.g < darkerThresh && color.b < darkerThresh;
+    float resetThresh = 0.5 + sin(u_centerTime) * 0.03 - cos(u_centerTime * 0.1) * 0.15;
+    vec2 noiseResetTime = vec2(-noiseTime , noiseTime);
+    bool randomReset = random(noiseSt + noiseResetTime) < .2;
+    bool reset = noise(noiseMult * (noiseSt + wave) + noiseResetTime) < resetThresh && randomReset;
 
-    float resetThresh = 0.5 + sin(u_centerTime) * 0.05;
-    bool reset = noise(noiseMult * noiseSt + vec2(noiseTime , -noiseTime * 1.5)) < resetThresh && random(posBlockFloor) < 0.75 || random(u_centerTime + posBlockFloor) < 0.05;
-    bool useFlow = noise(posBlockFloor * flowMult + noiseTime * 1.) < 0.45;
+    vec2 flowMult = vec2(.1, 0.05) * chunkBuffer;
+    bool useFlow = random((posBlockFloor * flowMult) + noiseTime) < 0.5 && (center || useTopBlock);
 
     if(reset) {
       color = orgColor;
-    } else if(darker && useFlow) {
-      posBlockFloor.x += noiseNegNeutralPos(noiseMult * 10. * (posBlockFloor  + noiseTime * 4.) + 100.);
-      posBlockFloor.y += noiseOnOff(noiseMult  * 10. * (posBlockFloor - noiseTime ) + 200.);
+    } else if(useFlow && randomReset) {
+      posBlockFloor.x += noiseNegNeutralPos(noiseMult  * ( 1. * posBlockFloor   - (u_centerTime * 25.) / chunkBuffer ) + 100.);
+      posBlockFloor.y += noiseOnOff(noiseMult   * (4. * posBlockFloor+ (u_centerTime * 75.) / chunkBuffer ) + 200.);
 
       
       color = texture2D(u_texture, (posBlockFloor + posBlockOffset) * blockSize);
+      // color = vec4(1.0);
     }
   }
 

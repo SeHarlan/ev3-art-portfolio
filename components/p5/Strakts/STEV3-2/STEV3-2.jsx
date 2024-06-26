@@ -77,7 +77,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
       if (resetText) resetText.style.display = "none";
 
-      const { mouseX, mouseY, width, height } = p5sketch;
+      const { } = p5sketch;
 
      
       const windowWidth = containerRef.current.clientWidth;
@@ -131,16 +131,14 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       randomSeed(seed);
       noiseSeed(seed);
 
-          
-      if (width > height) {
-        aspectRatio = [width / height, 1];
+       
+      if (windowWidth > windowHeight) {
+        aspectRatio = [windowWidth / windowHeight, 1];
       } else {
-        aspectRatio = [1, height / width];
+        aspectRatio = [1, windowHeight / windowWidth];
       }
-
+          
       makeGridImage();
-
-    
     }
     p5sketch.setup = setup
 
@@ -178,28 +176,22 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       image(fxBuffer, 0, 0, width, height);
 
       // Swap buffers
-      currentBuffer.image(
-        previousBuffer,
-        -width / 2,
-        -height / 2,
-        width,
-        height
-      );
+      currentBuffer.image(previousBuffer, -width / 2, -height / 2, width, height);
       previousBuffer.clear();
 
       timeCounter += 1 / FR;
       stageCounter += 1;
 
-      if (stage != 1 || random() < 0.15) {
+      if (stage != 1 || random() < 0.25) {
         centerCounter += 1 / FR;
       }
 
-      const switchStage = random() < (stageCounter * 0.000033) % 1;
-      //|| (random() < .01 - (stageCounter * 0.001) % 1 && stage != 2)
+      const switchStage = random() < (stageCounter * 0.00003) % 1;
       if (switchStage) {
         switch (stage) {
           case 0:
-            if (random() < 0.33 && switchStage) stage = 2;
+            const ran = random();
+            if (ran < 0.8) stage = 2;
             else stage = 1;
             break;
           case 1:
@@ -211,6 +203,11 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
             stageCounter = 0;
             break;
         }
+      }
+      if (timeCounter < 2) {
+        stage = 1;
+      } else if (timeCounter < 3) {
+        stage = 0;
       }
     }
 
@@ -250,64 +247,123 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       return true;
     }
 
+
     function makeGridImage() {
-  const { mouseX, mouseY, width, height, radians, SQUARE } = p5sketch;
-  const minScale = 0.2;
-  const maxScale = 1 - minScale;
-  gridBuffer.noStroke();
 
-  //bottom reflection
-  gridBuffer.push();
-  gridBuffer.translate(0, height);
-  gridBuffer.rotate(radians(-90));
-  gridBuffer.image(img, 0, 0, height * minScale, width * maxScale);
-  gridBuffer.pop();
+      const { mouseX, mouseY, width, height, radians, SQUARE } = p5sketch;
+      
+      const minScale = 0.2;
+      const maxScale = 1 - minScale;
+      gridBuffer.noStroke();
 
-  //top reflection
-  gridBuffer.push();
-  gridBuffer.translate(width, 0);
-  gridBuffer.rotate(radians(90));
-  gridBuffer.image(img, 0, 0, height * minScale, width * maxScale);
-  gridBuffer.pop();
+      // bottom reflection
+      gridBuffer.push();
+      gridBuffer.translate(0, height);
+      gridBuffer.rotate(radians(-90));
+      gridBuffer.image(img, 0, 0, width * minScale, width * maxScale);
+      gridBuffer.pop();
 
-  // right reflection
-  gridBuffer.push();
-  gridBuffer.translate(width, height);
-  gridBuffer.rotate(radians(180));
-  gridBuffer.image(img, 0, 0, width * minScale, height * maxScale);
-  gridBuffer.pop();
+      //top reflection
+      gridBuffer.push();
+      gridBuffer.translate(width, 0);
+      gridBuffer.rotate(radians(90));
+      gridBuffer.image(
+        img,
+        0,
+        0,
+        height * minScale + width * minScale * 0.5,
+        width * maxScale
+      );
+      gridBuffer.pop();
 
-  //left reflection
-  gridBuffer.push();
-  gridBuffer.image(img, 0, 0, width * minScale, height * maxScale);
-  gridBuffer.pop();
+      // right reflection
+      gridBuffer.push();
+      gridBuffer.translate(width, height);
+      gridBuffer.rotate(radians(180));
+      gridBuffer.image(
+        img,
+        0,
+        0,
+        width * minScale,
+        height * maxScale - width * minScale * 0.5
+      );
+      gridBuffer.pop();
 
-  gridBuffer.image(
-    img,
-    width * minScale,
-    height * minScale,
-    width * (maxScale - minScale),
-    height * (maxScale - minScale)
-  );
+      //left reflection
+      gridBuffer.push();
+      gridBuffer.image(
+        img,
+        0,
+        0,
+        width * minScale,
+        height * maxScale + width * minScale * 0.5
+      );
+      gridBuffer.pop();
 
-  gridBuffer.stroke("black");
-  gridBuffer.strokeWeight(width * 0.015);
-  gridBuffer.strokeCap(SQUARE);
-  gridBuffer.line(
-    width * minScale,
-    height * minScale,
-    width,
-    height * minScale
-  );
-  gridBuffer.line(
-    width * maxScale,
-    height * minScale,
-    width * maxScale,
-    height
-  );
-  gridBuffer.line(width * minScale, 0, width * minScale, height * maxScale);
-  gridBuffer.line(0, height * maxScale, width * maxScale, height * maxScale);
-}
+      gridBuffer.image(
+        img,
+        width * minScale,
+        width * minScale * 2,
+        width * (maxScale - minScale),
+        height * (maxScale - minScale)
+      );
+
+      gridBuffer.stroke("black");
+      gridBuffer.strokeWeight(width * 0.015);
+      gridBuffer.strokeCap(SQUARE);
+
+      //center lkeft
+      gridBuffer.line(
+        width * minScale + width * maxScale * 0.33333,
+        0,
+        width * minScale + width * maxScale * 0.33333,
+        height * minScale + width * minScale * 0.5
+      );
+
+      //center
+      gridBuffer.line(
+        width * minScale + width * maxScale * 0.66666,
+        0,
+        width * minScale + width * maxScale * 0.66666,
+        height * minScale + width * minScale * 0.5
+      );
+
+      //center right
+      gridBuffer.line(width, 0, width, height * minScale + width * minScale * 0.5);
+
+      //top
+      gridBuffer.line(
+        width * minScale,
+        height * minScale + width * minScale * 0.5,
+        width,
+        height * minScale + width * minScale * 0.5
+      );
+
+      //right
+      gridBuffer.line(
+        width * maxScale,
+        height * minScale + width * minScale * 0.5,
+        width * maxScale,
+        height
+      );
+
+      //left
+      gridBuffer.line(
+        width * minScale,
+        0,
+        width * minScale,
+        height * maxScale + width * minScale * 0.5
+      );
+
+      //bottom
+      gridBuffer.line(
+        0,
+        height * maxScale + width * minScale * 0.5,
+        width * maxScale,
+        height * maxScale + width * minScale * 0.5
+      );
+    }
+
 
 
   }
