@@ -10,6 +10,11 @@ const STEV3_2 = dynamic(
   { ssr: false }
 ) as any;
 
+const STEV3_2B = dynamic(() => import("../p5/Strakts/STEV3-2B/STEV3-2B"), {
+  ssr: false,
+}) as any;
+
+
 const contentOptions = ["sketch", "about"]
 
 const STEV3_Window: FC = () => {
@@ -17,7 +22,7 @@ const STEV3_Window: FC = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeContent, setActiveContent] = useState(0)
   const [sketchCounter, setSketchCounter] = useState(1)
-  const [activeRemix, setActiveRemix] = useState("2")
+  const [activeRemix, setActiveRemix] = useState("A")
 
   const { activeWindow } = useWindowsContext()
   const isActiveRef = useRef(false)
@@ -27,9 +32,13 @@ const STEV3_Window: FC = () => {
   }, [activeWindow])
 
   const initSize = {
-    h: 893,
-    w: 553,
+    h: 900,
+    w: 700,
   }
+  //  const initSize = {
+  //    h: 893,
+  //    w: 553,
+  //  };
   const initPos = {
     x: 160,
     y: 30
@@ -51,6 +60,11 @@ const STEV3_Window: FC = () => {
     //   label: "Choose R3MIX",
     //   function: () => setMenuOpen(true)
     // },
+    {
+      label: "A",
+      function: () => setActiveRemix("A")
+    },
+    { label: "B", function: () => setActiveRemix("B") },
 
   ]
 
@@ -63,10 +77,20 @@ const STEV3_Window: FC = () => {
 
   const content = useMemo(() => { 
     switch (activeRemix) {
-      case "2":
+      case "A":
         return (
           <STEV3_2
             key="STEV3-2"
+            className={sketchCounter}
+            menuOpen={false}
+            seed={seed}
+            isActive={isActiveRef}
+          />
+        );
+      case "B":
+        return (
+          <STEV3_2B
+            key="STEV3-2B"
             className={sketchCounter}
             menuOpen={false}
             seed={seed}

@@ -128,27 +128,55 @@ void main() {
   #define marginMax 0.875
 
   float leftPoint = marginMin;
-  float topPoint = marginMin * u_aspectRatio.x/u_aspectRatio.y;
+  float leftCenterPoint = (marginMin * 0.5 * u_aspectRatio.x/u_aspectRatio.y + marginMax) * 0.45;
+
+  float centerPoint = marginMin + marginMax * 0.5 ;
+  float centerRightPoint = 1.0 - marginMin * 0.5;
+
+
+  float topPoint = marginMin * 2. * u_aspectRatio.x/u_aspectRatio.y;
   float bottomPoint = 1.0 - marginMin * u_aspectRatio.x/u_aspectRatio.y;
+
+
   float rightPoint = marginMax;
+  float rightBottomPoint = bottomPoint;
+
+  bool topCenterLeftBlock = orgSt.x > leftPoint && orgSt.x <= centerPoint && orgSt.y <= topPoint;
+  bool topCenterBlock = orgSt.x > centerPoint && orgSt.x <= centerRightPoint && orgSt.y <= topPoint;
+  bool topCenterRightBlock = orgSt.x > centerRightPoint && orgSt.y <= topPoint;
+  bool topBlock = topCenterLeftBlock || topCenterBlock || topCenterRightBlock;
+
+  bool leftTopBlock = orgSt.x <= leftPoint && orgSt.y <= leftCenterPoint;
+  bool leftBottomBlock = orgSt.x <= leftPoint && orgSt.y > leftCenterPoint && orgSt.y <= bottomPoint;
+  bool leftBlock = leftTopBlock || leftBottomBlock;
 
 
-  bool topBlock = orgSt.x > leftPoint && orgSt.y <= topPoint;
-  bool rightBlock = orgSt.x > rightPoint && orgSt.y > topPoint;
-  bool leftBlock = orgSt.x <= leftPoint && orgSt.y <= bottomPoint;
+  bool rightTopBlock = orgSt.x > rightPoint && orgSt.y > topPoint && orgSt.y <= rightBottomPoint;
+  bool rightBottomBlock = orgSt.x > rightPoint && orgSt.y > rightBottomPoint;
+  bool rightBlock = rightTopBlock || rightBottomBlock;
+
   bool bottomBlock = orgSt.x <= rightPoint && orgSt.y > bottomPoint;
 
-  bool center = !topBlock && !leftBlock && !rightBlock && !bottomBlock;
+  bool center = !leftTopBlock && !rightTopBlock && !bottomBlock && !topCenterBlock && !topCenterLeftBlock && !topCenterRightBlock && !leftBottomBlock && !rightBottomBlock;
+
   bool useBlock = false;
 
   float topRan = random(centerTimeBlock);
-  if(topRan < 2./20.) {
-    useBlock = topBlock;
+  if(topRan < 1./20.) {
+    useBlock = topCenterLeftBlock;
+  } else if(topRan < 2./20.) {
+    useBlock = topCenterBlock;
+  } else  if(topRan < 3./20.) {
+    useBlock = leftTopBlock;
   } else if(topRan < 4./20.) {
-    useBlock = leftBlock;
-  } else  if(topRan < 6./20.) {
-    useBlock = rightBlock;
+    useBlock = leftBottomBlock;
+  } else if(topRan < 5./20.) {
+    useBlock = rightTopBlock;
   } 
+  // else if(topRan <6./20.) {
+  //   // useBlock = topCenterRightBlock;
+  // } 
+
 
   if(true) {
     vec2 noiseSt = posBlockFloor;

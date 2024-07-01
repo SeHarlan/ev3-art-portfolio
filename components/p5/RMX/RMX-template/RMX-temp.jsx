@@ -32,6 +32,7 @@ const RMX_template = ({ className, menuOpen, seed, isActive }) => {
     let resetting = false
     let hasBeenReset = false
     let timeCounter = 0;
+    let aspectRatio;
 
     let seed, img;
     let fxShader, feedbackShader;
@@ -127,8 +128,11 @@ const RMX_template = ({ className, menuOpen, seed, isActive }) => {
       randomSeed(seed);
       noiseSeed(seed);
 
-      currentBuffer.image(img, -width / 2, -height / 2, width, height);
-
+      if (canvWidth > canvHeight) {
+        aspectRatio = [canvWidth / canvHeight, 1];
+      } else {
+        aspectRatio = [1, canvHeight / canvWidth];
+      }
     
     }
     p5sketch.setup = setup

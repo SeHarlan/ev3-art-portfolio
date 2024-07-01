@@ -221,24 +221,46 @@ void main() {
   #define marginMax 0.875
 
   float leftPoint = marginMin;
-  float topPoint = marginMin * u_aspectRatio.x/u_aspectRatio.y;
+  float leftCenterPoint = (marginMin * 0.5 * u_aspectRatio.x/u_aspectRatio.y + marginMax) * 0.45;
+
+  float centerPoint = marginMin + marginMax * 0.5 ;
+  float centerRightPoint = 1.0 - marginMin * 0.5;
+
+
+  float topPoint = marginMin * 2. * u_aspectRatio.x/u_aspectRatio.y;
   float bottomPoint = 1.0 - marginMin * u_aspectRatio.x/u_aspectRatio.y;
+
+
   float rightPoint = marginMax;
+  float rightBottomPoint = bottomPoint;
+
+  bool topCenterLeftBlock = orgSt.x > leftPoint && orgSt.x <= centerPoint && orgSt.y <= topPoint;
+  bool topCenterBlock = orgSt.x > centerPoint && orgSt.x <= centerRightPoint && orgSt.y <= topPoint;
+  bool topCenterRightBlock = orgSt.x > centerRightPoint && orgSt.y <= topPoint;
+  bool topBlock = topCenterLeftBlock || topCenterBlock || topCenterRightBlock;
+
+  bool leftTopBlock = orgSt.x <= leftPoint && orgSt.y <= leftCenterPoint;
+  bool leftBottomBlock = orgSt.x <= leftPoint && orgSt.y > leftCenterPoint && orgSt.y <= bottomPoint;
+  bool leftBlock = leftTopBlock || leftBottomBlock;
 
 
-  bool topBlock = orgSt.x > leftPoint && orgSt.y <= topPoint;
-  bool rightBlock = orgSt.x > rightPoint && orgSt.y > topPoint;
-  bool leftBlock = orgSt.x <= leftPoint && orgSt.y <= bottomPoint;
+  bool rightTopBlock = orgSt.x > rightPoint && orgSt.y > topPoint && orgSt.y <= rightBottomPoint;
+  bool rightBottomBlock = orgSt.x > rightPoint && orgSt.y > rightBottomPoint;
+  bool rightBlock = rightTopBlock || rightBottomBlock;
+
   bool bottomBlock = orgSt.x <= rightPoint && orgSt.y > bottomPoint;
 
-  bool center = !topBlock && !leftBlock && !rightBlock && !bottomBlock;
+  bool center = !leftTopBlock && !rightTopBlock && !bottomBlock && !topCenterBlock && !topCenterLeftBlock && !topCenterRightBlock && !leftBottomBlock && !rightBottomBlock;
 
   bool blockOn = false;
   float blockOnRan = random((floor(u_time * 2.)/2.) * 10000.);
-
-  if(blockOnRan < 1./4.) blockOn = topBlock;
-  else if(blockOnRan < 1./2.) blockOn = rightBlock;
-  else if(blockOnRan < 3./4.) blockOn = leftBlock;
+  if(blockOnRan < 1./8.) blockOn = topCenterLeftBlock;
+  else if(blockOnRan < 2./8.) blockOn = topCenterBlock;
+  else if(blockOnRan < 3./8.) blockOn = topCenterRightBlock;
+  else if(blockOnRan < 4./8.) blockOn = leftTopBlock;
+  else if(blockOnRan < 5./8.) blockOn = leftBottomBlock;
+  else if(blockOnRan < 6./8.) blockOn = rightTopBlock;
+  else if(blockOnRan < 7./8.) blockOn = rightBottomBlock;
   else blockOn = bottomBlock;
 
   blockOn = blockOn && u_stage == 2;
@@ -274,7 +296,7 @@ void main() {
 
   //vignette effect
   if(center) {
-    float distFromCenter = distance(orgSt, vec2(0.5, 0.5));
+    float distFromCenter = distance(orgSt, vec2(0.5, 0.55));
     color.rgb *= 1.0-smoothstep(0.35, .65, distFromCenter);
   }
 
@@ -289,8 +311,9 @@ void main() {
     if(bottomBlock) stMult *= -1000.;
     if(rightBlock) stMult *= vec2(-2800., 2800.);
     if(leftBlock) stMult *= 2000.;
-    if(topBlock) stMult *= -2400.;
-   
+    if(topCenterLeftBlock) stMult *= -2400.;
+    if(topCenterBlock) stMult *= -2200.;
+    if(topCenterRightBlock) stMult *= -2600.;
 
     stMult *= u_resolution;
 
@@ -327,7 +350,9 @@ void main() {
 
 
     float offsetMult = 0.5;
-    if(topBlock) offsetMult = 1.;
+    if(topCenterLeftBlock) offsetMult = 1.;
+    if(topCenterBlock) offsetMult = 2.;
+    if(topCenterRightBlock) offsetMult = 3.;
 
     offset *= offsetMult;
 

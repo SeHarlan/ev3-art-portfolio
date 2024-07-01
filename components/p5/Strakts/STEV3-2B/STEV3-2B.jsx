@@ -98,11 +98,9 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         canvHeight = canvWidth / imgRatio;
       }
 
-      const minScale = 0.125;
-      const yBorder = canvHeight * minScale * 2;
-      const xBorder = canvWidth * minScale * 2;
-      canvHeight -= yBorder;
-      canvHeight += xBorder;
+      
+
+
 
       canvWidth = Math.floor(canvWidth / 2) * 2;
       canvHeight = Math.floor(canvHeight / 2) * 2;
@@ -221,7 +219,6 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         stage = 0;
         stageCounter = 0;
       }
-      // stage = 2
     }
 
     p5sketch.keyPressed = () => {
@@ -270,8 +267,8 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       const minScale = 0.125;
       const maxScale = 1 - minScale;
 
-      const topY = width * minScale;
-      const bottomY = height - width * minScale;
+      const topY = height * minScale + width * minScale * 0.5;
+      const bottomY = height * maxScale + width * minScale * 0.5;
 
       gridBuffer.noStroke();
 
@@ -282,11 +279,25 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       gridBuffer.image(img, 0, 0, width * minScale, width * maxScale);
       gridBuffer.pop();
 
-      //top
+      //top left
       gridBuffer.push();
       gridBuffer.translate(width, 0);
       gridBuffer.rotate(radians(90));
       gridBuffer.image(img, 0, 0, topY, width * maxScale);
+      gridBuffer.pop();
+
+      //top center
+      gridBuffer.push();
+      gridBuffer.translate(width + width * minScale + width * maxScale * 0.5, 0);
+      gridBuffer.rotate(radians(90));
+      gridBuffer.image(img, 0, 0, topY, width);
+      gridBuffer.pop();
+
+      //topRight
+      gridBuffer.push();
+      gridBuffer.translate(width * 2 - width * minScale * 0.5, 0);
+      gridBuffer.rotate(radians(90));
+      gridBuffer.image(img, 0, 0, topY, width);
       gridBuffer.pop();
 
       // right reflection
@@ -298,7 +309,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         0,
         0,
         width * minScale,
-        height - width * minScale
+        height * maxScale - width * minScale * 0.5
       );
       gridBuffer.pop();
 
@@ -310,14 +321,30 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       gridBuffer.image(
         img,
         width * minScale,
-        width * minScale,
+        width * minScale * 2,
         width * (maxScale - minScale),
-        height - width * (minScale * 2)
+        height * (maxScale - minScale)
       );
 
       gridBuffer.stroke("black");
       gridBuffer.strokeWeight(width * 0.015);
       gridBuffer.strokeCap(SQUARE);
+
+      //center line
+      gridBuffer.line(
+        width * minScale + width * maxScale * 0.5,
+        0,
+        width * minScale + width * maxScale * 0.5,
+        topY
+      );
+
+      //center right
+      gridBuffer.line(
+        width - width * minScale * 0.5,
+        0,
+        width - width * minScale * 0.5,
+        topY
+      );
 
       //top
       gridBuffer.line(width * minScale, topY, width, topY);
@@ -332,9 +359,12 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       gridBuffer.line(
         0,
         bottomY,
-        width * maxScale,
+        width, //* maxScale,
         bottomY
       );
+
+      // left center
+      gridBuffer.line(0, bottomY * 0.45, width * minScale, bottomY * 0.45);
 
     }
 
