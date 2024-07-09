@@ -14,6 +14,10 @@ const STEV3_2B = dynamic(() => import("../p5/Strakts/STEV3-2B/STEV3-2B"), {
   ssr: false,
 }) as any;
 
+const STEV3_4 = dynamic(() => import("../p5/Strakts/STEV3-4/STEV3-4"), {
+  ssr: false,
+}) as any;
+
 
 const contentOptions = ["sketch", "about"]
 
@@ -49,7 +53,7 @@ const STEV3_Window: FC = () => {
     {
       label: "Refresh",
       function: () => {
-        setSketchCounter(prev => prev + 1) //just needs to reset state for the component
+        setSketchCounter((prev) => prev + 1); //just needs to reset state for the component
       },
     },
     // {
@@ -61,12 +65,15 @@ const STEV3_Window: FC = () => {
     //   function: () => setMenuOpen(true)
     // },
     {
-      label: "A",
-      function: () => setActiveRemix("A")
+      label: "2-a",
+      function: () => setActiveRemix("A"),
     },
-    { label: "B", function: () => setActiveRemix("B") },
-
-  ]
+    { label: "2-b", function: () => setActiveRemix("B") },
+    {
+      label: "4",
+      function: () => setActiveRemix("4"),
+    },
+  ];
 
   const menuOptions = [
     {
@@ -97,13 +104,23 @@ const STEV3_Window: FC = () => {
             isActive={isActiveRef}
           />
         );
+      case "4":
+        return (
+          <STEV3_4
+            key="STEV3-4"
+            className={sketchCounter}
+            menuOpen={false}
+            seed={seed}
+            isActive={isActiveRef}
+          />
+        );
     }
   }, [activeRemix, sketchCounter, seed, isActiveRef])
 
 
   return (
     <Window windowKey={WINDOWS.STEV3} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
-      <MenuDropdown options={menuOptions} isOpen={menuOpen} setIsOpen={setMenuOpen} className="absolute top-0 left-0" />
+      {/* <MenuDropdown options={menuOptions} isOpen={menuOpen} setIsOpen={setMenuOpen} className="absolute top-0 left-0" /> */}
 
       <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>
         {content}
