@@ -49,15 +49,15 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
 
         document.documentElement.style.setProperty(
           "--rmx-bg-color",
-          "rgb(45, 35, 63)"
+          "rgb(2, 23, 50)"
         );
         document.documentElement.style.setProperty(
           "--rmx-color1",
-          "rgb(117,77,61)"
+          "rgb(195,64,59)"
         );
         document.documentElement.style.setProperty(
           "--rmx-color2",
-          "rgb(215,130,43)"
+          "rgb(113,162,205)"
         );
 
         fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);

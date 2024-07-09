@@ -347,8 +347,8 @@ void main() {
   }
 
 
-  vec3 bgTint = vec3(15./255., 30./255., 100./255.); //dark blue
-  // vec3 bgTint = vec3(87./255., 129./255., 158./255.); //sky blue
+  // vec3 bgTint = vec3(15./255., 30./255., 100./255.); //blue
+   vec3 bgTint = vec3(2./255., 23./255., 50./255.); //darkblue
   bool isDark = color.r < 0.1 && color.g < 0.1 && color.b < 0.1;
 
   if((!center || isDark) ) {
