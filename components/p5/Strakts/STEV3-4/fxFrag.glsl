@@ -222,7 +222,7 @@ void main() {
   float timeBlockOffset = floor(u_time * 10.);
 
   bool blockOn = false;
-  float blockOnRan = random(timeBlock);
+  float blockOnRan = random(floor(timeBlock*0.1));
 
   if(blockOnRan < 1./18.) blockOn = bottomBlock1;
   else if(blockOnRan < 2./18.) blockOn = bottomBlock2;
@@ -291,7 +291,8 @@ void main() {
   //bubbles
   float bubbleThresh = 0.55 + sin(u_centerTime * .1) * 0.12;
   float wValue = whirls(st);
-  bool useBubbles = center && wValue + random(st) * 0.05 > bubbleThresh;
+  bool useBubbleBlocks = blockOn; //&& random(posBlockFloor + u_centerTime * 0.00005) < 0.5;
+  bool useBubbles = (center  || useBubbleBlocks) && wValue + random(st) * 0.05 > bubbleThresh;
   if(useBubbles) {
 
     //  gl_FragColor = vec4(1.);
@@ -305,7 +306,7 @@ void main() {
 
     vec2 negPosSt = st * 5. + vec2((sin(u_centerTime * .1)) * 0.3, u_centerTime * -0.05);
 
-    float ranBuffer = random(st * u_imageResolution + fract(u_centerTime* 0.001)) * 0.15;
+    float ranBuffer = random(st * u_imageResolution + fract(u_centerTime* 0.001)) * 0.1;
     float negPosX = noiseNegPos(negPosSt + 50. + ranBuffer);
     float negPosY = noiseNegPos(negPosSt + 150. + ranBuffer);
 
@@ -315,10 +316,12 @@ void main() {
     st.x -= noise(noiseSt) * range * negPosX;
     st.y += noise(noiseSt+ 100.) * range * negPosY;
 
-    if(st.x < leftPoint) st.x = leftPoint;
-    if(st.x > rightPoint) st.x = rightPoint;
-    if(st.y < topPoint) st.y = topPoint;
-    if(st.y > bottomPoint) st.y = bottomPoint;
+    if(center) {
+      if(st.x < leftPoint) st.x = leftPoint;
+      if(st.x > rightPoint) st.x = rightPoint;
+      if(st.y < topPoint) st.y = topPoint;
+      if(st.y > bottomPoint) st.y = bottomPoint;
+    }
   }
 
   vec4 color = texture2D(u_texture, st);
@@ -347,8 +350,8 @@ void main() {
   }
 
 
-  // vec3 bgTint = vec3(15./255., 30./255., 100./255.); //blue
-   vec3 bgTint = vec3(2./255., 23./255., 50./255.); //darkblue
+  // vec3 bgTint = vec3(15./255., 20./255., 100./255.); //blue
+  vec3 bgTint = vec3(2./255., 23./255., 50./255.); //darkblue
   bool isDark = color.r < 0.1 && color.g < 0.1 && color.b < 0.1;
 
   if((!center || isDark) ) {
