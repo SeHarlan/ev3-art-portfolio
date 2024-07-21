@@ -18,6 +18,10 @@ const STEV3_4 = dynamic(() => import("../p5/Strakts/STEV3-4/STEV3-4"), {
   ssr: false,
 }) as any;
 
+const STEV3_1 = dynamic(() => import("../p5/Strakts/STEV3-1/STEV3-1"), {
+  ssr: false,
+}) as any;
+
 
 const contentOptions = ["sketch", "about"]
 
@@ -73,6 +77,10 @@ const STEV3_Window: FC = () => {
       label: "4",
       function: () => setActiveRemix("4"),
     },
+    {
+      label: "1",
+      function: () => setActiveRemix("1"),
+    }
   ];
 
   const menuOptions = [
@@ -108,6 +116,16 @@ const STEV3_Window: FC = () => {
         return (
           <STEV3_4
             key="STEV3-4"
+            className={sketchCounter}
+            menuOpen={false}
+            seed={seed}
+            isActive={isActiveRef}
+          />
+        );
+      case "1":
+        return (
+          <STEV3_1
+            key="STEV3-1"
             className={sketchCounter}
             menuOpen={false}
             seed={seed}
