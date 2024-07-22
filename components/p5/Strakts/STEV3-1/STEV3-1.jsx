@@ -163,13 +163,16 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       const goodFrameRate = checkFrameRate();
       if (!goodFrameRate) return;
 
+      const switchChance = stage == 0 ? 0.01 : 0.05;
+
       if (stage == 1) {
-        const abIndex = floor(timeCounter * 20) % blocks.length;
+        const abIndex = floor(timeCounter * 5) % blocks.length;
         const abIndex2 = (abIndex + blocks.length / 2) % blocks.length;
 
         activeBlock = blocks[abIndex];
         activeBlock2 = blocks[abIndex2];
-      } else if (random() < 0.05) {
+
+      } else if (random() < switchChance) {
         if (random() < 0.9) {
           activeBlock = blocks[floor(random() * blocks.length)];
         } else {
@@ -181,11 +184,6 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         } else {
           activeBlock2 = [-1, -1, -1, -1];
         }
-      }
-
-      if (stage == 0) {
-        activeBlock = [-1, -1, -1, -1];
-        activeBlock2 = [-1, -1, -1, -1];
       }
 
 

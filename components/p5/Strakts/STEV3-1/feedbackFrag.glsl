@@ -19,6 +19,8 @@ uniform float u_seed;
 uniform vec2 u_mouse;
 uniform vec2 u_aspectRatio;
 uniform int u_stage;
+uniform vec4 u_activeBlock;
+uniform vec4 u_activeBlock2;
 
 varying vec2 vTexCoord;
 
@@ -150,33 +152,29 @@ void main() {
 
   vec4 color = texture2D(u_texture, st);
 
-  bool useBlock = false;
-  float blockOnRan = random(timeBlock);
-
-  // if(blockOnRan < 1./48.) useBlock = topBlock1;
-  // else if(blockOnRan < 2./48.) useBlock = topBlock2;
-  // else if(blockOnRan < 3./48.) useBlock = topBlock3;
-  // else if(blockOnRan < 4./48.) useBlock = topBlock4;
-  // else if(blockOnRan < 5./48.) useBlock = topBlock5;
-  // else if(blockOnRan < 6./48.) useBlock = topBlock6;
-  // // else if(blockOnRan < 8./48.) useBlock = topBlock;
-  // else if(blockOnRan < 10./48.) useBlock = leftBlock;
-  // // else if(blockOnRan < 12./48.) useBlock = rightBlock;
+   bool blockOn = false;
+  
+  if(st.x > u_activeBlock.x && st.x < u_activeBlock.z && st.y > u_activeBlock.y && st.y < u_activeBlock.w) {
+    blockOn = true;
+  }
+  if(st.x > u_activeBlock2.x && st.x < u_activeBlock2.z && st.y > u_activeBlock2.y && st.y < u_activeBlock2.w) {
+    blockOn = true;
+  }
 
 
 
   float sections = map(random(centerTimeBlock), 0., 1., .02, .5) ; // .5- 0.02
   sections *= chunk / 10.;
+
+  bool useStagared = u_stage != 1 || random(u_centerTime) < 0.5;
  
-  if(center && noise(floor(posBlockFloor * sections) * 0.1 + u_centerTime*0.05) < 0.45) {
+  if((center || blockOn) && noise(floor(posBlockFloor * sections) * 0.1 + u_centerTime*0.05) < 0.45 && useStagared) {
 
     vec2 belowBlock = posBlockFloor + vec2(1.0, -1.0);
     vec4 belowCheck = texture2D(u_texture, belowBlock * blockSize);
-    float belowBrightness = (belowCheck.r + belowCheck.g + belowCheck.b) / 3.0;\
+    float belowBrightness = (belowCheck.r + belowCheck.g + belowCheck.b) / 3.0;
 
-    if(belowBrightness < 0.2) {
-      // posBlockFloor.y += 1.0;
-    } else if(belowBrightness < 0.5) {
+    if(belowBrightness >= 0.2 && belowBrightness < 0.5) {
       posBlockFloor.y += 1.0;
     } else if(belowBrightness < 0.8) {
       posBlockFloor.x += 1.0;
@@ -190,7 +188,7 @@ void main() {
     vec2 blockSt = (posBlockFloor + posBlockOffset) * blockSize;
     color = texture2D(u_texture, blockSt);
   } else {
-    if(random(posBlockFloor * 10. + u_time) < 0.1) {
+    if(random(posBlockFloor * 10. + u_centerTime) < 0.1) {
       color = orgColor;
     }
   }
@@ -200,7 +198,7 @@ void main() {
 
 
   gl_FragColor = color;
-  }
+}
 
 
 

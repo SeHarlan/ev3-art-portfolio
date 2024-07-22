@@ -307,7 +307,7 @@ void main() {
   }
 
 
-  bool use3dGlitch = u_stage == 3 || (blockOn && u_stage != 1);
+  bool use3dGlitch = u_stage == 3 || (blockOn && u_stage == 2);
 
     
   //ZAGGIN
@@ -336,7 +336,7 @@ void main() {
 
   bool isDark = color.r < 0.1 && color.g < 0.1 && color.b < 0.1;
 
-  bool useStage1Glitch = u_stage == 1 && random(u_time) < 0.85;
+  bool useStage1Glitch = u_stage == 1 && random(u_time) < 0.8;
 
 
   if (!center && !useStage1Glitch) {
@@ -345,7 +345,7 @@ void main() {
   }
 
   if(!center && useStage1Glitch) {
-    float clipT = map(sin((st.x-st.y) * 10. + u_time * 10.), -1., 1., 0.4, 0.9);
+    float clipT = map(sin((st.x-st.y) * 10. + u_time * 40.), -1., 1., 0.4, 0.9);
 
     if(blockOn) {
       clipT = random(posBlockFloor + u_time);
