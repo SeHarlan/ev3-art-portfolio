@@ -105,12 +105,6 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         canvHeight = canvWidth / imgRatio;
       }
 
-      const minScale = 0.125;
-      const yBorder = canvHeight * minScale * 2;
-      const xBorder = canvWidth * minScale * 2;
-      canvHeight -= yBorder;
-      canvHeight += xBorder;
-
       canvWidth = Math.floor(canvWidth / 2) * 2;
       canvHeight = Math.floor(canvHeight / 2) * 2;
 
