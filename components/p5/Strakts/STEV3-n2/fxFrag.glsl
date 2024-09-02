@@ -154,10 +154,10 @@ float whirls(vec2 _st) {
 
   float noiseMod = 2. + (sin(u_centerTime*.2)*.5);
 
-  float moveMult = u_centerTime * 0.05;
+  float moveMult = u_centerTime * .25 + sin(u_centerTime * .25) * .1;
 
-  st.x -= sin(moveMult * 2.) * 0.08;
-  st.y -= cos(moveMult) * 0.04;
+  st.x -= sin(moveMult * 2.) * 0.06;
+  st.y -= cos(moveMult) * 0.02;
   st += vec2(-moveMult * .05, moveMult * .05);
 
   st += noise(st*3.) * noiseMod;
@@ -175,7 +175,7 @@ void main() {
   vec2 st = vTexCoord;
   vec2 orgSt = st;
 
-  float chunk = 10.0;
+  float chunk = 40.0;
   vec2 blockSize = vec2(chunk / u_resolution.x, chunk / u_resolution.y);
 
   vec2 posBlockFloor = floor(st / blockSize) ;
@@ -195,72 +195,86 @@ void main() {
   #define marginMin 0.1
   #define marginMax 0.9
 
-  float leftPoint = marginMin * u_aspectRatio.y/u_aspectRatio.x;
+  float leftPoint = marginMin;
   float topPoint = marginMin;
-  float bottomPoint = marginMax - marginMin;
-  float rightPoint = 1.0 - (marginMin * u_aspectRatio.y/u_aspectRatio.x);
+  float bottomPoint = marginMax;
+  float rightPoint = marginMax;
+
+  
+  bool topBlock = st.y <= topPoint && st.x > leftPoint && st.x <= rightPoint;
+  bool leftBlock = st.x <= leftPoint && st.y <= bottomPoint && st.y > topPoint;
+  bool rightBlock = st.x > rightPoint && st.y > topPoint && st.y <= bottomPoint;
+  bool bottomBlock = st.y > bottomPoint && st.x <= rightPoint;
+  
+  bool tlBlock = st.x <= leftPoint && st.y <= topPoint;
+  bool trBlock = st.x > rightPoint && st.y <= topPoint;
+  bool brBlock = st.x > rightPoint && st.y > bottomPoint;
 
 
-  bool topBlock = orgSt.y <= topPoint && orgSt.x <= rightPoint;
-  bool leftBlock = orgSt.x <= leftPoint && orgSt.y > topPoint;
-  bool rightBlock = orgSt.x > rightPoint && orgSt.y <= bottomPoint;
-  bool bottomBlock = orgSt.y > bottomPoint && orgSt.x > leftPoint;
-
-  float bottomW = rightPoint / 6.;
-
-  bool bottomBlock1 = bottomBlock && orgSt.x <= bottomW * 2.;
-  bool bottomBlock2 = bottomBlock && orgSt.x > bottomW * 2. && orgSt.x <= bottomW * 3.;
-  bool bottomBlock3 = bottomBlock && orgSt.x > bottomW * 3. && orgSt.x <= bottomW * 4.;
-  bool bottomBlock4 = bottomBlock && orgSt.x > bottomW * 4. && orgSt.x <= bottomW * 5.;
-  bool bottomBlock5 = bottomBlock && orgSt.x > bottomW * 5. && orgSt.x <= bottomW * 6.;
-  bool bottomBlock6 = bottomBlock && orgSt.x > bottomW * 6.;
-
-  bool center = !leftBlock && !rightBlock && !bottomBlock && !topBlock;
+  bool center = !leftBlock && !rightBlock && !bottomBlock && !topBlock && !tlBlock && !trBlock && !brBlock;
 
   float timeMult = 1.;
   float timeBlock = floor(u_time * timeMult);
   float timeBlockOffset = floor(u_time * 10.);
 
-  bool blockOn = false;
-  float blockOnRan = random(floor(timeBlock*0.1));
+  bool blockOn = false; 
 
-  if(blockOnRan < 1./18.) blockOn = bottomBlock1;
-  else if(blockOnRan < 2./18.) blockOn = bottomBlock2;
-  else if(blockOnRan < 3./18.) blockOn = bottomBlock3;
-  else if(blockOnRan < 4./18.) blockOn = bottomBlock4;
-  else if(blockOnRan < 5./18.) blockOn = bottomBlock5;
-  else if(blockOnRan < 6./18.) blockOn = bottomBlock6;
-  else if(blockOnRan < 8./18.) blockOn = topBlock;
-  else if(blockOnRan < 10./18.) blockOn = leftBlock;
-  else if(blockOnRan < 12./18.) blockOn = rightBlock;
+  if(u_stage ==2) {
+    //always on
+    float blockOnRan = random((floor(u_time * 2.)/2.) * 10000.);
+
+    if(blockOnRan < 1./8.) blockOn = tlBlock;
+    else if(blockOnRan < 3./8.) blockOn = trBlock;
+    else if(blockOnRan < 4./8.) blockOn = brBlock;
+    else if(blockOnRan < 5./8.) blockOn = topBlock;
+    else if(blockOnRan < 6./8.) blockOn = leftBlock ;
+    else if(blockOnRan < 7./8.) blockOn = rightBlock;
+    else blockOn = bottomBlock;
+  } else {
+    //one third
+    float blockOnRan = random(floor(u_centerTime * .1));
+    if(blockOnRan < 1./14.) blockOn = tlBlock;
+    else if(blockOnRan < 2./14.) blockOn = trBlock;
+    else if(blockOnRan < 3./14.) blockOn = brBlock;
+    else if(blockOnRan < 4./14.) blockOn = topBlock;
+    else if(blockOnRan < 5./14.) blockOn = leftBlock;
+    else if(blockOnRan < 6./14.) blockOn = rightBlock;
+    else if (blockOnRan < 7./14.) blockOn = bottomBlock;
+  }
 
   bool useSplit = u_stage == 3 || (u_stage == 2 && blockOn);
 
-  if(useSplit && random(st * u_imageResolution + fract(.5+timeBlockOffset* 1.5)) < 0.92) {
+  bool splitHappened = false;
+
+  if(useSplit && random(st * u_imageResolution * 5. + fract(.5+timeBlockOffset* 1.5)) < 0.93) {
     float centerHor = 0.42;
     float centerVer = 0.4;
     float centerDiagTR = .4;
     float centerDiagTL = .49;
-    float timeFactor = fract(u_time * timeMult) * (0.2 + random(timeBlockOffset) * 0.075 * randomNegPos(vec2(timeBlockOffset) + 100.));
+    float timeFactor = fract(u_time * timeMult) * (0.2 + random(timeBlockOffset) * 0.075 * randomNegPos(vec2(timeBlockOffset) + 100.)) * 0.75;
 
 
     float timeBlockRan = random(timeBlock);
 
-    if(timeBlockRan < random(timeBlock* 200.)) {
+    
+
+    if(timeBlockRan < random(timeBlock + 200.)) {
       if (st.x < centerHor) {
         st.x = clamp(st.x + timeFactor, marginMin, centerHor);
       } else {
         st.x = clamp(st.x - timeFactor, centerHor, marginMax);
       }
+      splitHappened = true;
     } 
-    if(timeBlockRan <  random(timeBlock* 300.)) {
+    if(timeBlockRan <  random(timeBlock + 300.)) {
       if(st.y < centerVer) {
         st.y = clamp(st.y +  timeFactor, marginMin, centerVer);
       } else {
         st.y = clamp(st.y - timeFactor, centerVer, marginMax);
       }
+      splitHappened = true;
     } 
-    if (timeBlockRan < random(timeBlock* 400.)) {
+    if (timeBlockRan < random(timeBlock + 400.)) {
       float distanceToDiagTR = (orgSt.y + orgSt.x) * 0.5;
 
       if (distanceToDiagTR < centerDiagTR) {
@@ -270,9 +284,10 @@ void main() {
           st.x = clamp(st.x - timeFactor * 0.5, abs(centerDiagTR * 2. - (orgSt.y - orgSt.x)) * 0.5, 1.);
           st.y = clamp(st.y - timeFactor * 0.5, abs(centerDiagTR * 2. - (orgSt.x - orgSt.y)) * 0.5, 1.);
       }
+      splitHappened = true;
     }
 
-    if (timeBlockRan < random(timeBlock* 500.)) {
+    if (timeBlockRan < random(timeBlock + 500.)) {
 
       float distanceToDiagTL = .5 + (orgSt.y - orgSt.x);
 
@@ -284,27 +299,30 @@ void main() {
         st.x = clamp(st.x + timeFactor * 0.5 , 0., orgSt.y * centerDiagTL + orgSt.x * 0.5);
         st.y = clamp(st.y - timeFactor * 0.5, orgSt.x * centerDiagTL + orgSt.y * 0.5, 1.); 
       }
+      splitHappened = true;
     }  
+
+    if(!splitHappened && !center && random(posBlockFloor + u_time + 0.) < 0.5) {
+      st.x += random(posBlockFloor + u_time + 200.) * 0.05;
+      st.y -= random(posBlockFloor + u_time +100.) * 0.05;
+    }
   }
 
 
   //bubbles
-  float bubbleThresh = 0.55 + sin(u_centerTime * .1) * 0.12;
+  float bubbleThresh = 0.5 + sin(PI * u_seed + u_centerTime * .15) * 0.15;
   float wValue = whirls(st);
-  bool useBubbleBlocks = blockOn; //&& random(posBlockFloor + u_centerTime * 0.00005) < 0.5;
+  bool useBubbleBlocks = blockOn;
   bool useBubbles = (center  || useBubbleBlocks) && wValue + random(st) * 0.05 > bubbleThresh;
-  if(useBubbles) {
 
-    //  gl_FragColor = vec4(1.);
-    // return;
-    
-    vec2 noiseMult = vec2(50. + sin(u_centerTime*.01) * 25.);
+  if(useBubbles) {    
+    vec2 noiseMult = vec2(50. + sin(PI * u_seed + u_centerTime*.01) * 25.);
  
     vec2 noiseSt = st * noiseMult + vec2(u_centerTime* 0.5, -u_centerTime * 0.5);
 
 
 
-    vec2 negPosSt = st * 5. + vec2((sin(u_centerTime * .1)) * 0.3, u_centerTime * -0.05);
+    vec2 negPosSt = st * 5. + vec2((sin(PI * u_seed + u_centerTime * .1)) * 0.3, u_centerTime * -0.05);
 
     float ranBuffer = random(st * u_imageResolution + fract(u_centerTime* 0.001)) * 0.1;
     float negPosX = noiseNegPos(negPosSt + 50. + ranBuffer);
@@ -326,10 +344,25 @@ void main() {
 
   vec4 color = texture2D(u_texture, st);
 
- 
+
+  topBlock = st.y <= topPoint && st.x > leftPoint && st.x <= rightPoint;
+  leftBlock = st.x <= leftPoint && st.y <= bottomPoint && st.y > topPoint;
+  rightBlock = st.x > rightPoint && st.y > topPoint && st.y <= bottomPoint;
+  bottomBlock = st.y > bottomPoint && st.x <= rightPoint;
+  
+  tlBlock = st.x <= leftPoint && st.y <= topPoint;
+  trBlock = st.x > rightPoint && st.y <= topPoint;
+  brBlock = st.x > rightPoint && st.y > bottomPoint;
 
 
-  if (!center && u_stage != 1) {
+  center = !leftBlock && !rightBlock && !bottomBlock && !topBlock && !tlBlock && !trBlock && !brBlock;
+
+
+
+  bool flicker = u_stage == 1 && random(u_time) < 0.75 + sin(u_time * 3.) * 0.1;
+
+
+  if (!center && !flicker) {
     // float gray = dot(color.rgb, vec3(0.333, 0.333, 0.333));
     // color.rgb = vec3(floor(gray * 2.0) / 2.0);
 
@@ -337,11 +370,12 @@ void main() {
     color = edgeDetection(color, st, edgeInsensity);
   }
 
-  if (u_stage==1 && !center) {
 
-    float centerDist = distance(st, vec2(0.42, 0.4)) + noise(st * vec2(30., 10.) +u_time * 0.5) * 0.3;
+
+  float clipRan = random(u_time * 20.) * 0.5;
+  if (u_stage==1 && !center && flicker) {
+    float centerDist = distance(st, vec2(0.42, 0.4)) + noise(st * vec2(50., 10.) +u_time * 0.5) * 0.3;
     // float centerDist = (1.0-orgSt.y + orgSt.x) * 0.5;
-    float clipRan = random(u_time * 2.) * 0.5;
 
     float clipT = map(abs(sin(u_time * 4. + centerDist * 10. + clipRan)), 0., 1., 0.4, .9);
     color.r = step(clipT, color.r);
@@ -350,42 +384,66 @@ void main() {
   }
 
 
-  // vec3 bgTint = vec3(15./255., 20./255., 100./255.); //blue
-  vec3 bgTint = vec3(2./255., 23./255., 50./255.); //darkblue
+  vec3 bgTint = vec3(35./255., 40./255., 70./255.); //blue
+  // vec3 bgTint = vec3(18./255., 20./255., 70./255.); //darkblue
+
+  vec3 fxTint = vec3(75./255., 75./255., 90./255.);
   bool isDark = color.r < 0.1 && color.g < 0.1 && color.b < 0.1;
 
   if((!center || isDark) ) {
-
-    vec2 stMult = vec2(0.0005) * 2000.;
-    stMult *= u_resolution;
-
     //static
-    color.rgb += (random(stMult * st + fract(u_time * u_resolution.x * 0.0000009)) * .5) - 0.25;
+    vec2 stMult = vec2(.99998, 1.);
+    stMult *= u_resolution;
+    float range = st.y * .25 + 0.3;
+    color.rgb += map(random(stMult * st + fract(u_time * u_resolution.x * 0.0000008)), 0., 1., -range, range);
 
     // tint
-    float tintAmount = .3 + (1.-st.y) * 0.15;
+    float tintAmount = .4 + (st.y + sin(u_centerTime * 0.5) * 0.5) * 0.15; 
 
-    if(u_stage == 1) tintAmount*=.35;
+    if(u_stage == 1 && flicker) tintAmount *= .5;
 
     color.rgb = mix(color.rgb, bgTint, tintAmount);
+
+    //SHINY stage 3 //electric
+    if(u_stage == 3 || (u_stage == 2 && blockOn)) {
+      float centerDist = distance(st, vec2(0.5, 0.5)) + noise(st * vec2(3., 10.) +u_time * 10.5) * 0.3;
+      float clipT = map(abs(sin(u_time * 4. - centerDist * 20.)), 0., 1., 0.2, .9);
+      color.rgb = step(clipT, color.rgb);
+
+
+
+      color.rgb = mix(color.rgb, fxTint, .38);
+
+    }
+
+    
+
   } 
 
-
-  if(center) {
+  bool alternateStatic = u_stage == 3 || blockOn || (u_stage == 0);
+  if(center || alternateStatic) {
     float staticMult = 0.15;
-    float stMult = 10.1 * u_resolution.x * 0.001;
-    color.r += (random((st + fract(u_centerTime)) * stMult) * staticMult) - staticMult * .5;
-    color.g += (random((st + fract(u_centerTime)) * stMult + 100.) * staticMult)  - staticMult * .5;
-    color.b += (random((st + fract(u_centerTime)) * stMult + 200.) * staticMult)  - staticMult * .5;
+    vec2 stMult = vec2(.1, -0.1);
+    stMult *= u_resolution;
 
-    color.rgb *= 1.15;
+    color.r += (random((st - fract(u_centerTime * u_resolution.x * 0.0000005)) * stMult) * staticMult) - staticMult * .5;
+    color.g += (random((st - fract(u_centerTime * u_resolution.x * 0.0000005)) * stMult + 100.) * staticMult)  - staticMult * .5;
+    color.b += (random((st - fract(u_centerTime * u_resolution.x * 0.0000005)) * stMult + 200.) * staticMult)  - staticMult * .5;
+
+    color.rgb *= 1.05;
   } 
+
+  if(center && u_stage == 1 && flicker) {
+    vec4 edg = edgeDetection(color, st, 0.5) * .5;
+    color = max(edg, color);
+  }
+
 
   //vignette effect
-  if(center) {  
-    float distFromCenter = distance(orgSt, vec2(0.5, 0.46));
-    color.rgb *= 1.0-smoothstep(0.3, .65, distFromCenter);
-  } 
+  if(center && !isDark) {
+    float distFromCenter = distance(orgSt, vec2(0.5, 0.5));
+    color.rgb *= 1.0-smoothstep(0.35, .7, distFromCenter);
+  }
 
   gl_FragColor = color;
 }

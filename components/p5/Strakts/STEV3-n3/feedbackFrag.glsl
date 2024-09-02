@@ -106,17 +106,17 @@ void main() {
 
   vec4 orgColor = texture2D(u_originalImage, orgSt);
 
-  if (u_time < .25) {
+  if (u_time < .1) {
     gl_FragColor = orgColor;
     return;
   }
   float timeBlock = floor(u_time * .3);
   float timeFract = fract(u_time * .3);
 
-  float centerTimeBlock = floor(u_centerTime * .1);
+  float centerTimeBlock = floor(u_centerTime * .05);
 
   //1 - 10
-  float chunk = 1. + 2. * floor((0.5 + sin(PI * 1.33 + u_centerTime * .1) * 0.5) * 6.);
+  float chunk = 1. + 2. * floor((0.5 + sin(PI * u_seed + u_centerTime * .075) * 0.5) * 6.);
   vec2 blockSize = vec2(chunk / u_resolution.x, chunk / u_resolution.y);
 
   vec2 posBlockFloor = floor(st / blockSize) ;
@@ -133,19 +133,10 @@ void main() {
   float bottomPoint = marginMax;
   float rightPoint = marginMax;
 
-  bool topBlock = orgSt.y <= topPoint && orgSt.x <= rightPoint;
-  bool leftBlock = orgSt.x <= leftPoint && orgSt.y > topPoint;
-  bool rightBlock = orgSt.x > rightPoint && orgSt.y <= bottomPoint;
-  bool bottomBlock = orgSt.y > bottomPoint && orgSt.x > leftPoint;
-
-  float topW = 1. / 6.;
-
-  bool topBlock1 = topBlock && orgSt.x <= topW * 2.;
-  bool topBlock2 = topBlock && orgSt.x > topW * 2. && orgSt.x <= topW * 3.;
-  bool topBlock3 = topBlock && orgSt.x > topW * 3. && orgSt.x <= topW * 4.;
-  bool topBlock4 = topBlock && orgSt.x > topW * 4. && orgSt.x <= topW * 5.;
-  bool topBlock5 = topBlock && orgSt.x > topW * 5. && orgSt.x <= topW * 6.;
-  bool topBlock6 = topBlock && orgSt.x > topW * 6.;
+  bool topBlock = orgSt.y <= topPoint;
+  bool leftBlock = orgSt.x <= leftPoint;
+  bool rightBlock = orgSt.x > rightPoint;
+  bool bottomBlock = orgSt.y > bottomPoint;
 
   bool center = !leftBlock && !rightBlock && !bottomBlock && !topBlock;
 
@@ -168,7 +159,7 @@ void main() {
 
   bool useStagared = u_stage != 1 || random(u_centerTime) < 0.5;
  
-  if((center || blockOn) && noise(floor(posBlockFloor * sections) * 0.1 + u_centerTime*0.05) < 0.45 && useStagared) {
+  if((center || blockOn) && noise(floor(posBlockFloor * sections) * 0.1 + PI * u_seed + u_centerTime*0.1) < 0.475 && useStagared) {
 
     vec2 belowBlock = posBlockFloor + vec2(1.0, -1.0);
     vec4 belowCheck = texture2D(u_texture, belowBlock * blockSize);

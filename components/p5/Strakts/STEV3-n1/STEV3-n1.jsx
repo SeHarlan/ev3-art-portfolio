@@ -9,7 +9,7 @@ import feedbackFrag from "./feedbackFrag.glsl";
 
 p5.prototype.loadImage = loadLargeImage;
 
-const CSS_RMX_PREFIX = "STEV3-2-"
+const CSS_RMX_PREFIX = "STEV3-1-"
 
 const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
   const containerRef = useRef(null);

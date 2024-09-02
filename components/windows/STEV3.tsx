@@ -6,7 +6,11 @@ import clsx from "clsx";
 import Link from "next/link";
 import MenuDropdown from "../MenuDropdown";
 
-const STEV3_4 = dynamic(() => import("../p5/Strakts/STEV3-4/STEV3-4"), {
+const STEV3_3 = dynamic(() => import("../p5/Strakts/STEV3-n3/STEV3-n3"), {
+  ssr: false,
+}) as any;
+
+const STEV3_2 = dynamic(() => import("../p5/Strakts/STEV3-n2/STEV3-n2"), {
   ssr: false,
 }) as any;
 
@@ -22,7 +26,7 @@ const STEV3_Window: FC = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeContent, setActiveContent] = useState(0)
   const [sketchCounter, setSketchCounter] = useState(1)
-  const [activeRemix, setActiveRemix] = useState("A")
+  const [activeRemix, setActiveRemix] = useState("1")
 
   const { activeWindow } = useWindowsContext()
   const isActiveRef = useRef(false)
@@ -32,8 +36,8 @@ const STEV3_Window: FC = () => {
   }, [activeWindow])
 
   const initSize = {
-    h: 900,
-    w: 700,
+    h: 1000,
+    w: 619,
   }
   //  const initSize = {
   //    h: 893,
@@ -41,7 +45,7 @@ const STEV3_Window: FC = () => {
   //  };
   const initPos = {
     x: 160,
-    y: 30
+    y: 0
   }
 
 
@@ -61,33 +65,42 @@ const STEV3_Window: FC = () => {
     //   function: () => setMenuOpen(true)
     // },
     {
-      label: "2-a",
-      function: () => setActiveRemix("A"),
-    },
-    { label: "2-b", function: () => setActiveRemix("B") },
-    {
-      label: "4",
-      function: () => setActiveRemix("4"),
-    },
-    {
       label: "1",
       function: () => setActiveRemix("1"),
-    }
-  ];
-
-  const menuOptions = [
+    },
     {
-      label: "st2",
-      onClick: () => setActiveRemix("2"),
+      label: "2",
+      function: () => setActiveRemix("2"),
+    },
+    {
+      label: "3",
+      function: () => setActiveRemix("3"),
     },
   ];
+
+  // const menuOptions = [
+  //   {
+  //     label: "st2",
+  //     onClick: () => setActiveRemix("2"),
+  //   },
+  // ];
 
   const content = useMemo(() => { 
     switch (activeRemix) {
-      case "4":
+      case "3":
         return (
-          <STEV3_4
-            key="STEV3-4"
+          <STEV3_3
+            key="STEV3-3"
+            className={sketchCounter}
+            menuOpen={false}
+            seed={seed}
+            isActive={isActiveRef}
+          />
+        );
+      case "2":
+        return (
+          <STEV3_2
+            key="STEV3-2"
             className={sketchCounter}
             menuOpen={false}
             seed={seed}

@@ -5,7 +5,6 @@ const P5Wrapper = dynamic(() => import('../../P5Wrapper'), { ssr: false });
 import { bindMethods, loadLargeImage } from "../../utils";
 import vertex from "../../vertex.glsl";
 import fxFrag from "./fxFrag.glsl";
-import feedbackFrag from "./feedbackFrag.glsl";
 
 p5.prototype.loadImage = loadLargeImage;
 
@@ -19,12 +18,12 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     if (typeof window === "undefined") return;
     if (!containerRef.current) return;
 
-    const methodsToBind = ['createCanvas', 'createGraphics', 'colorMode', 'frameRate', 'random', 'randomSeed', 'noiseSeed', 'image', 'pixelDensity', 'floor'];
-    const { createCanvas, createGraphics, colorMode, frameRate, random, randomSeed, noiseSeed, image, pixelDensity, floor } = bindMethods(p5sketch, methodsToBind);
+    const methodsToBind = ['createCanvas', 'createGraphics', 'colorMode', 'frameRate', 'random', 'randomSeed', 'noiseSeed', 'image', 'pixelDensity'];
+    const { createCanvas, createGraphics, colorMode, frameRate, random, randomSeed, noiseSeed, image, pixelDensity } = bindMethods(p5sketch, methodsToBind);
     //p5 vars
     let { HSL, WEBGL } = p5sketch;
     const EV3binary = '01000101 01010110 00110011'
-    const imageUrl = "e1.png";
+    const imageUrl = "e4.png";
 
     let FR = 30;
     const checkInterval = FR;
@@ -37,37 +36,31 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     let centerCounter = 0;
     let stageCounter = 0;
 
-    let blocks = [];
-    let activeBlock = [-1, -1, -1, -1];
-    let activeBlock2 = [-1, -1, -1, -1];
-
-
     let seed, img;
     let fxShader, feedbackShader;
     let currentBuffer, previousBuffer, fxBuffer, gridBuffer, textBuffer;
     let clearGlitch = false;
     let font;
-
     const margin = 0.1;
+    let imgRatio;
 
     function preload() {
       try {
 
         document.documentElement.style.setProperty(
           "--rmx-bg-color",
-          "rgb(30, 20, 40)"
+          "rgb(0, 0, 0)"
         );
         document.documentElement.style.setProperty(
           "--rmx-color1",
-          "rgb(255,254,211)"
+          "rgb(195,64,59)"
         );
         document.documentElement.style.setProperty(
           "--rmx-color2",
-          "rgb(255, 165, 220)"
+          "rgb(113,162,205)"
         );
 
         fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
-        feedbackShader = new p5.Shader(p5sketch._renderer, vertex, feedbackFrag);
         img = p5sketch.loadImage(imageUrl)
         font = '"Kode Mono", monospace'
 
@@ -157,32 +150,8 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       const goodFrameRate = checkFrameRate();
       if (!goodFrameRate) return;
 
-      const switchChance = stage == 0 ? 0.01 : 0.05;
-
-      if (stage == 1) {
-        const abIndex = floor(timeCounter * 5) % blocks.length;
-        const abIndex2 = (abIndex + blocks.length / 2) % blocks.length;
-
-        activeBlock = blocks[abIndex];
-        activeBlock2 = blocks[abIndex2];
-
-      } else if (random() < switchChance) {
-        if (random() < 0.9) {
-          activeBlock = blocks[floor(random() * blocks.length)];
-        } else {
-          activeBlock = [-1, -1, -1, -1];
-        }
-
-        if (random() < 0.9) {
-          activeBlock2 = blocks[floor(random() * blocks.length)];
-        } else {
-          activeBlock2 = [-1, -1, -1, -1];
-        }
-      }
-
-
-      [fxShader, feedbackShader].forEach((shdr) => {
-        shdr.setUniform("u_texture", currentBuffer);
+      [fxShader].forEach((shdr) => {
+        shdr.setUniform("u_texture", gridBuffer);
         shdr.setUniform("u_originalImage", gridBuffer);
         shdr.setUniform("u_resolution", [width, height]);
         shdr.setUniform("u_imageResolution", [img.width, img.height]);
@@ -193,22 +162,13 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         shdr.setUniform("u_clear", clearGlitch);
         shdr.setUniform("u_aspectRatio", aspectRatio);
         shdr.setUniform("u_stage", stage);
-        shdr.setUniform("u_activeBlock", activeBlock);
-        shdr.setUniform("u_activeBlock2", activeBlock2);
       });
-
-      previousBuffer.shader(feedbackShader);
-      previousBuffer.rect(-width / 2, -height / 2, width, height);
 
       // Display the result on the main canvas
       fxBuffer.shader(fxShader);
       fxBuffer.rect(-width / 2, -height / 2, width, height);
 
       image(fxBuffer, 0, 0, width, height);
-
-      // Swap buffers
-      currentBuffer.image(previousBuffer, -width / 2, -height / 2, width, height);
-      previousBuffer.clear();
 
       timeCounter += 1 / FR;
       stageCounter += 1;
@@ -217,16 +177,20 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         centerCounter += 1 / FR;
       }
 
-      const switchStage = random() < (stageCounter * 0.00003) % 1;
+      const switchStage = random() < (stageCounter * 0.00005) % 1;
       if (switchStage) {
         switch (stage) {
+          case 2:
+            stage = 0;
+            break;
           case 0:
             const ran = random();
-            if (ran < 0.66) stage = 2;
+            if (ran < 0.55) stage = 2;
             else stage = 1;
+            stageCounter *= 0.8;
             break;
           case 1:
-            if (random() < 0.5) {
+            if (random() < 0.45) {
               stage = 3;
               stageCounter = 0;
               break;
@@ -238,11 +202,12 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
             break;
         }
       }
+
       if (timeCounter < 1.5) {
         stage = 1;
-      } else if (timeCounter < 3) {
+      } else if (timeCounter < 4) {
         stage = 3;
-      } else if (timeCounter < 5) {
+      } else if (timeCounter < 6) {
         stage = 0;
         stageCounter = 0;
       }
@@ -258,13 +223,13 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     }
 
     function resetThings() {
-      const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
-      if (resetText) resetText.style.display = "block";
+      // const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
+      // if (resetText) resetText.style.display = "block";
 
-      const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
-      if (loadingBorder) loadingBorder.style.display = "block";
+      // const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
+      // if (loadingBorder) loadingBorder.style.display = "block";
 
-      setLowframeRate(true);
+      // setLowframeRate(true);
     }
 
     function checkFrameRate() {
@@ -286,6 +251,8 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     }
 
 
+    
+
     function makeGridImage() {
       const { mouseX, mouseY, width, height, radians, SQUARE } = p5sketch;
       gridBuffer.noStroke();
@@ -295,72 +262,66 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
 
       gridBuffer.image(img, lilW, lilH, width - lilW * 2, height - lilH * 2);
 
-      for (let x = 0; x < width; x += lilW) {
-        const y = 0;
-        gridBuffer.image(img, x, y, lilW, lilH);
-      }
+      //top right
+      gridBuffer.image(img, width - lilW, 0, lilW, lilH*1.5);
 
-      for (let y = lilH; y < height; y += lilH) {
-        const x = 0;
-        gridBuffer.image(img, x, y, lilW, lilH);
-      }
+      //bottom left
+      // gridBuffer.image(img, 0, height - lilH, lilW, lilH);
 
-      for (let x = width - lilW; x > 0; x -= lilW) {
-        const y = height - lilH;
-        gridBuffer.image(img, x, y, lilW, lilH);
-      }
+      // top left
+      gridBuffer.image(img, 0, -lilH, lilW, lilH*2);
 
-      for (let y = height - lilH; y > 0; y -= lilH) {
-        const x = width - lilW;
-        gridBuffer.image(img, x, y, lilW, lilH);
-      }
+      //br
+      gridBuffer.image(img, width - lilW, height - lilH * 2, lilW, lilH * 2);
+
+      //top
+      gridBuffer.push();
+      gridBuffer.translate(width - lilW, 0);
+      gridBuffer.rotate(radians(90));
+      gridBuffer.image(img, 0, 0, lilH, width - lilW * 2);
+      gridBuffer.pop();
+
+      //bottom
+      gridBuffer.push();
+      gridBuffer.translate(0, height);
+      gridBuffer.rotate(radians(270));
+      gridBuffer.image(img, 0, 0, lilH, width - lilW);
+      gridBuffer.pop();
+
+      //left
+      gridBuffer.push();
+      gridBuffer.image(img, 0, lilH, lilW, height - lilH * 2);
+      gridBuffer.pop();
+
+      //right
+      gridBuffer.push();
+      gridBuffer.translate(width, height - lilH);
+      gridBuffer.rotate(radians(180));
+      gridBuffer.image(img, 0, 0, lilW, height - lilH * 2);
+      gridBuffer.pop();
 
       gridBuffer.stroke("black");
       gridBuffer.strokeWeight(width * 0.01);
       gridBuffer.strokeCap(SQUARE);
 
-      gridBuffer.line(lilW, lilH, lilW, height - lilH);
-      gridBuffer.line(lilW, lilH, width - lilW, lilH);
-      gridBuffer.line(width - lilW, lilH, width - lilW, height - lilH);
-      gridBuffer.line(lilW, height - lilH, width - lilW, height - lilH);
+      //main borders
+      gridBuffer.line(lilW, 0, lilW, height - lilH);
+      gridBuffer.line(lilW, lilH, width, lilH);
+      gridBuffer.line(width - lilW, lilH, width - lilW, height); //right
+      gridBuffer.line(0, height - lilH, width - lilW, height - lilH); //bottom
 
-      for (let x = lilW; x < width; x += lilW) {
-        gridBuffer.line(x, 0, x, lilH);
-        gridBuffer.line(x, height - lilH, x, height);
-      }
+      //top right
+      gridBuffer.line(width - lilW, 0, width - lilW, lilH);
 
-      for (let y = lilH; y < height; y += lilH) {
-        gridBuffer.line(0, y, lilW, y);
-        gridBuffer.line(width - lilW, y, width, y);
-      }
+      // bottom left
+      // gridBuffer.line(lilW, height - lilH, lilW, height);
 
-      blocks = [];
-      for (let y = 0; y < height - lilH; y += lilH) {
-        blocks.push([0, y / height, lilW / width, (y + lilH) / height]);
-      }
-      for (let x = lilW; x < width - lilW * 2; x += lilW) {
-        blocks.push([
-          x / width,
-          (height - lilH) / height,
-          (x + lilW) / width,
-          1,
-        ]);
-      }
-      for (let y = height - lilH; y > lilH; y -= lilH) {
-        blocks.push([
-          (width - lilW) / width,
-          y / height,
-          1,
-          (y + lilH) / height,
-        ]);
-      }
-      for (let x = width - lilW; x > lilW; x -= lilW) {
-        blocks.push([x / width, 0, (x + lilW) / width, lilH / height]);
-      }
+      // top left
+      gridBuffer.line(0, lilH, lilW, lilH);
+
+      //right
+      gridBuffer.line(width - lilW, height - lilH, width, height - lilH);
     }
-
-
-
   }
   
   return (

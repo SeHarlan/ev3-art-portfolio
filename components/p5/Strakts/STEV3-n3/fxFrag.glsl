@@ -314,6 +314,7 @@ void main() {
   if(use3dGlitch || (u_stage == 1 && blockOn)) {
     st = zag(st, timeBlock, 0.05);
     st = zag(st, timeBlock + 1., 0.05);
+    st = zag(st, timeBlock + 3., 0.05);
     st = zag(st, timeBlock + 2., .3);
 
     if(random(st + 100.) < 0.5) {
@@ -344,6 +345,12 @@ void main() {
     color = edgeDetection(color, st, edgeInsensity);
   }
 
+    //flicker
+  if(center && u_stage == 1 && random(u_time) < 0.5) {
+    vec4 edg = edgeDetection(color, st, 0.5) * .5;
+    color = max(edg, color);
+  }
+
   if(!center && useStage1Glitch) {
     float clipT = map(sin((st.x-st.y) * 10. + u_time * 40.), -1., 1., 0.4, 0.9);
 
@@ -365,47 +372,48 @@ void main() {
     color.b = texture2D(u_texture, st - offset).b;
   }
 
-  if(use3dGlitch && !center) {
-    color.rgb += 0.2;
+  if(use3dGlitch) {
+    color.rgb *= 1.15;
   }
 
 
  
-  // vec3 bgTint = vec3(60./255., 50./255., 90./255.); //ourple
-  vec3 bgTint = vec3(60./255., 40./255., 80./255.); 
+  vec3 bgTint = vec3(80./255., 30./255., 70./255.); //ourple
+  // vec3 bgTint = vec3(60./255., 70./255., 60./255.); 
   
 
   if((!center || isDark) ) {
+     vec2 stMult = vec2(0.0005, 0.05);
 
-    vec2 stMult = vec2(80.);
-    stMult *= u_resolution;
-
-    //static
-    color.rgb += (random(stMult * st + fract(u_time * u_resolution.x)) * .5) - 0.25;
+    float range = 0.3;
+    color.rgb += map(random(stMult * (st + fract(u_time))), 0.0, 1.0, -range, range);
 
     // tint
-    float tintAmount = .3 + (1.-st.y) * 0.15;
+    float tintAmount = .4 + (st.y + sin(u_centerTime * 0.5) * 0.5) * 0.15; 
 
-    if(u_stage == 1) tintAmount*=.35;
+    if(u_stage == 3 || (blockOn && u_stage == 2) || u_stage == 1) tintAmount*=.35;
 
     color.rgb = mix(color.rgb, bgTint, tintAmount);
   } 
 
 
   if(center) {
-    float staticMult = 0.15;
-    float stMult = 10.1 * u_resolution.x * 0.001;
-    color.r += (random((st + fract(u_centerTime)) * stMult) * staticMult) - staticMult * .5;
-    color.g += (random((st + fract(u_centerTime)) * stMult + 100.) * staticMult)  - staticMult * .5;
-    color.b += (random((st + fract(u_centerTime)) * stMult + 200.) * staticMult)  - staticMult * .5;
 
-    color.rgb *= 1.15;
+    vec2 stMult = vec2(-0.00015, 0.0001);
+    float range = 0.05;
+
+    color.r += map(random(stMult * (st + fract(u_time * 1.) + 0.)), 0.0, 1.0, -range, range);
+    color.g += map(random(stMult * (st + fract(u_time * 1.) + 100.)), 0.0, 1.0, -range, range);
+    color.b += map(random(stMult * (st + fract(u_time * 1.) + 200.)), 0.0, 1.0, -range, range);
+
+
+    color.rgb *= 1.05;
   } 
 
   //vignette effect
-  if(center) {  
+  if(center && !isDark) {  
     float distFromCenter = distance(orgSt, vec2(0.5, 0.5));
-    color.rgb *= 1.0-smoothstep(0.35, .65, distFromCenter);
+    color.rgb *= 1.0-smoothstep(0.35, .7, distFromCenter);
   } 
 
   gl_FragColor = color;
