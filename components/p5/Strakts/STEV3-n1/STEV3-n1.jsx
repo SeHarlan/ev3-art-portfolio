@@ -36,6 +36,8 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     let stage = 0;
     let centerCounter = 0;
     let stageCounter = 0;
+    const margin = 0.1;
+    let imgRatio
 
     let seed, img;
     let fxShader, feedbackShader;
@@ -48,7 +50,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
 
         document.documentElement.style.setProperty(
           "--rmx-bg-color",
-          "rgb(45, 35, 63)"
+          "rgb(0, 0, 0)"
         );
         document.documentElement.style.setProperty(
           "--rmx-color1",
@@ -56,7 +58,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         );
         document.documentElement.style.setProperty(
           "--rmx-color2",
-          "rgb(215,130,43)"
+          "rgb(230,144,42)"
         );
 
         fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
@@ -98,12 +100,6 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         canvHeight = canvWidth / imgRatio;
       }
 
-      const minScale = 0.125;
-      const yBorder = canvHeight * minScale * 2;
-      const xBorder = canvWidth * minScale * 2;
-      canvHeight -= yBorder;
-      canvHeight += xBorder;
-
       canvWidth = Math.floor(canvWidth / 2) * 2;
       canvHeight = Math.floor(canvHeight / 2) * 2;
 
@@ -128,7 +124,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       currentBuffer.colorMode(HSL);
       previousBuffer.colorMode(HSL);
       fxBuffer.colorMode(HSL);
-      gridBuffer.colorMode(HSL);
+      // gridBuffer.colorMode(HSL);
       textBuffer.colorMode(HSL);
 
       textBuffer.textFont(font);
@@ -192,16 +188,20 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         centerCounter += 1 / FR;
       }
 
-      const switchStage = random() < (stageCounter * 0.00003) % 1;
+      const switchStage = random() < (stageCounter * 0.00005) % 1;
       if (switchStage) {
         switch (stage) {
+          case 2:
+            stage = 0;
+            break;
           case 0:
             const ran = random();
-            if (ran < 0.66) stage = 2;
+            if (ran < 0.55) stage = 2;
             else stage = 1;
+            stageCounter *= 0.8;
             break;
           case 1:
-            if (random() < 0.5) {
+            if (random() < 0.45) {
               stage = 3;
               stageCounter = 0;
               break;
@@ -210,14 +210,15 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
           default:
             stage = 0;
             stageCounter = 0;
+
             break;
         }
       }
       if (timeCounter < 1.5) {
         stage = 1;
-      } else if (timeCounter < 3) {
+      } else if (timeCounter < 4) {
         stage = 3;
-      } else if (timeCounter < 5) {
+      } else if (timeCounter < 6) {
         stage = 0;
         stageCounter = 0;
       }
@@ -233,13 +234,13 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     }
 
     function resetThings() {
-      const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
-      if (resetText) resetText.style.display = "block";
+      // const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
+      // if (resetText) resetText.style.display = "block";
 
-      const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
-      if (loadingBorder) loadingBorder.style.display = "block";
+      // const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
+      // if (loadingBorder) loadingBorder.style.display = "block";
 
-      setLowframeRate(true);
+      // setLowframeRate(true);
     }
 
     function checkFrameRate() {
@@ -264,79 +265,57 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     function makeGridImage() {
 
       const { mouseX, mouseY, width, height, radians, SQUARE } = p5sketch;
-      
-      
-
-      const minScale = 0.125;
-      const maxScale = 1 - minScale;
-
-      const topY = width * minScale;
-      const bottomY = height - width * minScale;
-
+    
       gridBuffer.noStroke();
 
-      // bottom reflection
-      gridBuffer.push();
-      gridBuffer.translate(0, height);
-      gridBuffer.rotate(radians(-90));
-      gridBuffer.image(img, 0, 0, width * minScale, width * maxScale);
-      gridBuffer.pop();
+      const lilH = height * margin;
+      const lilW = width * margin;
+
+      gridBuffer.image(img, lilW, lilH, width - lilW * 2, height - lilH * 2);
 
       //top
       gridBuffer.push();
       gridBuffer.translate(width, 0);
       gridBuffer.rotate(radians(90));
-      gridBuffer.image(img, 0, 0, topY, width * maxScale);
+      gridBuffer.image(img, 0, 0, lilH, width - lilW);
       gridBuffer.pop();
-
-      // right reflection
-      gridBuffer.push();
-      gridBuffer.translate(width, height);
-      gridBuffer.rotate(radians(180));
-      gridBuffer.image(
-        img,
-        0,
-        0,
-        width * minScale,
-        height - width * minScale
-      );
-      gridBuffer.pop();
-
-      //left reflection
-      gridBuffer.push();
-      gridBuffer.image(img, 0, 0, width * minScale, bottomY);
-      gridBuffer.pop();
-
-      gridBuffer.image(
-        img,
-        width * minScale,
-        width * minScale,
-        width * (maxScale - minScale),
-        height - width * (minScale * 2)
-      );
-
-      gridBuffer.stroke("black");
-      gridBuffer.strokeWeight(width * 0.015);
-      gridBuffer.strokeCap(SQUARE);
-
-      //top
-      gridBuffer.line(width * minScale, topY, width, topY);
-
-      //right
-      gridBuffer.line(width * maxScale, topY, width * maxScale, height);
-
-      //left
-      gridBuffer.line(width * minScale, 0, width * minScale, bottomY);
 
       //bottom
-      gridBuffer.line(
-        0,
-        bottomY,
-        width * maxScale,
-        bottomY
-      );
+      gridBuffer.push();
+      gridBuffer.translate(0, height);
+      gridBuffer.rotate(radians(270));
+      gridBuffer.image(img, 0, 0, lilH, width - lilW);
+      gridBuffer.pop();
 
+      //left
+      gridBuffer.push();
+      gridBuffer.image(img, 0, 0, lilW, height - lilH);
+      gridBuffer.pop();
+
+      gridBuffer.stroke("black");
+      gridBuffer.strokeWeight(width * 0.01);
+      gridBuffer.strokeCap(SQUARE);
+
+      //bottom right
+      gridBuffer.image(img, width - lilW, height - lilH*2, lilW, lilH*2);
+
+      //right
+      gridBuffer.push();
+      gridBuffer.translate(width, height - lilH);
+      gridBuffer.rotate(radians(180));
+      gridBuffer.image(img, 0, 0, lilW, height - lilH * 2);
+      gridBuffer.pop();
+
+      //main borders
+      gridBuffer.line(lilW, 0, lilW, height - lilH);
+      gridBuffer.line(lilW, lilH, width, lilH);
+      gridBuffer.line(width - lilW, lilH, width - lilW, height);
+      gridBuffer.line(0, height - lilH, width - lilW, height - lilH);
+
+      // lower right
+      gridBuffer.line(width - lilW, height - lilH, width, height - lilH);
     }
+
 
 
 

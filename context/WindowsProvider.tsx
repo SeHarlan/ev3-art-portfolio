@@ -37,7 +37,7 @@ export const WINDOWS = {
   NOISE: "it's just noise",
   SOMEDAYS: "some days",
   MAURER: "Maurer Expanse",
-  STEV3: "wip" //currently Stev3
+  STEV3: "3xgp" //currently Stev3
 }
 
 type WINDOWS = {
@@ -63,7 +63,7 @@ export const ICONS = {
 };
 
 export const filterOutFromMenu = (windowKey: string) => { 
-  return windowKey !== WINDOWS.STEV3 && windowKey !== WINDOWS.SOMEDAYS
+  return windowKey !== WINDOWS.SOMEDAYS
 }
 
 const defaultMin = Object.values(WINDOWS).reduce((acc: {[key:string]: boolean}, curr) => {

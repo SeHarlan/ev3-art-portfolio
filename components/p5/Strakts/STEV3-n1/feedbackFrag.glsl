@@ -33,7 +33,6 @@ float random(in vec2 _st) {
   
   return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
-
 float random(in float _x){
     float x = _x + u_seed;
 
@@ -105,16 +104,17 @@ void main() {
 
   vec4 orgColor = texture2D(u_originalImage, orgSt);
 
-  if (u_time < .25) {
+  if (u_time < .1) {
     gl_FragColor = orgColor;
     return;
   }
+
   float timeBlock = floor(u_time * .3);
   float timeFract = fract(u_time * .3);
 
   float centerTimeBlock = floor(u_centerTime * .15);
 
-  float chunk = floor(8.0 + sin(PI * 1.33 + u_centerTime * 0.13) * 7.);
+  float chunk = floor(6.0 + sin(PI * u_seed + u_centerTime * 0.075) * 5.);
   vec2 blockSize = vec2(chunk / u_resolution.x, chunk / u_resolution.y);
 
   vec2 posBlockFloor = floor(st / blockSize) ;
@@ -122,70 +122,79 @@ void main() {
 
   vec4 color = texture2D(u_texture, st);
 
-
-  
-  #define marginMin 0.125
-  #define marginMax 0.875
+  #define marginMin 0.1
+  #define marginMax 0.9
 
   float leftPoint = marginMin;
-  float topPoint = marginMin * u_aspectRatio.x/u_aspectRatio.y;
-  float bottomPoint = 1.0 - marginMin * u_aspectRatio.x/u_aspectRatio.y;
+  float topPoint = marginMin;
+  float bottomPoint = marginMax;
   float rightPoint = marginMax;
 
+  
+  
+  bool topBlock = st.y <= topPoint && st.x > leftPoint;
+  bool leftBlock = st.x <= leftPoint && st.y <= bottomPoint;
+  bool rightBlock = st.x > rightPoint && st.y > topPoint && st.y <= bottomPoint;
+  bool bottomBlock = st.y > bottomPoint && st.x <= rightPoint;
+  bool bottomRightBlock = st.y > bottomPoint && st.x > rightPoint;
 
-  bool topBlock = orgSt.x > leftPoint && orgSt.y <= topPoint;
-  bool rightBlock = orgSt.x > rightPoint && orgSt.y > topPoint;
-  bool leftBlock = orgSt.x <= leftPoint && orgSt.y <= bottomPoint;
-  bool bottomBlock = orgSt.x <= rightPoint && orgSt.y > bottomPoint;
+  bool center = !leftBlock && !rightBlock && !bottomBlock && !topBlock && !bottomRightBlock;
 
-  bool center = !topBlock && !leftBlock && !rightBlock && !bottomBlock;
+
   bool useBlock = false;
 
   float topRan = random(centerTimeBlock);
-  if(topRan < 2./20.) {
+  if(topRan < 1./15.) {
     useBlock = topBlock;
-  } else if(topRan < 4./20.) {
+  } else if(topRan < 2./15.) {
     useBlock = leftBlock;
-  } else  if(topRan < 6./20.) {
+  } else  if(topRan < 3./15.) {
     useBlock = rightBlock;
+  } else if(topRan < 4./15.) {
+    useBlock = bottomBlock;
+  } else if(topRan < 5./15.) {
+    useBlock = bottomRightBlock;
   } 
 
-  if(true) {
-    vec2 noiseSt = posBlockFloor;
-    noiseSt.x -= sin(u_centerTime * 0.75) * 4.;
-    noiseSt.y += cos(u_centerTime * 0.75) * 8.;
-
-    float noiseTime = u_centerTime * .2 ;
-
-    float chunkBuffer = ( chunk);
-   
-
-    vec2 noiseMult = vec2(.01, 0.005) * chunkBuffer;
-
-    float waveMultAmp = (20. - (noise(chunkBuffer * posBlockFloor * .005 + noiseTime + 100.) * 10.)) / chunkBuffer;
-    float waveMultFreq = (0.2 - (noise(chunkBuffer * posBlockFloor * .001 - noiseTime * 0.5) * 0.2));
-    float wave = sin(chunkBuffer*posBlockFloor.x * waveMultFreq) * waveMultAmp;
 
 
-    float resetThresh = 0.5 + sin(u_centerTime) * 0.03 - cos(u_centerTime * 0.1) * 0.15;
-    vec2 noiseResetTime = vec2(-noiseTime , noiseTime);
-    bool randomReset = random(noiseSt + noiseResetTime) < .2;
-    bool reset = noise(noiseMult * (noiseSt + wave) + noiseResetTime) < resetThresh && randomReset;
 
-    vec2 flowMult = vec2(.1, 0.05) * chunkBuffer;
-    bool useFlow = random((posBlockFloor * flowMult) + noiseTime) < 0.5 && (center || useBlock);
+  vec2 noiseSt = posBlockFloor;
+  noiseSt.x -= sin(u_centerTime * 0.75) * 4.;
+  noiseSt.y += cos(u_centerTime * 0.75) * 8.;
 
-    if(reset) {
-      color = orgColor;
-    } else if(useFlow && randomReset) {
-      posBlockFloor.x += noiseNegNeutralPos(noiseMult  * ( 1. * posBlockFloor   - (u_centerTime * 25.) / chunkBuffer ) + 100.);
-      posBlockFloor.y += noiseOnOff(noiseMult   * (4. * posBlockFloor+ (u_centerTime * 75.) / chunkBuffer ) + 200.);
+  float noiseTime = u_centerTime * .2 ;
 
-      
-      color = texture2D(u_texture, (posBlockFloor + posBlockOffset) * blockSize);
-      // color = vec4(1.0);
-    }
+  float chunkBuffer = ( chunk);
+  
+
+  vec2 noiseMult = vec2(.01, 0.005) * chunkBuffer;
+
+  float waveMultAmp = (20. - (noise(chunkBuffer * posBlockFloor * .005 + noiseTime + 100.) * 10.)) / chunkBuffer;
+  float waveMultFreq = (0.2 - (noise(chunkBuffer * posBlockFloor * .001 - noiseTime * 0.5) * 0.2));
+  float wave = sin(chunkBuffer*posBlockFloor.x * waveMultFreq) * waveMultAmp;
+
+
+  float resetThresh = 0.425 + sin(PI * u_seed + u_centerTime* 1.75) * 0.05 - cos(u_centerTime * 1.15) * 0.15;
+
+  vec2 noiseResetTime = vec2(-noiseTime , noiseTime);
+  bool randomReset = random(noiseSt + noiseResetTime) < .2;
+  bool reset = noise(noiseMult * (noiseSt + wave) + noiseResetTime) < resetThresh && randomReset;
+
+  vec2 flowMult = vec2(.1, 0.05) * chunkBuffer;
+  bool useFlow = random((posBlockFloor * flowMult) + noiseTime) < 0.5 && (center || useBlock);
+
+  if(reset) {
+    color = orgColor;
+  } else if(useFlow && randomReset) {
+    posBlockFloor.x += noiseNegNeutralPos(noiseMult  * ( .25 * posBlockFloor   - (u_centerTime * 25.) / chunkBuffer ) + 100.);
+    posBlockFloor.y += noiseOnOff(noiseMult   * (.5 * posBlockFloor+ (u_centerTime * 50.) / chunkBuffer ) + 200.);
+
+    
+    color = texture2D(u_texture, (posBlockFloor + posBlockOffset) * blockSize);
+    // color = vec4(1.0);
   }
+  
 
 
 

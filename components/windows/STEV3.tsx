@@ -5,20 +5,12 @@ import dynamic from "next/dynamic";
 import clsx from "clsx";
 import Link from "next/link";
 import MenuDropdown from "../MenuDropdown";
-const STEV3_2 = dynamic(
-  () => import("../p5/Strakts/STEV3-2/STEV3-2"),
-  { ssr: false }
-) as any;
-
-const STEV3_2B = dynamic(() => import("../p5/Strakts/STEV3-2B/STEV3-2B"), {
-  ssr: false,
-}) as any;
 
 const STEV3_4 = dynamic(() => import("../p5/Strakts/STEV3-4/STEV3-4"), {
   ssr: false,
 }) as any;
 
-const STEV3_1 = dynamic(() => import("../p5/Strakts/STEV3-1/STEV3-1"), {
+const STEV3_1 = dynamic(() => import("../p5/Strakts/STEV3-n1/STEV3-n1"), {
   ssr: false,
 }) as any;
 
@@ -92,26 +84,6 @@ const STEV3_Window: FC = () => {
 
   const content = useMemo(() => { 
     switch (activeRemix) {
-      case "A":
-        return (
-          <STEV3_2
-            key="STEV3-2"
-            className={sketchCounter}
-            menuOpen={false}
-            seed={seed}
-            isActive={isActiveRef}
-          />
-        );
-      case "B":
-        return (
-          <STEV3_2B
-            key="STEV3-2B"
-            className={sketchCounter}
-            menuOpen={false}
-            seed={seed}
-            isActive={isActiveRef}
-          />
-        );
       case "4":
         return (
           <STEV3_4
