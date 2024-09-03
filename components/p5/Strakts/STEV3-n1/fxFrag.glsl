@@ -258,15 +258,6 @@ void main() {
     else blockOn = bottomBlock;
   }
 
-
-  // if(u_stage == 3 ) {
-  //   vec2 center = vec2(0.5, 0.55);
-  //   float zoomFactor = 1.0 + fract(u_time * 1.5) * 0.2 * random(blockTime);
-
-  //   // Scale the UV coordinates around the center to achieve the zoom effect
-  //   orgSt = center + (st - center) * zoomFactor;
-  // }
-
   if(u_stage == 3 || blockOn) {
     float noiseMult = 0.075;
     float timeMult = 1.0;
@@ -277,58 +268,6 @@ void main() {
   }
 
   vec4 color = texture2D(u_texture, st);
-
-  // #define marginMin 0.125
-  // #define marginMax 0.875
-
-  // float leftPoint = marginMin;
-  // float leftCenterPoint = (marginMin * 0.5 * u_aspectRatio.x/u_aspectRatio.y + marginMax) * 0.45;
-
-  // float centerPoint = marginMin + marginMax * 0.5 ;
-  // float centerRightPoint = 1.0 - marginMin * 0.5;
-
-
-  // float topPoint = marginMin * 2. * u_aspectRatio.x/u_aspectRatio.y;
-  // float bottomPoint = 1.0 - marginMin * u_aspectRatio.x/u_aspectRatio.y;
-
-
-  // float rightPoint = marginMax;
-  // float rightBottomPoint = bottomPoint;
-
-  // bool topCenterLeftBlock = orgSt.x > leftPoint && orgSt.x <= centerPoint && orgSt.y <= topPoint;
-  // bool topCenterBlock = orgSt.x > centerPoint && orgSt.x <= centerRightPoint && orgSt.y <= topPoint;
-  // bool topCenterRightBlock = orgSt.x > centerRightPoint && orgSt.y <= topPoint;
-  // bool topBlock = topCenterLeftBlock || topCenterBlock || topCenterRightBlock;
-
-  // bool leftTopBlock = orgSt.x <= leftPoint && orgSt.y <= leftCenterPoint;
-  // bool leftBottomBlock = orgSt.x <= leftPoint && orgSt.y > leftCenterPoint && orgSt.y <= bottomPoint;
-  // bool leftBlock = leftTopBlock || leftBottomBlock;
-
-
-  // bool rightTopBlock = orgSt.x > rightPoint && orgSt.y > topPoint && orgSt.y <= rightBottomPoint;
-  // bool rightBottomBlock = orgSt.x > rightPoint && orgSt.y > rightBottomPoint;
-  // bool rightBlock = rightTopBlock || rightBottomBlock;
-
-  // bool bottomBlock = orgSt.x <= rightPoint && orgSt.y > bottomPoint;
-
-  // bool center = !leftTopBlock && !rightTopBlock && !bottomBlock && !topCenterBlock && !topCenterLeftBlock && !topCenterRightBlock && !leftBottomBlock && !rightBottomBlock;
-
-  // bool blockOn = false;
-  // float blockOnRan = random((floor(u_time * 2.)/2.) * 10000.);
-  // if(blockOnRan < 1./8.) blockOn = topCenterLeftBlock;
-  // else if(blockOnRan < 2./8.) blockOn = topCenterBlock;
-  // else if(blockOnRan < 3./8.) blockOn = topCenterRightBlock;
-  // else if(blockOnRan < 4./8.) blockOn = leftTopBlock;
-  // else if(blockOnRan < 5./8.) blockOn = leftBottomBlock;
-  // else if(blockOnRan < 6./8.) blockOn = rightTopBlock;
-  // else if(blockOnRan < 7./8.) blockOn = rightBottomBlock;
-  // else blockOn = bottomBlock;
-
-  // blockOn = blockOn && u_stage == 2;
-
-
- 
-
 
   if(u_stage == 1 && !center) {
     st -= random(posBlockFloor / 100. + u_centerTime) * 0.002;
@@ -424,6 +363,7 @@ void main() {
     if(color.r + color.g + color.b > 2.) {
       color.rgb = highlightTint;
     }
+    color.rgb *= 1.15;
   }
 
     //vignette effect

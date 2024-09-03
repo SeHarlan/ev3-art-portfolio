@@ -28,7 +28,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
 
     let FR = 30;
     const checkInterval = FR;
-    const threshold = FR * 0.66;
+    const threshold = FR * 0.5;
     let resetting = false
     let hasBeenReset = false
     let timeCounter = 0;
@@ -335,7 +335,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         </div>
       </div>
       <p id={CSS_RMX_PREFIX + "resetText"} className="RMX-resetText" >
-        Low framerate detected. Resetting with lower image quality...
+        Low framerate detected. Resetting with lower image quality.
       </p>
     </div>
   );

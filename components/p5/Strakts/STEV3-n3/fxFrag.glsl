@@ -366,7 +366,7 @@ void main() {
 
 
   if(use3dGlitch) {
-    vec2 offset = vec2(0.01) - sin(u_time * 4.) * 0.005 * random(u_time);
+    vec2 offset = vec2(0.01) - sin(u_time * 4.) * 0.07 * random(u_time);
     color.r = texture2D(u_texture, st + offset).r;
     color.g = texture2D(u_texture, st).g;
     color.b = texture2D(u_texture, st - offset).b;

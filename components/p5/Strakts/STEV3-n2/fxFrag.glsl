@@ -407,12 +407,12 @@ void main() {
     //SHINY stage 3 //electric
     if(u_stage == 3 || (u_stage == 2 && blockOn)) {
       float centerDist = distance(st, vec2(0.5, 0.5)) + noise(st * vec2(3., 10.) +u_time * 10.5) * 0.3;
-      float clipT = map(abs(sin(u_time * 4. - centerDist * 20.)), 0., 1., 0.2, .9);
+      float clipT = map(abs(sin(u_time * 4. - centerDist * 20.)), 0., 1., 0.3, .9);
       color.rgb = step(clipT, color.rgb);
 
 
 
-      color.rgb = mix(color.rgb, fxTint, .38);
+      color.rgb = mix(color.rgb, fxTint + 0.1, .35);
 
     }
 
@@ -432,6 +432,12 @@ void main() {
 
     color.rgb *= 1.05;
   } 
+
+  if(u_stage == 3 || (u_stage == 2 && blockOn)) {
+    float direction = st.y * 15. + 1.0 - st.x * 7.;
+    color.r *= 1. + sin(direction - u_centerTime * 40.) * .5;
+    color.b *= 1. - sin(direction - u_centerTime * 40.) * .4;
+  }
 
   if(center && u_stage == 1 && flicker) {
     vec4 edg = edgeDetection(color, st, 0.5) * .5;
