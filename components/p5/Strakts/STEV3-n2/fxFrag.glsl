@@ -254,11 +254,11 @@ void main() {
     float timeFactor = fract(u_time * timeMult) * (0.2 + random(timeBlockOffset) * 0.075 * randomNegPos(vec2(timeBlockOffset) + 100.)) * 0.75;
 
 
-    float timeBlockRan = random(timeBlock);
+    float timeBlockRan1 = random(timeBlock);
+    float timeBlockRan2 = random(timeBlock + .1) < 0.5 ? timeBlockRan1 : random(timeBlock + .2);
 
-    
 
-    if(timeBlockRan < random(timeBlock + 200.)) {
+    if (timeBlockRan1 < 0.25 || timeBlockRan2 < 0.25) {
       if (st.x < centerHor) {
         st.x = clamp(st.x + timeFactor, marginMin, centerHor);
       } else {
@@ -266,7 +266,7 @@ void main() {
       }
       splitHappened = true;
     } 
-    if(timeBlockRan <  random(timeBlock + 300.)) {
+    if (timeBlockRan1 > 0.25 && timeBlockRan1 < 0.5 || timeBlockRan2 > 0.25 && timeBlockRan2 < 0.5) {
       if(st.y < centerVer) {
         st.y = clamp(st.y +  timeFactor, marginMin, centerVer);
       } else {
@@ -274,7 +274,7 @@ void main() {
       }
       splitHappened = true;
     } 
-    if (timeBlockRan < random(timeBlock + 400.)) {
+    if (timeBlockRan1 > 0.5 && timeBlockRan1 < 0.75 || timeBlockRan2 > 0.5 && timeBlockRan2 < 0.75) {
       float distanceToDiagTR = (orgSt.y + orgSt.x) * 0.5;
 
       if (distanceToDiagTR < centerDiagTR) {
@@ -287,7 +287,7 @@ void main() {
       splitHappened = true;
     }
 
-    if (timeBlockRan < random(timeBlock + 500.)) {
+    if (timeBlockRan1 > 0.75 && timeBlockRan1 < 1. || timeBlockRan2 > 0.75 && timeBlockRan2 < 1.) {
 
       float distanceToDiagTL = .5 + (orgSt.y - orgSt.x);
 
@@ -302,7 +302,20 @@ void main() {
       splitHappened = true;
     }  
 
-    if(!splitHappened && !center && random(posBlockFloor + u_time + 0.) < 0.5) {
+    topBlock = st.y <= topPoint && st.x > leftPoint && st.x <= rightPoint;
+    leftBlock = st.x <= leftPoint && st.y <= bottomPoint && st.y > topPoint;
+    rightBlock = st.x > rightPoint && st.y > topPoint && st.y <= bottomPoint;
+    bottomBlock = st.y > bottomPoint && st.x <= rightPoint;
+
+    tlBlock = st.x <= leftPoint && st.y <= topPoint;
+    trBlock = st.x > rightPoint && st.y <= topPoint;
+    brBlock = st.x > rightPoint && st.y > bottomPoint;
+
+
+    center = !leftBlock && !rightBlock && !bottomBlock && !topBlock && !tlBlock && !trBlock && !brBlock;
+
+
+    if(!center && random(posBlockFloor + u_time + 0.) < 0.5) {
       st.x += random(posBlockFloor + u_time + 200.) * 0.05;
       st.y -= random(posBlockFloor + u_time +100.) * 0.05;
     }
@@ -435,7 +448,7 @@ void main() {
 
   if(u_stage == 3 || (u_stage == 2 && blockOn)) {
     float direction = st.y * 20.;
-    color.r *= 1. + sin(direction - u_centerTime * 40.) * .6;
+    color.r *= 1. + sin(direction - u_centerTime * 40.) * .55;
     color.b *= 1. - sin(direction - u_centerTime * 40.) * .4;
   }
 
