@@ -394,7 +394,20 @@ void main() {
     color.r = step(clipT, color.r);
     color.g = step(clipT, color.g);
     color.b = step(clipT, color.b);
+
+    //add on below
+
+
+    float direction = st.y * 20. + 1.0 - st.x * 15. + noise(st * 10. + u_time * 10.) * 0.5;
+
+    // if (bottomBlock || topBlock) {
+    //   direction = st.x * 50.;
+    // }
+
+    color.r *= 1. + sin(direction - u_time * 40.) * .49;
+    color.b *= 1. - sin(direction - u_time * 40.) * .27;
   }
+
 
 
   vec3 bgTint = vec3(35./255., 40./255., 70./255.); //blue
@@ -447,9 +460,15 @@ void main() {
   } 
 
   if(u_stage == 3 || (u_stage == 2 && blockOn)) {
-    float direction = st.y * 20.;
-    color.r *= 1. + sin(direction - u_centerTime * 40.) * .55;
-    color.b *= 1. - sin(direction - u_centerTime * 40.) * .4;
+
+    if(random(st + u_time) < .92) {
+      float centerDist = distance(st, vec2(0.42, 0.4)) + noise(st * vec2(10., 10.) + u_time * 0.5) * 0.3;
+
+      float clipT = map(abs(sin(u_time * 4. + centerDist * 10. + clipRan)), 0., 1., 0.4, .9);
+      color.r = step(clipT, color.r);
+      color.g = step(clipT, color.g);
+      color.b = step(clipT, color.b);
+    }
   }
 
   if(center && u_stage == 1 && flicker) {
