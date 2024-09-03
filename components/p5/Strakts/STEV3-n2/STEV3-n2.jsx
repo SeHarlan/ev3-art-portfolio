@@ -223,13 +223,13 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     }
 
     function resetThings() {
-      // const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
-      // if (resetText) resetText.style.display = "block";
+      const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
+      if (resetText) resetText.style.display = "block";
 
-      // const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
-      // if (loadingBorder) loadingBorder.style.display = "block";
+      const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
+      if (loadingBorder) loadingBorder.style.display = "block";
 
-      // setLowframeRate(true);
+      setLowframeRate(true);
     }
 
     function checkFrameRate() {
