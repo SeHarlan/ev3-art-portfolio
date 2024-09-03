@@ -35,14 +35,11 @@ const STEV3_Window: FC = () => {
     isActiveRef.current = activeWindow === WINDOWS.R3MIX
   }, [activeWindow])
 
-  const initSize = {
-    h: 1000,
-    w: 619,
-  }
-  //  const initSize = {
-  //    h: 893,
-  //    w: 553,
-  //  };
+
+   const initSize = {
+     h: 890 * 1.4,
+     w: 560 * 1.4,
+   };
   const initPos = {
     x: 160,
     y: 0
@@ -122,7 +119,7 @@ const STEV3_Window: FC = () => {
 
 
   return (
-    <Window windowKey={WINDOWS.STEV3} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
+    <Window windowKey={WINDOWS.GP} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
       {/* <MenuDropdown options={menuOptions} isOpen={menuOpen} setIsOpen={setMenuOpen} className="absolute top-0 left-0" /> */}
 
       <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>

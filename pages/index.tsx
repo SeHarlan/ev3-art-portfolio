@@ -42,7 +42,7 @@ export default function Home() {
           {openMap[WINDOWS.SOMEDAYS] ? <SomeDaysWindow /> : null}
           {openMap[WINDOWS.R3MIX] ? <R3MIX_Window /> : null}
           {openMap[WINDOWS.ITB] ? <ITBWindow /> : null}
-          {openMap[WINDOWS.STEV3] ? <STEV3_Window /> : null}
+          {openMap[WINDOWS.GP] ? <STEV3_Window /> : null}
           
         </div>
         <Footer />

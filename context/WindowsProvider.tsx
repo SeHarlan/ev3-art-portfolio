@@ -37,7 +37,7 @@ export const WINDOWS = {
   NOISE: "it's just noise",
   SOMEDAYS: "some days",
   MAURER: "Maurer Expanse",
-  STEV3: "3xgp" //currently Stev3
+  GP: "3xgp"
 }
 
 type WINDOWS = {
@@ -48,7 +48,7 @@ type WINDOWS = {
   SOMEDAYS: string;
   R3MIX: string;
   ITB: string;
-  STEV3: string;
+  GP: string;
 }
 
 export const ICONS = {
@@ -59,7 +59,7 @@ export const ICONS = {
   [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
   [WINDOWS.R3MIX]: "/images/r3mix-icon.png",
   [WINDOWS.ITB]: "/images/ITB-icon.png",
-  [WINDOWS.STEV3]: "/images/small-alt-logo.png",
+  [WINDOWS.GP]: "/images/small-alt-logo.png",
 };
 
 export const filterOutFromMenu = (windowKey: string) => { 
@@ -88,7 +88,6 @@ export default function WindowsProvider({ children }: { children: ReactNode }) {
   const activeWindow = orderList[orderList.length - 1]
 
   const openWindow = (router.query.window as string)?.toUpperCase() as keyof WINDOWS;
-
 
   useEffect(() => {
     if (openWindow && Object.keys(WINDOWS).includes(openWindow)) {
