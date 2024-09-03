@@ -434,8 +434,8 @@ void main() {
   } 
 
   if(u_stage == 3 || (u_stage == 2 && blockOn)) {
-    float direction = st.y * 15. + 1.0 - st.x * 7.;
-    color.r *= 1. + sin(direction - u_centerTime * 40.) * .5;
+    float direction = st.y * 20.;
+    color.r *= 1. + sin(direction - u_centerTime * 40.) * .6;
     color.b *= 1. - sin(direction - u_centerTime * 40.) * .4;
   }
 
