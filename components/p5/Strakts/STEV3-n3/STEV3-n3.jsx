@@ -24,7 +24,7 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     //p5 vars
     let { HSL, WEBGL } = p5sketch;
     const EV3binary = '01000101 01010110 00110011'
-    const imageUrl = "e1.png";
+    const imageUrl = "https://arweave.net/7qgd7WEIbovmv6zKxG9diwdN7tpqUot6A158R9doKSk";
 
     let FR = 30;
     const checkInterval = FR;
