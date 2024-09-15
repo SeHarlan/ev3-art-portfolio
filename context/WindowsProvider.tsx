@@ -31,13 +31,13 @@ export const useWindowsContext = () => useContext(WindowsContext)
 
 export const WINDOWS = {
   HOME: "Introduction",
+  GP: "3xGP",
   DUET: "DUET",
+  NOISE: "it's just noise",
   ITB: "ITB",
   R3MIX: "R3MIX",
-  NOISE: "it's just noise",
-  SOMEDAYS: "some days",
   MAURER: "Maurer Expanse",
-  GP: "3xgp"
+  SOMEDAYS: "some days",
 }
 
 type WINDOWS = {
@@ -53,13 +53,13 @@ type WINDOWS = {
 
 export const ICONS = {
   [WINDOWS.HOME]: "/images/small-logo.png",
+  [WINDOWS.GP]: "/images/3xgp-icon.png",
   [WINDOWS.DUET]: "/images/DUET-icon.png",
   [WINDOWS.MAURER]: "/images/small-alt-logo.png",
   [WINDOWS.NOISE]: "/images/its_just_noise-icon.png",
   [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
   [WINDOWS.R3MIX]: "/images/r3mix-icon.png",
   [WINDOWS.ITB]: "/images/ITB-icon.png",
-  [WINDOWS.GP]: "/images/small-alt-logo.png",
 };
 
 export const filterOutFromMenu = (windowKey: string) => { 

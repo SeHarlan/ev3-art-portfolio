@@ -53,34 +53,31 @@ const STEV3_Window: FC = () => {
         setSketchCounter((prev) => prev + 1); //just needs to reset state for the component
       },
     },
-    // {
-    //   label: "About",
-    //   function: () => setActiveContent(prev => (prev + 1) % contentOptions.length)
-    // },
-    // {
-    //   label: "Choose R3MIX",
-    //   function: () => setMenuOpen(true)
-    // },
     {
-      label: "1",
-      function: () => setActiveRemix("1"),
+      label: "Choose Prelude",
+      function: () => setMenuOpen(true)
     },
     {
-      label: "2",
-      function: () => setActiveRemix("2"),
+      label: "About",
+      function: () => setActiveContent(prev => (prev + 1) % contentOptions.length)
     },
-    {
-      label: "3",
-      function: () => setActiveRemix("3"),
-    },
+
   ];
 
-  // const menuOptions = [
-  //   {
-  //     label: "st2",
-  //     onClick: () => setActiveRemix("2"),
-  //   },
-  // ];
+  const menuOptions = [
+    {
+      label: "that which blooms in the desert",
+      onClick: () => setActiveRemix("1"),
+    },
+    {
+      label: "floating on taken by the tempest",
+      onClick: () => setActiveRemix("2"),
+    },
+    {
+      label: "icarus never did fall",
+      onClick: () => setActiveRemix("3"),
+    },
+  ];
 
   const content = useMemo(() => { 
     switch (activeRemix) {
@@ -119,23 +116,81 @@ const STEV3_Window: FC = () => {
 
 
   return (
-    <Window windowKey={WINDOWS.GP} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
-      {/* <MenuDropdown options={menuOptions} isOpen={menuOpen} setIsOpen={setMenuOpen} className="absolute top-0 left-0" /> */}
+    <Window
+      windowKey={WINDOWS.GP}
+      initSize={initSize}
+      initPosition={initPos}
+      menu={menu}
+      wrapperClassName="bg-amber-50"
+    >
+      <MenuDropdown
+        options={menuOptions}
+        isOpen={menuOpen}
+        setIsOpen={setMenuOpen}
+        className="absolute top-0 left-0"
+      />
 
-      <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>
+      <div
+        className={clsx(
+          "w-full h-full duration-200",
+          activeContent === 0 ? "opacity-100" : "opacity-0"
+        )}
+      >
         {content}
       </div>
 
-      <div className={clsx("p-4 absolute top-0 left-0 h-full w-full overflow-auto", activeContent === 1 ? "block" : "hidden")}>
-        
-          
+      <div
+        className={clsx(
+          "p-4 absolute top-0 left-0 h-full w-full overflow-auto",
+          activeContent === 1 ? "block" : "hidden"
+        )}
+      >
+        <p className="font-bold">Three Glitch Preludes</p>
         <br />
-        <button className="classic-button px-2" onClick={() => setActiveContent(0)}>
+        <p>“that which blooms in the desert”</p>
+        <p>“floating on taken by the tempest”</p>
+        <p>“icarus never did fall”</p>
+        <br />
+        <p>
+          Original digital art by{" "}
+          <Link
+            href="https://x.com/strakts"
+            target="_blank"
+            className="underline"
+          >
+            Strakts
+          </Link>
+          , modified with code by EV3
+        </p>
+        <br />
+        <p>
+          The concept for the base images originates from a deliberate isolation
+          of abstract, gestural forms. The glitch algorithms then interpret
+          their flow and character, sometimes honoring them, sometimes
+          deliberately distorting them.
+        </p>
+        <br />
+        <p>
+          Each piece begins with a preview of three motifs shown in succession,
+          before entering a random flow state where tension rises and falls at
+          unpredictable intervals.
+        </p>
+        <br />
+        <p>
+          The pieces remain in constant flux, glitched in real-time with
+          randomized and interacting parameters. No two viewings are ever
+          exactly the same. 
+        </p>
+        <br />
+        <button
+          className="classic-button px-2"
+          onClick={() => setActiveContent(0)}
+        >
           Go back
         </button>
       </div>
     </Window>
-  )
+  );
 }
 
 export default STEV3_Window

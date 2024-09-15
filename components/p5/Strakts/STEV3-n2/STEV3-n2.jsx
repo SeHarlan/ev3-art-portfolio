@@ -10,6 +10,12 @@ p5.prototype.loadImage = loadLargeImage;
 
 const CSS_RMX_PREFIX = "STEV3-2-"
 
+function scaleToFraction(x) {
+  let numberOfDigits = Math.floor(Math.log10(x)) + 1;
+  let scale = Math.pow(10, numberOfDigits - 1);
+  return x / scale;
+}
+
 const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
   const containerRef = useRef(null);
   const [lowframeRate, setLowframeRate] = useState(false)
@@ -18,19 +24,39 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
     if (typeof window === "undefined") return;
     if (!containerRef.current) return;
 
-    const methodsToBind = ['createCanvas', 'createGraphics', 'colorMode', 'frameRate', 'random', 'randomSeed', 'noiseSeed', 'image', 'pixelDensity'];
-    const { createCanvas, createGraphics, colorMode, frameRate, random, randomSeed, noiseSeed, image, pixelDensity } = bindMethods(p5sketch, methodsToBind);
+    const methodsToBind = [
+      "createCanvas",
+      "createGraphics",
+      "colorMode",
+      "frameRate",
+      "random",
+      "randomSeed",
+      "noiseSeed",
+      "image",
+      "pixelDensity",
+    ];
+    const {
+      createCanvas,
+      createGraphics,
+      colorMode,
+      frameRate,
+      random,
+      randomSeed,
+      noiseSeed,
+      image,
+      pixelDensity,
+    } = bindMethods(p5sketch, methodsToBind);
     //p5 vars
     let { HSL, WEBGL } = p5sketch;
-    const EV3binary = '01000101 01010110 00110011'
+    const EV3binary = "01000101 01010110 00110011";
     const imageUrl =
-      "https://arweave.net/LfnLdIBwPIoDr1d_X22ElhzqyClq1JcCllhnNSRSeXI";
+      "https://arweave.net/WTRmY3fZ2ofM2_g-OPTXpiCXhg7Ppm3kZcLymvfhdO8"; //minted image
 
     let FR = 30;
     const checkInterval = FR;
     const threshold = FR * 0.5;
-    let resetting = false
-    let hasBeenReset = false
+    let resetting = false;
+    let hasBeenReset = false;
     let timeCounter = 0;
     let aspectRatio;
     let stage = 0;
@@ -47,7 +73,6 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
 
     function preload() {
       try {
-
         document.documentElement.style.setProperty(
           "--rmx-bg-color",
           "rgb(0, 0, 0)"
@@ -62,28 +87,27 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         );
 
         fxShader = new p5.Shader(p5sketch._renderer, vertex, fxFrag);
-        img = p5sketch.loadImage(imageUrl)
-        font = '"Kode Mono", monospace'
-
+        img = p5sketch.loadImage(imageUrl);
+        font = '"Kode Mono", monospace';
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-    p5sketch.preload = preload
+    p5sketch.preload = preload;
 
     function setup() {
-      const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
+      const loadingBorder = document.getElementById(
+        CSS_RMX_PREFIX + "loadingBorder"
+      );
       if (loadingBorder) loadingBorder.style.display = "none";
-  
+
       const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
       if (resetText) resetText.style.display = "none";
 
-      const { } = p5sketch;
+      const {} = p5sketch;
 
-     
       const windowWidth = containerRef.current.clientWidth;
-      const windowHeight = containerRef.current.clientHeight
-
+      const windowHeight = containerRef.current.clientHeight;
 
       let windowRatio = windowWidth / windowHeight;
       let imgRatio = img.width / img.height;
@@ -102,12 +126,12 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       canvWidth = Math.floor(canvWidth / 2) * 2;
       canvHeight = Math.floor(canvHeight / 2) * 2;
 
-      img.resize(canvWidth, canvHeight)
+      img.resize(canvWidth, canvHeight);
       createCanvas(canvWidth, canvHeight);
       frameRate(FR);
-      colorMode(HSL)
+      colorMode(HSL);
 
-      if (lowframeRate) pixelDensity(1)
+      if (lowframeRate) pixelDensity(1);
 
       currentBuffer = createGraphics(canvWidth, canvHeight, WEBGL);
       previousBuffer = createGraphics(canvWidth, canvHeight, WEBGL);
@@ -128,22 +152,21 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
 
       textBuffer.textFont(font);
 
-      seed = random() * 10;
+      seed = scaleToFraction(new Date().getTime()) + Math.random() * 10;
+
+      console.log("seed:", seed);
       randomSeed(seed);
       noiseSeed(seed);
 
-       
       if (canvWidth > canvHeight) {
         aspectRatio = [canvWidth / canvHeight, 1];
       } else {
         aspectRatio = [1, canvHeight / canvWidth];
       }
-          
+
       makeGridImage();
     }
-    p5sketch.setup = setup
-
-
+    p5sketch.setup = setup;
 
     p5sketch.draw = () => {
       const { mouseX, mouseY, width, height } = p5sketch;
@@ -213,21 +236,23 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
         stageCounter = 0;
       }
       // stage = 2
-    }
+    };
 
     p5sketch.keyPressed = () => {
-      if (menuOpen.current || !isActive.current) return
+      if (menuOpen.current || !isActive.current) return;
       if (p5sketch.key == "c") {
         clearGlitch = !clearGlitch;
-        return false
+        return false;
       }
-    }
+    };
 
     function resetThings() {
       const resetText = document.getElementById(CSS_RMX_PREFIX + "resetText");
       if (resetText) resetText.style.display = "block";
 
-      const loadingBorder = document.getElementById(CSS_RMX_PREFIX + "loadingBorder")
+      const loadingBorder = document.getElementById(
+        CSS_RMX_PREFIX + "loadingBorder"
+      );
       if (loadingBorder) loadingBorder.style.display = "block";
 
       setLowframeRate(true);
@@ -241,18 +266,19 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       if (!hasBeenReset && frameCount && frameCheckPeriod && frameCheckWindow) {
         let currentFrameRate = frameRate();
         if (currentFrameRate < threshold) {
-          console.log('Warning: Frame rate has significantly dropped to ' + currentFrameRate + ' fps');
-          resetThings()
+          console.log(
+            "Warning: Frame rate has significantly dropped to " +
+              currentFrameRate +
+              " fps"
+          );
+          resetThings();
           return false;
         } else {
-          console.log('Frame rate is stable at ' + currentFrameRate + ' fps');
+          console.log("Frame rate is stable at " + currentFrameRate + " fps");
         }
       }
       return true;
     }
-
-
-    
 
     function makeGridImage() {
       const { mouseX, mouseY, width, height, radians, SQUARE } = p5sketch;
@@ -264,13 +290,13 @@ const STEV3_2 = ({ className, menuOpen, seed, isActive }) => {
       gridBuffer.image(img, lilW, lilH, width - lilW * 2, height - lilH * 2);
 
       //top right
-      gridBuffer.image(img, width - lilW, 0, lilW, lilH*1.5);
+      gridBuffer.image(img, width - lilW, 0, lilW, lilH * 1.5);
 
       //bottom left
       // gridBuffer.image(img, 0, height - lilH, lilW, lilH);
 
       // top left
-      gridBuffer.image(img, 0, -lilH, lilW, lilH*2);
+      gridBuffer.image(img, 0, -lilH, lilW, lilH * 2);
 
       //br
       gridBuffer.image(img, width - lilW, height - lilH * 2, lilW, lilH * 2);

@@ -331,7 +331,7 @@ void main() {
   bool alternateStatic = u_stage == 3 || blockOn || u_stage == 1;
   if(center || alternateStatic) {
     vec2 stMult = vec2(10.);
-    float range = 0.075;
+    float range = 0.05;
 
     color.r += map(random(stMult * (st + fract(u_time) + 0.)), 0.0, 1.0, -range, range);
     color.g += map(random(stMult * (st + fract(u_time) + 100.)), 0.0, 1.0, -range, range);
