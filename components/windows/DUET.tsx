@@ -65,10 +65,10 @@ const DuetWindow: FC = () => {
       label: "About",
       function: () => setActiveContent(prev => (prev+1)%contentOptions.length)
     },
-    {
-      label: "Collect",
-      function: visit,
-    },
+    // {
+    //   label: "Collect",
+    //   function: visit,
+    // },
   ]
 
   return (

@@ -74,18 +74,18 @@ const MaurerWindow: FC = () => {
       label: "About",
       function: () => setActiveContent(prev => (prev + 1) % contentOptions.length)
     },
-    {
-      label: "Trade (Void)",
-      function: visitVoid
-    },
-    {
-      label: "Trade (Ink)",
-      function: visitInk
-    },
-    {
-      label: "Trade (Neon)",
-      function: visitNeon
-    },
+    // {
+    //   label: "Trade (Void)",
+    //   function: visitVoid
+    // },
+    // {
+    //   label: "Trade (Ink)",
+    //   function: visitInk
+    // },
+    // {
+    //   label: "Trade (Neon)",
+    //   function: visitNeon
+    // },
   ]
 
 

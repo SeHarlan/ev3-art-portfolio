@@ -65,10 +65,10 @@ const NoiseWindow: FC = () => {
       label: "About",
       function: () => setActiveContent(prev => (prev + 1) % contentOptions.length)
     },
-    {
-      label: "Trade",
-      function: visit
-    },
+    // {
+    //   label: "Trade",
+    //   function: visit
+    // },
   ]
 
 

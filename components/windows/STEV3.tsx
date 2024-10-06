@@ -193,4 +193,4 @@ const STEV3_Window: FC = () => {
   );
 }
 
-export default STEV3_Window
+export default STEV3_Window;
