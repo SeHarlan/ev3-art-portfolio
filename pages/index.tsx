@@ -105,7 +105,27 @@ export default function Home() {
           {openMap[WINDOWS.GP] ? <STEV3_Window /> : null}
           {openMap[WINDOWS.TECHTONIC] ? <TechtonicWindow /> : null}
           {openMap[WINDOWS.OBH] ? <OnBeingHumanWindow /> : null}
-          
+
+          <div className="absolute bottom-3 right-4 z-[2] flex gap-4 text-white text-sm select-none">
+            <a
+              href="https://epoch1.ev3.art/?tab=techtonic"
+              target="_blank"
+              rel="noreferrer"
+              title="techtonic — Epoch One"
+              className="underline"
+            >
+              techtonic
+            </a>
+            <a
+              href="https://epoch1.ev3.art/?tab=obh"
+              target="_blank"
+              rel="noreferrer"
+              title="on being human — Epoch One"
+              className="underline"
+            >
+              on being human
+            </a>
+          </div>
         </div>
         <Footer />
       </main>

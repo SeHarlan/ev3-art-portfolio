@@ -15,6 +15,14 @@ const Links: FC<{className?: string}> = ({className}) => {
       <Link href="mailto:ev3reth@gmail.com" target="_blank">
         <EmailIcon colorClass="stroke-black fill-none stroke-[1.5]" />
       </Link>
+      <Link
+        href="https://epoch1.ev3.art/"
+        target="_blank"
+        title="Epoch One — techtonic & on being human"
+        className="underline whitespace-nowrap"
+      >
+        Epoch One
+      </Link>
       {/* <Link href="https://collector.sh/EV3" target="_blank">
         <Image src="/images/collector-logo.png" width={18} height={18} alt="collector" className="flex-shrink-0"/>
         
