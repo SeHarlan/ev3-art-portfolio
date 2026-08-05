@@ -38,6 +38,8 @@ export const WINDOWS = {
   R3MIX: "R3MIX",
   MAURER: "Maurer Expanse",
   SOMEDAYS: "some days",
+  TECHTONIC: "techtonic",
+  OBH: "on being human",
 }
 
 type WINDOWS = {
@@ -49,6 +51,8 @@ type WINDOWS = {
   R3MIX: string;
   ITB: string;
   GP: string;
+  TECHTONIC: string;
+  OBH: string;
 }
 
 export const ICONS = {
@@ -60,6 +64,8 @@ export const ICONS = {
   [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
   [WINDOWS.R3MIX]: "/images/r3mix-icon.png",
   [WINDOWS.ITB]: "/images/ITB-icon.png",
+  [WINDOWS.TECHTONIC]: "/images/small-logo.png",
+  [WINDOWS.OBH]: "/images/small-logo.png",
 };
 
 export const filterOutFromMenu = (windowKey: string) => { 
