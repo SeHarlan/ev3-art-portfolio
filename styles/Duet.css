@@ -19,12 +19,8 @@
 
     /* The panel's colors and bevels follow the palette (styles/globals.css). */
     --windowGray: var(--p95-face);
-    --windowGrayDark: var(--p95-shadow);
     --windowHeader: var(--p95-title-bg);
-    --windowBorder: var(--p95-dark) -1px -1px 0px 0px inset, var(--p95-light) 1px 1px 0px 0px inset, var(--p95-shadow) -2px -2px 0px 0px inset, var(--p95-hilight) 2px 2px 0px 0px inset;
-    --windowBorderSmall: var(--p95-dark) -1px -1px 0px 0px inset, var(--p95-hilight) 1px 1px 0px 0px inset, var(--p95-shadow) -2px -2px 0px 0px inset, var(--p95-light) 2px 2px 0px 0px inset;
-    --windowBorderNoBottom: var(--p95-dark) -1px 0px 0px 0px inset, var(--p95-hilight) 1px 1px 0px 0px inset, var(--p95-shadow) -2px 0px 0px 0px inset, var(--p95-light) 2px 2px 0px 0px inset;
-    --windowInset: var(--p95-hilight) -1px -1px 0px 0px inset, var(--p95-shadow) 1px 1px 0px 0px inset, var(--p95-light) -2px -2px 0px 0px inset, color-mix(in srgb, var(--p95-dark) 35%, var(--p95-shadow)) 2px 2px 0px 0px inset;
+    --windowBorder: var(--p95-bevel-window);
     
 
     p,
@@ -65,9 +61,9 @@
       padding: 7px 13px 5px 15px;
     }
 
-    /* The close button's black X, white on 1-Bit's black face. */
-    :root[data-p95-theme='bw'] & #closeButton img {
-      filter: invert(1);
+    /* The close button's black X, kept visible on a dark face. */
+    #closeButton img {
+      filter: var(--p95-bitmap-filter);
     }
 
     .hidden {

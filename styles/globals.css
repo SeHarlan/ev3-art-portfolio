@@ -60,6 +60,33 @@
 
   /* One Win95 pixel. */
   --u: 1px;
+
+  /* Win95's white text field (no Sk3tch token; black in 1-Bit via the icon
+     ink), and a filter that keeps black chrome bitmaps visible. */
+  --p95-field-bg: var(--p95-icon-light);
+  --p95-bitmap-filter: none;
+
+  /* Bevels and the 50% dither, from Sk3tch's .p95-raised / .p95-sunken /
+     .p95-window / .p95-dither. Every theme var lives on :root, so these
+     resolve against the active palette. */
+  --p95-bevel-raised:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
+    inset var(--u) var(--u) var(--p95-hilight),
+    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
+    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-light);
+  --p95-bevel-sunken:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-hilight),
+    inset var(--u) var(--u) var(--p95-shadow),
+    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-light),
+    inset calc(2 * var(--u)) calc(2 * var(--u)) color-mix(in srgb, var(--p95-dark) 35%, var(--p95-shadow));
+  --p95-bevel-window:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
+    inset var(--u) var(--u) var(--p95-light),
+    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
+    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-hilight);
+  --p95-dither: conic-gradient(
+    var(--p95-dither-ink) 25%, transparent 0 50%, var(--p95-dither-ink) 0 75%, transparent 0)
+    0 0 / calc(2 * var(--u)) calc(2 * var(--u));
 }
 
 /* Grayscale: Win95 bevels, every hue mapped to a gray. */
@@ -112,6 +139,7 @@
   --p95-icon-olive: #808080;
   --p95-icon-red: #ffffff;
   --p95-icon-maroon: #ffffff;
+  --p95-bitmap-filter: invert(1);
 }
 html, body {
   overflow: hidden;
@@ -142,19 +170,12 @@ html, body {
   height: calc(16 * var(--u));
 }
 ::-webkit-scrollbar-track {
-  background-color: var(--p95-face);
-  background-image: conic-gradient(
-    var(--p95-dither-ink) 25%, transparent 0 50%, var(--p95-dither-ink) 0 75%, transparent 0);
-  background-size: calc(2 * var(--u)) calc(2 * var(--u));
+  background: var(--p95-dither), var(--p95-face);
 }
 ::-webkit-scrollbar-thumb,
 ::-webkit-scrollbar-button:single-button {
   background-color: var(--p95-face);
-  box-shadow:
-    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
-    inset var(--u) var(--u) var(--p95-hilight),
-    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
-    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-light);
+  box-shadow: var(--p95-bevel-raised);
 }
 ::-webkit-scrollbar-button:single-button {
   display: block;
@@ -196,7 +217,7 @@ html, body {
 /* Win95's white field (black in 1-Bit) for a text input, in a classic-inset
    well. */
 .p95-field {
-  background: var(--p95-icon-light);
+  background: var(--p95-field-bg);
   color: var(--p95-text);
 }
 .p95-field input {
@@ -216,14 +237,9 @@ html, body {
 /* Push button: Sk3tch's .p95-raised + .p95-btn. */
 .classic-button {
   position: relative;
-  --p95-dots: calc(2 * var(--u));
   color: var(--p95-text);
   background: var(--p95-face);
-  box-shadow:
-    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
-    inset var(--u) var(--u) var(--p95-hilight),
-    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
-    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-light);
+  box-shadow: var(--p95-bevel-raised);
 }
 
 /* Pressed, and toggled on (taskbar item, open Start, aria-pressed): the
@@ -232,18 +248,11 @@ html, body {
 .classic-button.active,
 .classic-button[aria-pressed='true'],
 .classic-inset {
-  box-shadow:
-    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-hilight),
-    inset var(--u) var(--u) var(--p95-shadow),
-    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-light),
-    inset calc(2 * var(--u)) calc(2 * var(--u)) color-mix(in srgb, var(--p95-dark) 35%, var(--p95-shadow));
+  box-shadow: var(--p95-bevel-sunken);
 }
 .classic-button.active,
 .classic-button[aria-pressed='true'] {
-  background-color: var(--p95-face);
-  background-image: conic-gradient(
-    var(--p95-dither-ink) 25%, transparent 0 50%, var(--p95-dither-ink) 0 75%, transparent 0);
-  background-size: calc(2 * var(--u)) calc(2 * var(--u));
+  background: var(--p95-dither), var(--p95-face);
 }
 .classic-button:active:not(:disabled):not(.disabled) > *,
 .classic-button.active > *,
@@ -251,10 +260,11 @@ html, body {
   translate: var(--u) var(--u);
 }
 
-/* Hover and keyboard focus: Win95's dotted focus rect inside the bevel. */
+/* Hover and keyboard focus: Win95's dotted focus rect inside the bevel,
+   --p95-dots in (2u, or 4u on a dialog button). */
 .classic-button::after {
   position: absolute;
-  inset: var(--p95-dots);
+  inset: var(--p95-dots, calc(2 * var(--u)));
   border: var(--u) dotted var(--p95-text);
   pointer-events: none;
 }
@@ -281,11 +291,7 @@ html, body {
 /* Window frame: Sk3tch's .p95-window bevel. */
 .classic-border {
   padding: calc(4 * var(--u));
-  box-shadow:
-    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
-    inset var(--u) var(--u) var(--p95-light),
-    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
-    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-hilight);
+  box-shadow: var(--p95-bevel-window);
 }
 
 /* Sunken well (content area, text field, status panes, tray): .p95-sunken,
@@ -316,10 +322,6 @@ html, body {
     inset var(--u) var(--u) var(--p95-hilight);
 }
 
-.classic-corner {
-  filter: drop-shadow(calc(-1 * var(--u)) calc(-1 * var(--u)) 0 var(--p95-hilight));
-}
-
 /* Window chrome text at Sk3tch's size; window content keeps the body font. */
 .p95-chrome {
   font-family: 'W95FA UI', Tahoma, sans-serif;
@@ -328,4 +330,19 @@ html, body {
   -webkit-font-smoothing: none;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* Menu bar, Start menu and dropdown items: the selection highlight on hover
+   (where there is one), keyboard focus and headlessui's active item. */
+@media (hover: hover) {
+  .p95-menu-item:hover {
+    background: var(--p95-select-bg);
+    color: var(--p95-select-fg);
+  }
+}
+.p95-menu-item:focus-visible,
+.p95-menu-item[data-headlessui-state~='active'] {
+  background: var(--p95-select-bg);
+  color: var(--p95-select-fg);
+  outline: none;
 }

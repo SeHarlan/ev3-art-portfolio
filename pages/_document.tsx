@@ -1,12 +1,12 @@
 import { Html, Head, Main, NextScript } from 'next/document'
-import { THEME_STORAGE_KEY, THEMES } from '@/context/ThemeProvider'
+import { DEFAULT_THEME, THEME_ATTRIBUTE, THEME_STORAGE_KEY, THEMES } from '@/context/ThemeProvider'
 
 // Runs before first paint, so a saved palette never flashes the default.
-const themeScript = `try{var t=localStorage.getItem('${THEME_STORAGE_KEY}');if(${JSON.stringify(THEMES)}.indexOf(t)>=0)document.documentElement.setAttribute('data-p95-theme',t)}catch(e){}`
+const themeScript = `try{var t=localStorage.getItem('${THEME_STORAGE_KEY}');if(${JSON.stringify(THEMES)}.indexOf(t)>=0)document.documentElement.setAttribute('${THEME_ATTRIBUTE}',t)}catch(e){}`
 
 export default function Document() {
   return (
-    <Html lang="en" data-p95-theme="gray">
+    <Html lang="en" {...{ [THEME_ATTRIBUTE]: DEFAULT_THEME }}>
       <Head >
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link

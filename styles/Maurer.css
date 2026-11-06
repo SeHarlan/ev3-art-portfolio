@@ -28,12 +28,11 @@
 /* The panel's colors and bevels follow the palette (styles/globals.css),
    whose scrollbars apply here too. */
 --windowGray: var(--p95-face);
---windowGrayDark: var(--p95-shadow);
 --windowHeader: var(--p95-title-bg);
---windowBorder: var(--p95-dark) -1px -1px 0px 0px inset, var(--p95-light) 1px 1px 0px 0px inset, var(--p95-shadow) -2px -2px 0px 0px inset, var(--p95-hilight) 2px 2px 0px 0px inset;
---windowBorderSmall: var(--p95-dark) -1px -1px 0px 0px inset, var(--p95-hilight) 1px 1px 0px 0px inset, var(--p95-shadow) -2px -2px 0px 0px inset, var(--p95-light) 2px 2px 0px 0px inset;
+--windowBorder: var(--p95-bevel-window);
+--windowBorderSmall: var(--p95-bevel-raised);
 --windowBorderNoBottom: var(--p95-dark) -1px 0px 0px 0px inset, var(--p95-hilight) 1px 1px 0px 0px inset, var(--p95-shadow) -2px 0px 0px 0px inset, var(--p95-light) 2px 2px 0px 0px inset;
---windowInset: var(--p95-hilight) -1px -1px 0px 0px inset, var(--p95-shadow) 1px 1px 0px 0px inset, var(--p95-light) -2px -2px 0px 0px inset, color-mix(in srgb, var(--p95-dark) 35%, var(--p95-shadow)) 2px 2px 0px 0px inset;
+--windowInset: var(--p95-bevel-sunken);
 
 
 p, h1, h2, h3 {
@@ -49,7 +48,7 @@ strong {
 } */
 input[type="number"] {
   border: none;
-  background-color: var(--p95-icon-light);
+  background-color: var(--p95-field-bg);
   color: var(--p95-text);
   box-shadow: var(--windowInset);
   padding: 3px 6px;
@@ -69,7 +68,7 @@ canvas {
   padding: 6px 8px;
   font-size: 0.75rem;
   box-shadow: var(--windowInset);
-  background-color: var(--p95-icon-light);
+  background-color: var(--p95-field-bg);
   color: var(--p95-text);
 }
 
@@ -80,9 +79,9 @@ canvas {
   padding: 3px 1px 1px 3px;
 }
 
-/* The close button's black X, white on 1-Bit's black face. */
-:root[data-p95-theme='bw'] & #closeButton img {
-  filter: invert(1);
+/* The close button's black X, kept visible on a dark face. */
+#closeButton img {
+  filter: var(--p95-bitmap-filter);
 }
 .custom-checkbox {
   cursor: pointer;
@@ -98,7 +97,7 @@ canvas {
   left: 0;
   height: 16px;
   width: 16px;
-  background-color: var(--p95-icon-light);
+  background-color: var(--p95-field-bg);
   border: inset 1px var(--p95-light);
   border-radius: 100%;
 }

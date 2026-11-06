@@ -5,8 +5,8 @@ export const THEMES = ["gray", "win95", "bw"] as const
 export type Theme = typeof THEMES[number]
 
 export const THEME_STORAGE_KEY = "ev3-p95-theme"
-const DEFAULT_THEME: Theme = "gray"
-const ATTRIBUTE = "data-p95-theme"
+export const DEFAULT_THEME: Theme = "gray"
+export const THEME_ATTRIBUTE = "data-p95-theme"
 
 interface ThemeContextValue {
   theme: Theme;
@@ -27,12 +27,12 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
 
   // _document's inline script has already applied any saved palette.
   useEffect(() => {
-    const current = document.documentElement.getAttribute(ATTRIBUTE)
+    const current = document.documentElement.getAttribute(THEME_ATTRIBUTE)
     if (isTheme(current)) setThemeState(current)
   }, [])
 
   const setTheme = (next: Theme) => {
-    document.documentElement.setAttribute(ATTRIBUTE, next)
+    document.documentElement.setAttribute(THEME_ATTRIBUTE, next)
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next)
     } catch (e) {}

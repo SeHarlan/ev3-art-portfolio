@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 
 // Sk3tch's window-chrome glyphs (sk3tch ui/model/icons.ts PIXEL_GLYPHS), drawn
 // as pixel rows. Each character is one pixel; `.` is transparent and every
@@ -38,25 +38,31 @@ const GLYPHS = {
 
 export type GlyphName = keyof typeof GLYPHS
 
-const PixelGlyph: FC<{ name: GlyphName; className?: string }> = ({ name, className }) => {
-  const rows = GLYPHS[name]
-  const w = Math.max(...rows.map(row => row.length))
-  const h = rows.length
+interface Rect { x: number; y: number; w: number; ink: string }
 
-  // Runs of one color in a row merge into one rect.
-  const rects: JSX.Element[] = []
+// Runs of one color in a row merge into one rect. Built once: the data is
+// static and the fills are CSS vars, so themes need no recompute.
+const toRects = (rows: readonly string[]) => {
+  const rects: Rect[] = []
   rows.forEach((row, y) => {
     let x = 0
     while (x < row.length) {
       const ch = row[x]
       let end = x + 1
       while (end < row.length && row[end] === ch) end++
-      const ink = PIXEL_INK[ch]
-      if (ink) rects.push(<rect key={`${x}-${y}`} x={x} y={y} width={end - x} height={1} style={{ fill: `var(${ink})` }} />)
+      if (PIXEL_INK[ch]) rects.push({ x, y, w: end - x, ink: PIXEL_INK[ch] })
       x = end
     }
   })
+  return { w: rows[0].length, h: rows.length, rects }
+}
 
+const BUILT = Object.fromEntries(
+  Object.entries(GLYPHS).map(([name, rows]) => [name, toRects(rows)])
+) as Record<GlyphName, ReturnType<typeof toRects>>
+
+const PixelGlyph: FC<{ name: GlyphName; className?: string }> = ({ name, className }) => {
+  const { w, h, rects } = BUILT[name]
   return (
     <svg
       className={className}
@@ -65,9 +71,12 @@ const PixelGlyph: FC<{ name: GlyphName; className?: string }> = ({ name, classNa
       shapeRendering="crispEdges"
       aria-hidden="true"
     >
-      {rects}
+      {rects.map(r => (
+        <rect key={`${r.x}-${r.y}`} x={r.x} y={r.y} width={r.w} height={1} style={{ fill: `var(${r.ink})` }} />
+      ))}
     </svg>
   )
 }
 
-export default PixelGlyph
+// Props are string literals, so window drags and resizes skip re-rendering it.
+export default memo(PixelGlyph)

@@ -135,7 +135,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         {menu
           ? menu.map(item => {
             return (
-              <button key={item.label} className="text-windowsText relative px-1.5 hover:bg-windowsSelect hover:text-windowsSelectText focus-visible:bg-windowsSelect focus-visible:text-windowsSelectText focus-visible:outline-none" onClick={item.function}>
+              <button key={item.label} className="p95-menu-item text-windowsText relative px-1.5" onClick={item.function}>
                 <span className="underline">{item.label[0]}</span>
                 {item.label.slice(1)}
                 {item.component}

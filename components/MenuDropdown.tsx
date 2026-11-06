@@ -58,7 +58,7 @@ const MenuDropdown: FC<MenuDropdownProps> = ({
               option.onClick();
               setIsOpen(false);
             }}
-            className="w-full p-1 hover:bg-windowsSelect hover:text-windowsSelectText focus-visible:bg-windowsSelect focus-visible:text-windowsSelectText focus-visible:outline-none"
+            className="p95-menu-item w-full p-1"
           >
             {option.label}
           </button>

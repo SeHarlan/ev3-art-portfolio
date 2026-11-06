@@ -1,13 +1,11 @@
 import clsx from "clsx";
 import { ButtonHTMLAttributes, FC, forwardRef, MouseEventHandler, ReactNode } from "react";
 
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   className?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>
   disabled?: boolean
-  "aria-label"?: string
-  "aria-pressed"?: boolean
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ children, className, onClick, disabled, ...props }, ref) => {

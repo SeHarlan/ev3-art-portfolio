@@ -1,6 +1,7 @@
 import { WINDOWS } from "@/context/WindowsProvider"
 import { Theme, useThemeContext } from "@/context/ThemeProvider"
 import Window from "../Window"
+import Button from "../Button"
 import clsx from "clsx"
 import { FC } from "react"
 
@@ -30,14 +31,14 @@ const SettingsWindow: FC = () => {
           {PALETTES.map(palette => {
             const selected = theme === palette.theme
             return (
-              <button
+              <Button
                 key={palette.theme}
-                className={clsx("classic-button [--p95-dots:4px] min-w-[75px] h-[23px] px-2", { active: selected })}
+                className={clsx("[--p95-dots:4px] min-w-[75px] h-[23px] px-2", { active: selected })}
                 aria-pressed={selected}
                 onClick={() => setTheme(palette.theme)}
               >
                 <span>{palette.label}</span>
-              </button>
+              </Button>
             )
           })}
         </div>
