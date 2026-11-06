@@ -25,34 +25,15 @@
 } */
 
 
---windowGray: #C4C4C4;
---windowGrayDark: #7D8583;
---windowHeader: #100084;
---windowBorder: rgb(39, 39, 39) -2px -2px 0px 0px inset, rgb(236, 236, 236) 2px 2px 0px 0px inset, rgb(117, 117, 117) -3px -3px 0px 0px inset, rgb(218, 218, 218) 3px 3px 0px 0px inset;
---windowBorderSmall: rgb(39, 39, 39) -1px -1px 0px 0px inset, rgb(236, 236, 236) 1px 1px 0px 0px inset, rgb(117, 117, 117) -2px -2px 0px 0px inset, rgb(218, 218, 218) 2px 2px 0px 0px inset;
---windowBorderNoBottom: rgb(39, 39, 39) -1px 0px 0px 0px inset, rgb(236, 236, 236) 1px 1px 0px 0px inset, rgb(117, 117, 117) -2px 0px 0px 0px inset, rgb(218, 218, 218) 2px 2px 0px 0px inset;
---windowInset: rgb(222 220 222) -1px -1px 0px 0px inset, rgb(160 153 161) 1px 1px 0px 0px inset, rgb(202 198 203) -2px -2px 0px 0px inset, rgb(70 65 71) 2px 2px 0px 0px inset;
-
-
-
-::-webkit-scrollbar {
-    width: 16px
-}
-::-webkit-scrollbar-track {
-  background-color:  rgb(210, 210, 210);
-  background-position: 0px 0px, -1px -1px;
-  background-size: 2px 2px;
-}
-::-webkit-scrollbar-thumb {
-  background-color: rgb(202, 198, 203);
-  border-color: rgb(202, 198, 203) rgb(70, 65, 71) rgb(70, 65, 71) rgb(202, 198, 203);
-  border-style: solid;
-  border-width: 1px;
-  box-shadow: rgb(255 255 255) 1px 1px 0px 0px inset, rgb(160 153 161) -1px -1px 0px 0px inset;
-  height: 16px;
-  width: 16px;
-  z-index: 1;
-}
+/* The panel's colors and bevels follow the palette (styles/globals.css),
+   whose scrollbars apply here too. */
+--windowGray: var(--p95-face);
+--windowGrayDark: var(--p95-shadow);
+--windowHeader: var(--p95-title-bg);
+--windowBorder: var(--p95-dark) -1px -1px 0px 0px inset, var(--p95-light) 1px 1px 0px 0px inset, var(--p95-shadow) -2px -2px 0px 0px inset, var(--p95-hilight) 2px 2px 0px 0px inset;
+--windowBorderSmall: var(--p95-dark) -1px -1px 0px 0px inset, var(--p95-hilight) 1px 1px 0px 0px inset, var(--p95-shadow) -2px -2px 0px 0px inset, var(--p95-light) 2px 2px 0px 0px inset;
+--windowBorderNoBottom: var(--p95-dark) -1px 0px 0px 0px inset, var(--p95-hilight) 1px 1px 0px 0px inset, var(--p95-shadow) -2px 0px 0px 0px inset, var(--p95-light) 2px 2px 0px 0px inset;
+--windowInset: var(--p95-hilight) -1px -1px 0px 0px inset, var(--p95-shadow) 1px 1px 0px 0px inset, var(--p95-light) -2px -2px 0px 0px inset, color-mix(in srgb, var(--p95-dark) 35%, var(--p95-shadow)) 2px 2px 0px 0px inset;
 
 
 p, h1, h2, h3 {
@@ -68,14 +49,15 @@ strong {
 } */
 input[type="number"] {
   border: none;
-  background-color: white;
+  background-color: var(--p95-icon-light);
+  color: var(--p95-text);
   box-shadow: var(--windowInset);
   padding: 3px 6px;
   border-radius: 1px;
 }
 button {
   border: none;
-  color: black;
+  color: var(--p95-text);
   padding: 0;
 }
 
@@ -87,34 +69,20 @@ canvas {
   padding: 6px 8px;
   font-size: 0.75rem;
   box-shadow: var(--windowInset);
-  background-color: white;
+  background-color: var(--p95-icon-light);
+  color: var(--p95-text);
 }
 
-.classic-button {
-  position: relative;
-  transition: 100ms;
-  background-color: rgb(202, 198, 203);
-  box-shadow: rgb(70 65 71) -1px -1px 0px 0px inset, white 1px 1px 0px 0px inset, rgb(160 153 161) -2px -2px 0px 0px inset, rgb(222 220 222) 2px 2px 0px 0px inset;
-}
-.classic-button:active {
-  padding: 2px 0 0 2px;
-  background: linear-gradient(45deg, rgb(239, 238, 240) 25%, transparent 25%, transparent 75%, rgb(239, 238, 240) 75%, rgb(239, 238, 240)) 0px 0px / 2px 2px, rgb(202, 198, 203);
-  box-shadow: white -1px -1px 0px 0px inset, rgb(70, 65, 71) 1px 1px 0px 0px inset, rgb(222, 220, 222) -2px -2px 0px 0px inset, rgb(202, 198, 203) 2px 2px 0px 0px inset;
+/* Bevel, hover and pressed states come from globals.css's .classic-button.
+   A bare-text label (the sketch's markup) shifts by padding when pressed;
+   labels in an element shift by globals.css's translate. */
+#buttonContainer .classic-button:active:not(:has(> *)) {
+  padding: 3px 1px 1px 3px;
 }
 
-.classic-button:after {
-  content: "";
-  position: absolute;
-  inset: 2px 3px 2px 2px;
-  border: 1px dashed black;
-  opacity: 0;
-  transition: 200ms;
-}
-.classic-button:hover:after {
-  opacity: 1;
-}
-.classic-button:active:after {
-  inset: 2px 2px 2px 2px;
+/* The close button's black X, white on 1-Bit's black face. */
+:root[data-p95-theme='bw'] & #closeButton img {
+  filter: invert(1);
 }
 .custom-checkbox {
   cursor: pointer;
@@ -130,8 +98,8 @@ canvas {
   left: 0;
   height: 16px;
   width: 16px;
-  background-color: white;
-  border: inset 1px rgb(220, 220, 220);
+  background-color: var(--p95-icon-light);
+  border: inset 1px var(--p95-light);
   border-radius: 100%;
 }
 .checkmark:before {
@@ -139,7 +107,7 @@ canvas {
   position: absolute;
   background-color: none;
   border-radius: 100%;
-  border: inset 2px rgb(146, 146, 146);
+  border: inset 2px var(--p95-shadow);
   top: 0px;
   left: 0px;
   height: 100%;
@@ -155,7 +123,7 @@ canvas {
   width: 6px;
   height: 6px;
   border-radius: 100%;
-  background: black
+  background: var(--p95-text)
 }
 
 .custom-checkbox input:checked ~ .checkmark:after {
@@ -187,6 +155,7 @@ canvas {
 
   padding: 4px;
   background-color: var(--windowGray);
+  color: var(--p95-text);
   border-radius: 2px;
   box-shadow: var(--windowBorder);
 
@@ -221,7 +190,7 @@ canvas {
   justify-content: space-between;
   align-items: center;
   background-color: var(--windowHeader);
-  color:white;
+  color: var(--p95-title-fg);
   font-size: 1rem;
   line-height: 0;
   padding: 4px 3px 4px 5px;
@@ -284,9 +253,8 @@ canvas {
   content: "";
   position: absolute;
   inset: 3px 4px 2px 3px;
-  border: 1px dashed black;
+  border: 1px dotted var(--p95-text);
   opacity: 0;
-  transition: 200ms;
 }
 #tabs label:hover:after {
   opacity: 1;
