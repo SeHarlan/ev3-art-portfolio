@@ -352,3 +352,11 @@ html, body {
   color: var(--p95-select-fg);
   outline: none;
 }
+/* Touch: press feedback without hover. */
+@media (hover: none) {
+  .p95-menu-item:active {
+    background: var(--p95-select-bg);
+    color: var(--p95-select-fg);
+    --p95-icon-ink: var(--p95-select-fg);
+  }
+}
