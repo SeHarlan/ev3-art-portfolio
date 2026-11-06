@@ -80,6 +80,7 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - 2026-11-06 step 3: classic-button/border/inset/divider/bump/corner rewritten to Sk3tch bevels on tokens (hover/focus dotted rect, pressed sunken + 1px label shift, toggled dither, disabled emboss); window-handle and inset-height removed; tsc passes, hover rect seen in browser
 - 2026-11-06 step 4: Tailwind window colors on --p95-* vars plus select/title/text tokens; menu bar, Start menu and dropdown items get the select highlight on hover/focus; taskbar on windowsGray; tsc passes; gray and bw checked in browser (Start menu hover, taskbar, title bar)
 - 2026-11-06 step 5: PixelGlyph (Sk3tch minimize/maximize/close/grip) replaces title PNGs and the Corner SVG, title bar 22u with 18x16 buttons; .p95-field text input; WebKit scrollbars raised/dithered with arrow glyphs, Firefox scrollbar-color behind @supports; tsc passes; title bar, seed field and a 16px styled scrollbar seen in browser
+- 2026-11-06 step 6: Settings window (Standard/Classic/1-Bit toggles, aria-pressed + .active), WINDOWS/ICONS entry, pixel monitor icon, tray button; tsc passes; check 2 passes: after localStorage.clear() the attribute is gray and Standard is pressed; tray, Start menu and desktop icon each open it; Classic and 1-Bit recolor on click; reload keeps bw, from the inline <head> script that runs before <body> (network throttling not available in the pane, so first paint was judged from script order)
 
 ## Decisions
 

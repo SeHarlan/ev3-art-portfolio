@@ -40,6 +40,7 @@ export const WINDOWS = {
   SOMEDAYS: "some days",
   TECHTONIC: "techtonic",
   OBH: "on being human",
+  SETTINGS: "Settings",
 }
 
 type WINDOWS = {
@@ -53,6 +54,7 @@ type WINDOWS = {
   GP: string;
   TECHTONIC: string;
   OBH: string;
+  SETTINGS: string;
 }
 
 export const ICONS = {
@@ -66,6 +68,7 @@ export const ICONS = {
   [WINDOWS.ITB]: "/images/ITB-icon.png",
   [WINDOWS.TECHTONIC]: "/images/small-logo.png",
   [WINDOWS.OBH]: "/images/small-logo.png",
+  [WINDOWS.SETTINGS]: "/svg/settings-icon.svg",
 };
 
 export const filterOutFromMenu = (windowKey: string) => { 

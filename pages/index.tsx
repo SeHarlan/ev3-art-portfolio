@@ -12,6 +12,7 @@ import ITBWindow from '@/components/windows/InTheBeginning'
 import STEV3_Window from '@/components/windows/STEV3'
 import TechtonicWindow from '@/components/windows/Techtonic'
 import OnBeingHumanWindow from '@/components/windows/OnBeingHuman'
+import SettingsWindow from '@/components/windows/Settings'
 
 export default function Home() {
   const { openState } = useWindowsContext()
@@ -105,6 +106,7 @@ export default function Home() {
           {openMap[WINDOWS.GP] ? <STEV3_Window /> : null}
           {openMap[WINDOWS.TECHTONIC] ? <TechtonicWindow /> : null}
           {openMap[WINDOWS.OBH] ? <OnBeingHumanWindow /> : null}
+          {openMap[WINDOWS.SETTINGS] ? <SettingsWindow /> : null}
 
           <div className="absolute bottom-3 right-4 z-[2] flex gap-4 text-white text-sm select-none">
             <a
