@@ -50,41 +50,42 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h1>SCOTT-973 Sk3tch Win95 design + palette switcher</h1>
 <div class="status">
-  <p class="verdict bad">1 must-fix ask open</p>
-  <p>Built on <code>goodaf/SCOTT-973-sk3tch-win95-palettes</code>, not merged · reviewed commit <code>13ff0a2</code>, final <code>856a044</code> · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 1 fix round</p>
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-973-sk3tch-win95-palettes</code>, not merged · reviewed commit <code>13ff0a2</code>, final <code>7cc28f1</code> after follow-up 1 · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 1 fix round, plus 1 in follow-up 1</p>
+  <p>Follow-up 1 did: T1 (touch press highlight on menu items), B1 (title bar and menu bar measurements). A1 answered leave.</p>
   <p>Running at <a href="http://localhost:3973">http://localhost:3973</a></p>
 </div>
 
 <h2>Asks</h2>
-<p class="muted">The recommendation happens unless you say otherwise.</p>
-<div class="ask must">
-  <p><span class="tag must">A1 · must-fix</span><strong>The DUET and Maurer canvases come out 18px taller than on main at the same window size, because Sk3tch's chrome is shorter. Is that acceptable?</strong></p>
+<p class="muted">None open. Answered:</p>
+<div class="ask">
+  <p><span class="tag">A1 · must-fix · answered: leave</span><strong>The DUET and Maurer canvases come out 18px taller than on main at the same window size, because Sk3tch's chrome is shorter. Is that acceptable?</strong></p>
   <p>If left, DUET's "DU"/"ET" text is about 2px larger and sits 6–12px lower than before. The drawing code is untouched, and the canvas still follows the window when it's resized or maximized, as before.</p>
-  <p class="rec">Recommend: leave — restoring main's size means undoing Sk3tch's chrome sizing for every window, and taller default windows don't help because window sizes are clamped to the screen. Record it in plan.md as accepted.</p>
+  <p class="rec">Your answer: leave ("The canvas sizes changing is no problem"). Recorded in plan.md as accepted. Follow-up 1's taller menu bar trims about 6px of that growth.</p>
   <details><summary>Where</summary><p><code>components/Window.tsx:101</code> — the 22px title bar, 11px menu font and 18px grip leave a taller content area, which the sketches use as their canvas size (DUET at 1024×768: 912×584 on main, 912×602 now).</p></details>
 </div>
 
 <h2>Worth checking by hand</h2>
 <ul>
   <li>In 1-Bit, open two windows and click between them → the unfocused window's title-bar logo is dark on dark gray, and Maurer's focused title icon is white on white (left as is; see Elevated decisions).</li>
-  <li>On a phone, tap a menu-bar item in DUET or R3MIX → no highlight on tap (T1).</li>
+  <li>On a phone, press and hold a menu-bar item in DUET or R3MIX → it takes the select highlight while pressed (T1; checked only under the browser's mobile emulation).</li>
+  <li>Open windows with long titles and narrow them → the title cuts off at the right edge without spilling under the title buttons, and descenders ("p" in Maurer Expanse) show whole (B1).</li>
 </ul>
 
 <h2>Outcome</h2>
 <div class="wide"><table>
   <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
-  <tr><td>1</td><td>Chrome uses Sk3tch font, bevels, colors; distinct hover and pressed</td><td class="pass">pass</td><td>Browser check: W95FA UI chrome font, 22px title bar with pixel glyphs, pressed toggles sunken and dithered; stylesheet has the dotted hover/focus rect, sunken <code>:active</code> with 1px child shift, disabled emboss and the menu select highlight</td></tr>
+  <tr><td>1</td><td>Chrome uses Sk3tch font, bevels, colors; distinct hover and pressed</td><td class="pass">pass</td><td>Browser check: W95FA UI chrome font, 22px title bar with pixel glyphs, pressed toggles sunken and dithered; stylesheet has the dotted hover/focus rect, sunken <code>:active</code> with 1px child shift, disabled emboss and the menu select highlight. Follow-up 1: <code>b1-repro.js</code> → <code>[]</code>: 22px title bars, title text at 13.2px line-height clipped only horizontally, 23px menu bars, 18px menu-bar and dropdown items, 3px dropdown panel padding</td></tr>
   <tr><td>2</td><td>Settings switches palettes instantly; first visit Standard; reload keeps choice, no flash</td><td class="pass">pass</td><td>After <code>localStorage.clear()</code>: <code>gray</code>, Standard pressed; tray, Start menu and desktop icon open Settings; Classic and 1-Bit recolor live; reload keeps <code>bw</code>; theme script sits in <code>&lt;head&gt;</code> before <code>&lt;body&gt;</code></td></tr>
-  <tr><td>3</td><td>DUET/Maurer panels follow palette; canvases unchanged</td><td class="fail">fail</td><td>Panels recolor in all three palettes and DUET's canvas hash is the same across them, but DUET's canvas is 912×602 vs 912×584 on main (A1)</td></tr>
-  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0</td></tr>
+  <tr><td>3</td><td>DUET/Maurer panels follow palette; canvases unchanged</td><td class="fail">fail</td><td>Panels recolor in all three palettes and DUET's canvas hash is the same across them, but DUET's canvas is 912×602 vs 912×584 on main (A1, accepted; about 6px less after follow-up 1, not remeasured)</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0, no warnings (at <code>7cc28f1</code>)</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
 <ul>
-  <li>The DUET and Maurer canvases are 18px taller than before at the same window size, so they don't render exactly as before (A1).</li>
+  <li>The DUET and Maurer canvases are taller than before at the same window size, so they don't render exactly as before (A1, accepted).</li>
   <li>In 1-Bit, unfocused windows' title-bar logos are dark on dark gray, and Maurer's focused title icon is white on white.</li>
-  <li>On touch screens, menu-bar and dropdown items show no selection highlight when tapped (T1).</li>
   <li>The DUET and Maurer close buttons keep their PNG X (inverted in 1-Bit), since their markup lives in sketch JS, which the spec leaves as is.</li>
 </ul>
 
@@ -109,7 +110,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 </div>
 
 <h2>Decided for you</h2>
-<details><summary>17 decisions</summary>
+<details><summary>20 decisions</summary>
 <ul>
   <li>Theme attribute: <code>data-p95-theme</code> on <code>&lt;html&gt;</code> with Sk3tch's keys <code>win95|gray|bw</code>, saved under <code>ev3-p95-theme</code></li>
   <li>Tailwind colors: plain <code>var(--p95-*)</code>, no alpha channel</li>
@@ -128,6 +129,9 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Sketch buttons with bare-text labels shift by padding when pressed</li>
   <li>DUET and Maurer close buttons keep their PNG, inverted in 1-Bit</li>
   <li>Simplify skipped four suggestions: deleting unused palette tokens, replacing <code>--u</code> with px, auto-wrapping button children, giving window frames a text color</li>
+  <li>A1: the taller canvases accepted, as you answered</li>
+  <li>Dropdown items keep their centered labels at Sk3tch's 18px height (Win95 left-aligns them)</li>
+  <li>Title text clips only horizontally, since W95FA's descenders reach about 1px past the line box</li>
 </ul>
 </details>
 
@@ -137,16 +141,20 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>No network throttling in the browser pane; "no flash" was judged from the theme script running in <code>&lt;head&gt;</code> before <code>&lt;body&gt;</code>.</li>
   <li>Maurer's canvas animates, so its hashes can't be compared across palettes or against main; the diff touches no canvas rule.</li>
   <li>Main's canvas size was measured by the fixer from a <code>git archive main</code> copy served on a scratch port, not from the root checkout.</li>
-  <li>Not tested on a touch device.</li>
+  <li>Not tested on a touch device: T1's rule was confirmed loaded under the browser's mobile emulation, where <code>(hover: none)</code> matches, but a held <code>:active</code> can't be produced from the pane; iOS Safari's tap behavior is unchecked.</li>
+  <li>Browsers without <code>overflow: clip</code> (Safari before 16) fall back to visible, so long titles could spill under the title buttons there; the repo names no browser target.</li>
+  <li>The Seed dropdown panel has the same <code>classic-border p-2</code> pattern, so its inset is 4px rather than 3px; outside B1, which named the title bar and menus, and not raised as a finding.</li>
+  <li>B1's repro is a browser console script (the repo has no test runner); its coverage gaps are T2 and T3.</li>
   <li>The reviewer's 1px status-row overflow concern: measured on DUET, the status row ends at 668.2px inside a 672px window, so nothing visible.</li>
 </ul>
 
 <h2>Review</h2>
-<p>2 fixed · 1 tracked · 0 dropped · 1 ask</p>
+<p>3 fixed · 3 tracked · 0 dropped · 1 ask (answered)</p>
 <details><summary>Fixed</summary>
 <ul>
   <li>F1 In 1-Bit, the Start logo and taskbar small-logo icons were invisible on the black face — <code>1befbfb</code></li>
   <li>F3 The tray lost its 16px side padding to the sunken-pane rule — <code>856a044</code></li>
+  <li>F5 The dropdown panel's padding was 4px instead of Sk3tch's 3px (follow-up 1) — <code>7cc28f1</code></li>
 </ul>
 </details>
 
@@ -154,11 +162,16 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <p class="muted">Not done unless you pull one in. They don't become tickets.</p>
 <h3>touch press feedback</h3>
 <ul>
-  <li>T1 Port Sk3tch's touch <code>:active</code> highlight so menu-bar and dropdown items respond to taps</li>
+  <li>T1 Port Sk3tch's touch <code>:active</code> highlight so menu-bar and dropdown items respond to taps — done in follow-up 1, <code>b37e176</code></li>
+</ul>
+<h3>B1 repro coverage</h3>
+<ul>
+  <li>T2 The repro's dropdown check also matches Start menu items (false failures with the Start menu open) and doesn't check the panel padding</li>
+  <li>T3 The repro's title clip check wouldn't catch a restored vertical clip at the 1.2 line-height</li>
 </ul>
 
 <footer>
-  <p>Answer in the review session, one line: "A1 leave, T1 in", "all as recommended", or a bug you found.</p>
+  <p>Answer in the review session, one line: "T2 in", "T3 in", or a bug you found.</p>
   <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-973-sk3tch-win95-palettes/.goodaf/2026-11-06-SCOTT-973-sk3tch-win95-palettes/review.md</code></p>
 </footer>
 

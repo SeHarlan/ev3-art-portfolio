@@ -1,18 +1,18 @@
 # Review: SCOTT-973 Sk3tch Win95 design + palette switcher
 
 Tier: Standard (visual diff)
-Reviewed: 2026-11-06 · main at 69acd7e · reviewed 13ff0a2 · final 856a044
+Reviewed: 2026-11-06 · main at 69acd7e · reviewed 13ff0a2 · final 856a044 · follow-up 1 final 7cc28f1
 Panel: general; no Codex pass: visual or device diff
 Oracle check: no oracles
-Rounds: 1 (round 1 fixed F1 and F3, the fixer declined F2, and the re-review found no new defects; hand-back matched: 2 commits, clean tree)
-Counts: 2 fixed, 1 asks, 1 tracked, 0 dropped
+Rounds: 1 (round 1 fixed F1 and F3, the fixer declined F2, and the re-review found no new defects; hand-back matched: 2 commits, clean tree); follow-up 1: 1 (fixed F5, the re-review found no new defects; hand-back matched: 1 commit, clean tree)
+Counts: 3 fixed, 1 asks, 3 tracked, 0 dropped
 
 ## Acceptance checks
 
-- 1 Chrome uses Sk3tch font, bevels, colors; distinct hover and pressed: pass — browser check at http://localhost:3973: W95FA UI chrome font, 22px title bar with pixel glyphs, Settings toggles show sunken + dither when pressed; stylesheet holds `.classic-button` hover/focus dotted `::after` (hover gated by `@media (hover: hover)`), `:active` sunken bevel with `translate: var(--u) var(--u)` on children, disabled emboss, `.p95-menu-item` select highlight (seen on the Start menu in 1-Bit). No side-by-side against Sk3tch's dev server.
+- 1 Chrome uses Sk3tch font, bevels, colors; distinct hover and pressed: pass — browser check at http://localhost:3973: W95FA UI chrome font, 22px title bar with pixel glyphs, Settings toggles show sunken + dither when pressed; stylesheet holds `.classic-button` hover/focus dotted `::after` (hover gated by `@media (hover: hover)`), `:active` sunken bevel with `translate: var(--u) var(--u)` on children, disabled emboss, `.p95-menu-item` select highlight (seen on the Start menu in 1-Bit). No side-by-side against Sk3tch's dev server. Follow-up 1 (at 7cc28f1): b1-repro.js returns [] with Introduction, R3MIX and its Choose R3MIX dropdown open: title bars 22px, title line-height 13.2px clipped only horizontally, menu bars 23px, menu-bar and dropdown items 18px; dropdown panel padding 3px; Maurer Expanse's title descender shows whole.
 - 2 Settings switches palettes instantly; first visit Standard; reload keeps choice, no flash: pass — after `localStorage.clear()` the attribute is `gray` with Standard pressed; tray button, Start menu and desktop icon each open Settings; Classic and 1-Bit recolor on click with no reload; reload keeps `bw`; served HTML has `<html data-p95-theme="gray">` and the `ev3-p95-theme` script at offset 2135, before `<body` at 6701. No network throttling in the pane.
-- 3 DUET/Maurer panels follow palette; canvases unchanged: fail — DUET canvas `toDataURL` hashes identical across gray, win95 and bw; DUET and Maurer panel buttons recolor (gray rgb(216,216,216)/black, win95 rgb(192,192,192)/black, bw black/white). Against main, the fixer measured DUET at 1024×768: canvas 912×584 on main, 912×602 on HEAD (F2, A1). Maurer's canvas animates, so its hashes can't be compared.
-- Full check: pass — `npx tsc --noEmit` → exit 0; `yarn build` → exit 0 (at 13ff0a2; the fixer reran both at 856a044 → exit 0).
+- 3 DUET/Maurer panels follow palette; canvases unchanged: fail — DUET canvas `toDataURL` hashes identical across gray, win95 and bw; DUET and Maurer panel buttons recolor (gray rgb(216,216,216)/black, win95 rgb(192,192,192)/black, bw black/white). Against main, the fixer measured DUET at 1024×768: canvas 912×584 on main, 912×602 on HEAD (F2, A1). Maurer's canvas animates, so its hashes can't be compared. Follow-up 1's 23px menu bar takes about 6px more from every window's content area, so the canvases now sit about 12px taller than main instead of 18px (not remeasured; A1 accepted the change).
+- Full check: pass — `npx tsc --noEmit` → exit 0; `yarn build` → exit 0 (at 13ff0a2; the fixer reran both at 856a044 → exit 0; follow-up 1 reran both at 7cc28f1 → exit 0, no warnings).
 
 ## Asks
 
@@ -23,12 +23,18 @@ Counts: 2 fixed, 1 asks, 1 tracked, 0 dropped
 
 - T1. [touch press feedback] Menu-bar and dropdown items get no selection highlight when tapped on touch screens; port Sk3tch's `@media (hover: none) { .p95-menu-item:active { … } }` rule (paint.css:952-957). From F4.
   Answer: 2026-11-06 "T1 in" → in
+  Done: 2026-11-06, b37e176
+- T2. [B1 repro coverage] b1-repro.js's dropdown selector `.p95-chrome.classic-border .p95-menu-item` also matches the Start menu's items, so running it with the Start menu open reports false failures (~21px items), and it never checks the dropdown panel's padding. From F6.
+  Answer: —
+- T3. [B1 repro coverage] b1-repro.js's title check only flags vertical clipping when `scrollHeight > clientHeight`, which a restored `overflow-hidden` at line-height 1.2 wouldn't trip (descender ink overflow isn't scrollable overflow); its line-height check still catches a returning `leading-none`. From F7.
+  Answer: —
 
 ## Worth checking by hand
 
 Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-973-sk3tch-win95-palettes · dev server: http://localhost:3973
 - In 1-Bit, open two windows and click between them → the unfocused window's title-bar logo is dark on dark gray, and Maurer's focused title icon is white on white (left as is, see plan.md's Elevated decision on F1).
-- On a phone, tap a menu-bar item in DUET or R3MIX → no highlight on tap (T1).
+- On a phone, press and hold a menu-bar item in DUET or R3MIX → it takes the select highlight while pressed (T1; checked only under the pane's mobile emulation, not on a device).
+- Open windows with long titles and narrow them → the title text cuts off at the right edge without spilling under the title buttons, and descenders ("p" in Maurer Expanse) show whole (B1).
 
 ## Findings
 
@@ -36,11 +42,15 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 - F2. [ask A1] components/Window.tsx:101 The shorter Sk3tch chrome makes the DUET and Maurer content areas, and so their canvases, 18px taller than on main at the same window size, moving DUET's canvas text. Found by: general. Verifier: admit — breaks "canvases render exactly as before"; acceptance check 3 against main was never run. Fixer: declined — restoring main's canvas size means undoing the plan's chrome sizes (steps 2 and 5); measured main 912×584 vs HEAD 912×602.
 - F3. [fixed 856a044] components/Footer.tsx:79 The tray's `px-4` was overridden by unlayered `.classic-inset { padding: 2u }`, leaving 2px instead of 16px. Found by: general. Verifier: admit — the diff swapped in `classic-inset` and kept `px-4`, so 16px was meant to stay.
 - F4. [tracked T1] styles/globals.css:337 Menu-bar and dropdown items show no selection highlight on tap on touch screens; Sk3tch's `(hover: none) :active` rule wasn't ported. Found by: general. Verifier: track — no done-when line broken; on main the dropdown closed on tap, so the lost feedback was about one frame.
+- F5. [fixed 7cc28f1] components/MenuDropdown.tsx:48 The dropdown panel's `p-2` lost to `.classic-border`'s unlayered 4px padding, so the panel inset was 4px instead of Sk3tch's 3u that B1 asks for. Found by: general (follow-up 1). Verifier: admit — a stated follow-up requirement unmet on a file the diff touched; 1px off, not the 5px the reviewer estimated.
+- F6. [tracked T2] .goodaf/2026-11-06-SCOTT-973-sk3tch-win95-palettes/b1-repro.js:28 The dropdown selector also matches Start menu items, and no check covers the panel padding. Found by: general (follow-up 1). Verifier: track — a console repro, not a shipped test; it only misfires with the Start menu open, and the padding gap was F5's subject.
+- F7. [tracked T3] .goodaf/2026-11-06-SCOTT-973-sk3tch-win95-palettes/b1-repro.js:17 The title clip check can't catch a restored `overflow-hidden` at line-height 1.2. Found by: general (follow-up 1). Verifier: track — a one-off repro that did fail before the fix; its line-height check still catches the actual regression.
 
 ## Bug notes
 
 - B1. 2026-11-06 "the title bar and nav menu buttons seem squished and cut off in some areas. Double check we are using the correct measurements, heights and font sizes."
+  Done: 2026-11-06, 887df4d (and 7cc28f1 for the dropdown panel's 3px padding, F5), repro .goodaf/2026-11-06-SCOTT-973-sk3tch-win95-palettes/b1-repro.js
 
 ## Follow-ups
 
-none
+- 2026-11-06 follow-up 1: base 1e66238, head 7cc28f1; did T1, B1 (A1 answered leave, recorded in plan.md Decisions); review: general, 1 fixed, 0 new asks, 2 tracked, 0 dropped
