@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-973</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-973 Sk3tch Win95 design + palette switcher</h1>
+<div class="status">
+  <p class="verdict bad">1 must-fix ask open</p>
+  <p>Built on <code>goodaf/SCOTT-973-sk3tch-win95-palettes</code>, not merged · reviewed commit <code>13ff0a2</code>, final <code>856a044</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 1 fix round</p>
+  <p>Running at <a href="http://localhost:3973">http://localhost:3973</a></p>
+</div>
+
+<h2>Asks</h2>
+<p class="muted">The recommendation happens unless you say otherwise.</p>
+<div class="ask must">
+  <p><span class="tag must">A1 · must-fix</span><strong>The DUET and Maurer canvases come out 18px taller than on main at the same window size, because Sk3tch's chrome is shorter. Is that acceptable?</strong></p>
+  <p>If left, DUET's "DU"/"ET" text is about 2px larger and sits 6–12px lower than before. The drawing code is untouched, and the canvas still follows the window when it's resized or maximized, as before.</p>
+  <p class="rec">Recommend: leave — restoring main's size means undoing Sk3tch's chrome sizing for every window, and taller default windows don't help because window sizes are clamped to the screen. Record it in plan.md as accepted.</p>
+  <details><summary>Where</summary><p><code>components/Window.tsx:101</code> — the 22px title bar, 11px menu font and 18px grip leave a taller content area, which the sketches use as their canvas size (DUET at 1024×768: 912×584 on main, 912×602 now).</p></details>
+</div>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>In 1-Bit, open two windows and click between them → the unfocused window's title-bar logo is dark on dark gray, and Maurer's focused title icon is white on white (left as is; see Elevated decisions).</li>
+  <li>On a phone, tap a menu-bar item in DUET or R3MIX → no highlight on tap (T1).</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Chrome uses Sk3tch font, bevels, colors; distinct hover and pressed</td><td class="pass">pass</td><td>Browser check: W95FA UI chrome font, 22px title bar with pixel glyphs, pressed toggles sunken and dithered; stylesheet has the dotted hover/focus rect, sunken <code>:active</code> with 1px child shift, disabled emboss and the menu select highlight</td></tr>
+  <tr><td>2</td><td>Settings switches palettes instantly; first visit Standard; reload keeps choice, no flash</td><td class="pass">pass</td><td>After <code>localStorage.clear()</code>: <code>gray</code>, Standard pressed; tray, Start menu and desktop icon open Settings; Classic and 1-Bit recolor live; reload keeps <code>bw</code>; theme script sits in <code>&lt;head&gt;</code> before <code>&lt;body&gt;</code></td></tr>
+  <tr><td>3</td><td>DUET/Maurer panels follow palette; canvases unchanged</td><td class="fail">fail</td><td>Panels recolor in all three palettes and DUET's canvas hash is the same across them, but DUET's canvas is 912×602 vs 912×584 on main (A1)</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<ul>
+  <li>The DUET and Maurer canvases are 18px taller than before at the same window size, so they don't render exactly as before (A1).</li>
+  <li>In 1-Bit, unfocused windows' title-bar logos are dark on dark gray, and Maurer's focused title icon is white on white.</li>
+  <li>On touch screens, menu-bar and dropdown items show no selection highlight when tapped (T1).</li>
+  <li>The DUET and Maurer close buttons keep their PNG X (inverted in 1-Bit), since their markup lives in sketch JS, which the spec leaves as is.</li>
+</ul>
+
+<h2>Elevated decisions</h2>
+<div class="elevated">
+  <p><strong>Sk3tch's font sizing on the existing W95FA face would grow all rem text 1.45× and change DUET's canvas text.</strong></p>
+  <p>Options: put size-adjust on the existing face; add a second face for the UI only.</p>
+  <p>Chose: a second face, 'W95FA UI' (Sk3tch's file), on chrome only at 11px, so window content and art keep the old face.</p>
+  <p>Reverse: point <code>.p95-chrome</code> at 'W95FA' and drop the new face.</p>
+</div>
+<div class="elevated">
+  <p><strong>Simplify deleted <code>public/svg/corner.tsx</code> after the grip glyph replaced its only use.</strong></p>
+  <p>Options: keep it as dead code; delete it.</p>
+  <p>Chose: delete; git keeps it.</p>
+  <p>Reverse: <code>git checkout main -- public/svg/corner.tsx</code>.</p>
+</div>
+<div class="elevated">
+  <p><strong>Review fix F1 left title-bar icons alone in 1-Bit: inverting them would turn the focused icon white on white, since the active title bar is white.</strong></p>
+  <p>Options: leave it; invert title-bar icons in 1-Bit only when the window is unfocused and drop Maurer's own invert when focused.</p>
+  <p>Chose: leave it, since it depends on the inactive-title color decision.</p>
+  <p>Reverse: none needed; to fix it, add a 1-Bit title-bar rule or a conditional at <code>Window.tsx:107</code>.</p>
+</div>
+
+<h2>Decided for you</h2>
+<details><summary>17 decisions</summary>
+<ul>
+  <li>Theme attribute: <code>data-p95-theme</code> on <code>&lt;html&gt;</code> with Sk3tch's keys <code>win95|gray|bw</code>, saved under <code>ev3-p95-theme</code></li>
+  <li>Tailwind colors: plain <code>var(--p95-*)</code>, no alpha channel</li>
+  <li>Inactive title bar: the shadow gray, Win95's inactive-title color</li>
+  <li>Settings icon: new 16×16 pixel-art monitor SVG in fixed colors</li>
+  <li>Palette controls: three pressed-state toggle buttons, Sk3tch's pattern</li>
+  <li>Tray and status panes: sunken panes instead of disabled buttons, so the clock isn't greyed</li>
+  <li>Bare-text button labels wrapped in a span so they shift 1px when pressed</li>
+  <li>New <code>windowsHilight</code> token for inactive title text and the Start menu sidebar text</li>
+  <li>Tray Twitter and email icons follow the text color</li>
+  <li>Window menu-bar items use Sk3tch's 6px item padding instead of a gap</li>
+  <li>Glyph ink from Sk3tch's icon ink vars, two inks for the grip</li>
+  <li>Text field: white on black in 1-Bit, black on white otherwise</li>
+  <li>Firefox scrollbar colors only where WebKit scrollbar styling isn't supported; arrow glyphs as data-URI SVGs</li>
+  <li>Maurer's own scrollbar rules removed so the global token scrollbars apply</li>
+  <li>Sketch buttons with bare-text labels shift by padding when pressed</li>
+  <li>DUET and Maurer close buttons keep their PNG, inverted in 1-Bit</li>
+  <li>Simplify skipped four suggestions: deleting unused palette tokens, replacing <code>--u</code> with px, auto-wrapping button children, giving window frames a text color</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>No side-by-side against Sk3tch's own paint UI dev server; check 1 was judged from the stylesheet and screenshots.</li>
+  <li>No network throttling in the browser pane; "no flash" was judged from the theme script running in <code>&lt;head&gt;</code> before <code>&lt;body&gt;</code>.</li>
+  <li>Maurer's canvas animates, so its hashes can't be compared across palettes or against main; the diff touches no canvas rule.</li>
+  <li>Main's canvas size was measured by the fixer from a <code>git archive main</code> copy served on a scratch port, not from the root checkout.</li>
+  <li>Not tested on a touch device.</li>
+  <li>The reviewer's 1px status-row overflow concern: measured on DUET, the status row ends at 668.2px inside a 672px window, so nothing visible.</li>
+</ul>
+
+<h2>Review</h2>
+<p>2 fixed · 1 tracked · 0 dropped · 1 ask</p>
+<details><summary>Fixed</summary>
+<ul>
+  <li>F1 In 1-Bit, the Start logo and taskbar small-logo icons were invisible on the black face — <code>1befbfb</code></li>
+  <li>F3 The tray lost its 16px side padding to the sunken-pane rule — <code>856a044</code></li>
+</ul>
+</details>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<h3>touch press feedback</h3>
+<ul>
+  <li>T1 Port Sk3tch's touch <code>:active</code> highlight so menu-bar and dropdown items respond to taps</li>
+</ul>
+
+<footer>
+  <p>Answer in the review session, one line: "A1 leave, T1 in", "all as recommended", or a bug you found.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-973-sk3tch-win95-palettes/.goodaf/2026-11-06-SCOTT-973-sk3tch-win95-palettes/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>
