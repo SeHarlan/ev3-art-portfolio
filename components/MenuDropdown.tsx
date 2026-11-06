@@ -45,7 +45,7 @@ const MenuDropdown: FC<MenuDropdownProps> = ({
       }}
       className={clsx(
         isOpen ? "flex flex-col items-start " : "hidden",
-        "p95-chrome bg-windowsGray text-windowsText classic-border p-2 shadow-md cursor-default z-30",
+        "p95-chrome bg-windowsGray text-windowsText classic-border !p-[3px] shadow-md cursor-default z-30",
         "w-fit pointer-events-auto",
         className
       )}
