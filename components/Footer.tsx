@@ -76,7 +76,7 @@ const Footer: FC = () => {
 
       <div className="relative flex">
         <div className="classic-divider h-full w-[1px] mr-1" />
-        <div className="px-4 classic-inset flex items-center justify-end gap-1">
+        <div className="!px-4 classic-inset flex items-center justify-end gap-1">
           <button
             className="flex focus-visible:outline-dotted focus-visible:outline-1 focus-visible:outline-windowsText"
             aria-label="Settings"
