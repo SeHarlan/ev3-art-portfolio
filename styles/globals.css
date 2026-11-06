@@ -241,6 +241,12 @@ html, body {
   background: var(--p95-face);
   box-shadow: var(--p95-bevel-raised);
 }
+/* The black EV3 logos on a button face (Start, taskbar items), kept visible
+   on 1-Bit's black face. Art-thumbnail icons have their own backgrounds. */
+.classic-button img[src='/images/small-logo.png'],
+.classic-button img[src='/images/small-alt-logo.png'] {
+  filter: var(--p95-bitmap-filter);
+}
 
 /* Pressed, and toggled on (taskbar item, open Start, aria-pressed): the
    sunken bevel, a 50% dither when toggled, and the label 1 down-right. */
