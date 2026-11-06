@@ -145,72 +145,113 @@ html, body {
   z-index: 1;
 }
 
-.classic-button{
+/* ---------- Bevels and buttons (Sk3tch paint.css recipes) ---------- */
+
+/* Push button: Sk3tch's .p95-raised + .p95-btn. */
+.classic-button {
   position: relative;
-  background-color: rgb(202, 198, 203);
-  box-shadow: rgb(70 65 71) -1px -1px 0px 0px inset, white 1px 1px 0px 0px inset, rgb(160 153 161) -2px -2px 0px 0px inset, rgb(222 220 222) 2px 2px 0px 0px inset;
-}
-.classic-button:active, .classic-button.active {
-  background: linear-gradient(45deg, rgb(239, 238, 240) 25%, transparent 25%, transparent 75%, rgb(239, 238, 240) 75%, rgb(239, 238, 240)) 0px 0px / 2px 2px, rgb(202, 198, 203);
-  box-shadow: white -1px -1px 0px 0px inset, rgb(70, 65, 71) 1px 1px 0px 0px inset, rgb(222, 220, 222) -2px -2px 0px 0px inset, rgb(202, 198, 203) 2px 2px 0px 0px inset;
-}
-.classic-button:disabled {
-  background: rgb(202, 198, 203);
-  color: rgb(133, 130, 134);
-  box-shadow: rgb(70 65 71) -1px -1px 0px 0px inset, white 1px 1px 0px 0px inset, rgb(160 153 161) -2px -2px 0px 0px inset, rgb(222 220 222) 2px 2px 0px 0px inset;
+  --p95-dots: calc(2 * var(--u));
+  color: var(--p95-text);
+  background: var(--p95-face);
+  box-shadow:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
+    inset var(--u) var(--u) var(--p95-hilight),
+    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
+    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-light);
 }
 
-.classic-button:not(.disabled):after {
-  content: "";
+/* Pressed, and toggled on (taskbar item, open Start, aria-pressed): the
+   sunken bevel, a 50% dither when toggled, and the label 1 down-right. */
+.classic-button:active:not(:disabled):not(.disabled),
+.classic-button.active,
+.classic-button[aria-pressed='true'],
+.classic-inset {
+  box-shadow:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-hilight),
+    inset var(--u) var(--u) var(--p95-shadow),
+    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-light),
+    inset calc(2 * var(--u)) calc(2 * var(--u)) color-mix(in srgb, var(--p95-dark) 35%, var(--p95-shadow));
+}
+.classic-button.active,
+.classic-button[aria-pressed='true'] {
+  background-color: var(--p95-face);
+  background-image: conic-gradient(
+    var(--p95-dither-ink) 25%, transparent 0 50%, var(--p95-dither-ink) 0 75%, transparent 0);
+  background-size: calc(2 * var(--u)) calc(2 * var(--u));
+}
+.classic-button:active:not(:disabled):not(.disabled) > *,
+.classic-button.active > *,
+.classic-button[aria-pressed='true'] > * {
+  translate: var(--u) var(--u);
+}
+
+/* Hover and keyboard focus: Win95's dotted focus rect inside the bevel. */
+.classic-button::after {
   position: absolute;
-  inset: 2px 3px 2px 2px;
-  border: 1px dashed black;
-  opacity: 0;
-  transition: 200ms;
+  inset: var(--p95-dots);
+  border: var(--u) dotted var(--p95-text);
+  pointer-events: none;
 }
-.classic-button:hover:after {
-  opacity: 1;
+@media (hover: hover) {
+  .classic-button:hover:not(:disabled):not(.disabled)::after {
+    content: '';
+  }
 }
-.classic-button:active:after {
-  inset: 2px 2px 2px 2px;
+.classic-button:focus-visible {
+  outline: none;
+}
+.classic-button:focus-visible:not(:disabled):not(.disabled)::after {
+  content: '';
 }
 
-.window-handle {
-  background: linear-gradient(90deg, rgb(0, 131, 208) 0%, rgb(160, 220, 255) 40%, rgb(84, 192, 255) 72%, rgb(0, 131, 208) 100%);
+/* Disabled: embossed gray text, no hover rect. */
+.classic-button:disabled,
+.classic-button.disabled {
+  color: var(--p95-text-disabled);
+  text-shadow: var(--u) var(--u) 0 var(--p95-hilight);
+  --p95-icon-ink: var(--p95-text-disabled);
 }
 
+/* Window frame: Sk3tch's .p95-window bevel. */
 .classic-border {
-  padding: 4px;
-  /* box-shadow: rgb(70 65 71) -2px -2px 0px 0px inset, white 2px 2px 0px 0px inset, rgb(160 153 161) -4px -4px 0px 0px inset, rgb(222 220 222) 4px 4px 0px 0px inset; */
-  box-shadow: rgb(70 65 71) -1px -1px 0px 0px inset, white 1px 1px 0px 0px inset, rgb(160 153 161) -2px -2px 0px 0px inset, rgb(222 220 222) 2px 2px 0px 0px inset;
+  padding: calc(4 * var(--u));
+  box-shadow:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
+    inset var(--u) var(--u) var(--p95-light),
+    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
+    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-hilight);
 }
 
+/* Sunken well (content area, text field, status panes, tray): .p95-sunken,
+   bevel above. */
+.classic-inset {
+  padding: calc(2 * var(--u));
+}
+
+/* Etched line, upright: shadow then hilight, 2 wide. */
 .classic-divider {
   position: relative;
-  width: 1px;
-  background: rgb(128, 128, 136);
-  box-shadow: rgb(255 255 255) 1px 0px 0px;
+  width: calc(2 * var(--u));
+  border-style: solid;
+  border-color: var(--p95-shadow) var(--p95-hilight) var(--p95-hilight) var(--p95-shadow);
+  border-width: 0 var(--u);
 }
+/* The taskbar's raised grab bar beside Start. */
 .classic-bump::before {
-    position: absolute;
-    height: calc(100% - 6px);
-    left: 4px;
-    top: 3px;
-    content: "";
-    width: 3px;
-    background: rgb(202, 198, 203);
-    box-shadow: rgb(128 128 136) -1px -1px 0px inset, rgb(255 255 255) 1px 1px 0px inset;
-}
-.classic-inset {
-  padding: 2px;
-  box-shadow: rgb(222 220 222) -1px -1px 0px 0px inset, rgb(160 153 161) 1px 1px 0px 0px inset, rgb(202 198 203) -2px -2px 0px 0px inset, rgb(70 65 71) 2px 2px 0px 0px inset;
-}
-.inset-height {
-  height: calc(100% - 60px)
+  position: absolute;
+  height: calc(100% - 6 * var(--u));
+  left: calc(4 * var(--u));
+  top: calc(3 * var(--u));
+  content: "";
+  width: calc(3 * var(--u));
+  background: var(--p95-face);
+  box-shadow:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-shadow),
+    inset var(--u) var(--u) var(--p95-hilight);
 }
 
 .classic-corner {
-  filter: drop-shadow(-1px -1px 0px rgb(222 220 222))
+  filter: drop-shadow(calc(-1 * var(--u)) calc(-1 * var(--u)) 0 var(--p95-hilight));
 }
 
 /* Window chrome text at Sk3tch's size; window content keeps the body font. */

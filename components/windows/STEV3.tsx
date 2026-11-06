@@ -186,7 +186,7 @@ const STEV3_Window: FC = () => {
           className="classic-button px-2"
           onClick={() => setActiveContent(0)}
         >
-          Go back
+          <span>Go back</span>
         </button>
       </div>
     </Window>

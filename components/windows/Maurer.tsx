@@ -108,7 +108,7 @@ const MaurerWindow: FC = () => {
         <p>Press "m" or swipe in from the top right to view a navigation menu.</p>
         <br />
         <button className="classic-button px-2" onClick={() => setActiveContent(0)}>
-          Go back
+          <span>Go back</span>
         </button>
       </div>
       

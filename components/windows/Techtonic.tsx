@@ -29,7 +29,7 @@ const TechtonicWindow: FC = () => {
     <Window windowKey={WINDOWS.TECHTONIC} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-black">
       <div className="w-full h-full flex items-center justify-center">
         <a href={SITE} target="_blank" rel="noreferrer" className="classic-button px-4 py-1">
-          Visit techtonic
+          <span>Visit techtonic</span>
         </a>
       </div>
     </Window>

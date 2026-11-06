@@ -77,6 +77,7 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - 2026-11-06 plan written
 - 2026-11-06 step 1: Sk3tch palettes on :root, data-p95-theme pre-paint script, ThemeProvider; tsc passes, theme attribute checked in browser (saved bw applies, invalid value falls back to gray); check 2 rerun after step 6
 - 2026-11-06 step 2: 'W95FA UI' face (Sk3tch file + OFL.txt) and .p95-chrome on title/menu/status bars, taskbar, Start menu, dropdowns, desktop labels; tsc passes, font seen in browser; checks 1, 3 rerun at the end
+- 2026-11-06 step 3: classic-button/border/inset/divider/bump/corner rewritten to Sk3tch bevels on tokens (hover/focus dotted rect, pressed sunken + 1px label shift, toggled dither, disabled emboss); window-handle and inset-height removed; tsc passes, hover rect seen in browser
 
 ## Decisions
 
@@ -86,5 +87,7 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - Normal: inactive title bar uses `--p95-shadow` (Win95's inactive-title grey); Sk3tch has no inactive token. Reverse: change the `windowsDarkGray` mapping.
 - Normal: settings icon is a new pixel-art SVG in `public/svg/`, in fixed colors like Sk3tch's app icon. Reverse: delete it and point `ICONS` at an existing PNG.
 - Normal: palette toggles are `classic-button`s with `aria-pressed`, following Sk3tch's pressed-toggle pattern, since Sk3tch has no radio control. Reverse: swap them for a list.
+- Normal: the tray and the window status panes were `classic-button active disabled` (dithered, and `disabled` now greys text). They became `classic-inset`, Sk3tch's sunken status pane (.p95-pane .p95-sunken), so the clock isn't greyed. Reverse: put `classic-button active` back on them in Footer.tsx and Window.tsx.
+- Normal: the 1px label shift moves a button's child elements (Sk3tch's `> *` translate), so bare-text labels got a `<span>`: taskbar items, SeedDropdown clear/use, every window's Go back, the techtonic/on being human Visit links. Reverse: unwrap the spans; bare text then doesn't shift.
 
 ## Parked asks

@@ -162,8 +162,8 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
       </div>
 
       <div className="p95-chrome flex gap-1 items-end">
-        <div className="w-1/2 h-4 classic-button active"></div>
-        <div className="w-1/2 h-4 classic-button active"></div>
+        <div className="w-1/2 h-4 classic-inset"></div>
+        <div className="w-1/2 h-4 classic-inset"></div>
         <div
           className="h-full py-0.5"
           ref={resizeRef}

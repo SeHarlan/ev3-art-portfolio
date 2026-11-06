@@ -65,10 +65,10 @@ const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen 
     
       <div className="flex justify-end gap-2 w-full mt-1 p-0.5">
         <button className="classic-button px-2" onClick={clearSeed}>
-          clear
+          <span>clear</span>
         </button>
         <button className="classic-button px-2" onClick={useSeed}>
-          use
+          <span>use</span>
         </button>
       </div>
     </div>

@@ -66,7 +66,7 @@ const Footer: FC = () => {
               onClick={handleClick}
             >
               <img src={ICONS[windowKey]} alt="" className="w-5 h-5 object-contain" />
-              {windowKey}
+              <span>{windowKey}</span>
             </Button>
           )
           })
@@ -76,7 +76,7 @@ const Footer: FC = () => {
 
       <div className="relative flex">
         <div className="classic-divider h-full w-[1px] mr-1" />
-        <div className="px-4 classic-button active disabled flex items-center justify-end gap-1">
+        <div className="px-4 classic-inset flex items-center justify-end gap-1">
           <Links className="flex gap-2 items-center"/>
           <p className="ml-2">
             {time?.toLocaleString(undefined, { "hour": "numeric", minute: "2-digit" }) || "0:00 PM"}

@@ -93,7 +93,7 @@ const NoiseWindow: FC = () => {
         </ul>
         <br />
         <button className="classic-button px-2" onClick={() => setActiveContent(0)}>
-          Go back
+          <span>Go back</span>
         </button>
       </div>
     </Window>
