@@ -41,11 +41,11 @@ const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen 
         "p95-chrome bg-windowsGray text-windowsText classic-border p-2 shadow-md absolute top-full left-0 cursor-default z-30",
         "w-[20rem] max-w-[calc(100vw-1rem)] pointer-events-auto"
     )}>
-      <div className="classic-inset bg-white w-full text-black">
+      <div className="classic-inset p95-field w-full">
         <input
           type="text"
           ref={inputRef}
-          className={clsx("bg-none px-1 text-black outline-none w-full")}
+          className={clsx("px-1 outline-none w-full")}
           onKeyDown={(e) => { 
             if (e.key === "Enter") {
               useSeed()

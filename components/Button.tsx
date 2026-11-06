@@ -6,6 +6,8 @@ interface ButtonProps {
   className?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>
   disabled?: boolean
+  "aria-label"?: string
+  "aria-pressed"?: boolean
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ children, className, onClick, disabled, ...props }, ref) => {

@@ -79,6 +79,7 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - 2026-11-06 step 2: 'W95FA UI' face (Sk3tch file + OFL.txt) and .p95-chrome on title/menu/status bars, taskbar, Start menu, dropdowns, desktop labels; tsc passes, font seen in browser; checks 1, 3 rerun at the end
 - 2026-11-06 step 3: classic-button/border/inset/divider/bump/corner rewritten to Sk3tch bevels on tokens (hover/focus dotted rect, pressed sunken + 1px label shift, toggled dither, disabled emboss); window-handle and inset-height removed; tsc passes, hover rect seen in browser
 - 2026-11-06 step 4: Tailwind window colors on --p95-* vars plus select/title/text tokens; menu bar, Start menu and dropdown items get the select highlight on hover/focus; taskbar on windowsGray; tsc passes; gray and bw checked in browser (Start menu hover, taskbar, title bar)
+- 2026-11-06 step 5: PixelGlyph (Sk3tch minimize/maximize/close/grip) replaces title PNGs and the Corner SVG, title bar 22u with 18x16 buttons; .p95-field text input; WebKit scrollbars raised/dithered with arrow glyphs, Firefox scrollbar-color behind @supports; tsc passes; title bar, seed field and a 16px styled scrollbar seen in browser
 
 ## Decisions
 
@@ -93,5 +94,8 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - Normal: added a `windowsHilight` token (--p95-hilight) for inactive title text and the Start menu sidebar text. The plan's `text-windowsGray` / title-fg there is #000 on #404040 in 1-Bit. Reverse: drop the token and use text-windowsGray / text-windowsTitleText.
 - Normal: tray Twitter/email icons use fill-current/stroke-current (Links.tsx) instead of black, so they follow the tray text in 1-Bit and stay black in the Home window's content. Reverse: restore fill-black / stroke-black.
 - Normal: the window menu bar items lost the gap-3 spacing for Sk3tch's 6u item padding (px-1.5) so the select highlight has room. Reverse: restore `gap-3 px-1` and drop px-1.5.
+- Normal: glyph ink is the --p95-icon-* vars (Sk3tch's PIXEL_INK), not currentColor: the grip needs two inks (light, shadow). Disabled title buttons set --p95-icon-ink to the disabled gray as paint.css does. Reverse: render glyphs with fill currentColor.
+- Normal: the text field (.p95-field) is --p95-icon-light behind --p95-text: white/black in Standard and Classic, black/white in 1-Bit. Sk3tch has no field token, and a white field with --p95-text would be white on white in 1-Bit. Reverse: set the well back to bg-white text-black.
+- Normal: Firefox's scrollbar-color sits in @supports not selector(::-webkit-scrollbar): Chrome 121+ drops ::-webkit-scrollbar styling wherever scrollbar-color applies, and it inherits. Scrollbar arrows are data-URI SVGs of Sk3tch's arrow glyphs, black with a white set for 1-Bit, since pseudo-element backgrounds can't take a CSS var color. Reverse: drop the arrow vars and @supports wrapper.
 
 ## Parked asks

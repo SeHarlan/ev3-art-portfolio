@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { FC, MouseEventHandler, ReactNode, useEffect, useRef, useState } from "react";
 import { ICONS, WINDOWS, useWindowsContext } from "../context/WindowsProvider";
 import Button from "./Button";
-import Corner from "../public/svg/corner";
+import PixelGlyph from "./PixelGlyph";
 
 import useWindowSize from "@/hooks/useWindowSize";
 
@@ -98,32 +98,35 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
     >
       <div
         className={clsx(
-          "p95-chrome p-1 cursor-grab active:cursor-grabbing flex justify-between items-center",
+          "p95-chrome h-[22px] pl-1 pr-0.5 gap-[5px] cursor-grab active:cursor-grabbing flex justify-between items-center flex-none",
           isActive ? "bg-windowsHeader text-windowsTitleText" : "bg-windowsDarkGray text-windowsHilight"
         )}
         ref={dragRef}
       >
-        <div className="flex items-center gap-2">
-          <img src={ICONS[windowKey]} alt="" className="w-5 h-5 object-contain" style={{filter: invertIcon ? "invert(1)" : ""}} />
-          <p className="leading-none">{windowKey}</p>
+        <div className="flex items-center gap-[5px] min-w-0">
+          <img src={ICONS[windowKey]} alt="" className="w-4 h-4 object-contain flex-none" style={{filter: invertIcon ? "invert(1)" : ""}} />
+          <p className="leading-none translate-y-px whitespace-nowrap overflow-hidden">{windowKey}</p>
         </div>
-        <div className="flex items-center gap-1">
-          <Button className="w-5 h-5 flex justify-center items-center p-1"
+        <div className="flex items-center">
+          <Button className="w-[18px] h-4 flex justify-center items-center"
             onClick={handleMinimize}
+            aria-label="Minimize"
           >
-            <img src="/images/min.png" alt="minimize" />
+            <PixelGlyph name="minimize" />
           </Button>
-          <Button className="w-5 h-5 flex justify-center items-center p-1"
+          <Button className="w-[18px] h-4 flex justify-center items-center"
             onClick={handleMaximize}
             disabled={isMdScreen}
+            aria-label="Maximize"
           >
-            <img src="/images/max.png" alt="full screen" />
+            <PixelGlyph name="maximize" />
           </Button>
           
-          <Button className="w-5 h-5 flex justify-center items-center p-1"
+          <Button className="w-[18px] h-4 flex justify-center items-center ml-0.5"
             onClick={handleClose}
+            aria-label="Close"
           >
-            <img src="/images/close.png" alt="close"/>
+            <PixelGlyph name="close" />
           </Button>
         </div>
       </div>
@@ -165,10 +168,10 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         <div className="w-1/2 h-4 classic-inset"></div>
         <div className="w-1/2 h-4 classic-inset"></div>
         <div
-          className="h-full py-0.5"
+          className="flex flex-none mr-px mb-px"
           ref={resizeRef}
         >
-          <Corner colorClass="stroke-windowsDarkGray" className="classic-corner relative -bottom-0.5 cursor-grab active:cursor-grabbing"/>
+          <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
         </div>
       </div>
     </div>

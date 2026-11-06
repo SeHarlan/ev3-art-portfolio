@@ -116,33 +116,99 @@
 html, body {
   overflow: hidden;
 
-  scrollbar-color: rgb(202, 198, 203);
-  scrollbar-width: 16px;
-  scrollbar-track-color: rgb(210, 210, 210);
-
   cursor: url(../public/images/cursor.png), auto;
 }
 .custom-cursor {
   cursor: url(../public/images/cursor.png), auto;
 }
+/* ---------- Scrollbars: Win95's on the palette tokens ---------- */
+
+/* Arrow glyphs (Sk3tch's up/down/left/right), black, white in 1-Bit. */
+:root {
+  --p95-arrow-up: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='7' y='6' width='1' height='1'/><rect x='6' y='7' width='3' height='1'/><rect x='5' y='8' width='5' height='1'/><rect x='4' y='9' width='7' height='1'/></svg>");
+  --p95-arrow-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='4' y='6' width='7' height='1'/><rect x='5' y='7' width='5' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='7' y='9' width='1' height='1'/></svg>");
+  --p95-arrow-left: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='9' y='4' width='1' height='1'/><rect x='8' y='5' width='2' height='1'/><rect x='7' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='7' y='8' width='3' height='1'/><rect x='8' y='9' width='2' height='1'/><rect x='9' y='10' width='1' height='1'/></svg>");
+  --p95-arrow-right: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='6' y='4' width='1' height='1'/><rect x='6' y='5' width='2' height='1'/><rect x='6' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='6' y='9' width='2' height='1'/><rect x='6' y='10' width='1' height='1'/></svg>");
+}
+:root[data-p95-theme='bw'] {
+  --p95-arrow-up: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='7' y='6' width='1' height='1'/><rect x='6' y='7' width='3' height='1'/><rect x='5' y='8' width='5' height='1'/><rect x='4' y='9' width='7' height='1'/></svg>");
+  --p95-arrow-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='4' y='6' width='7' height='1'/><rect x='5' y='7' width='5' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='7' y='9' width='1' height='1'/></svg>");
+  --p95-arrow-left: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='9' y='4' width='1' height='1'/><rect x='8' y='5' width='2' height='1'/><rect x='7' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='7' y='8' width='3' height='1'/><rect x='8' y='9' width='2' height='1'/><rect x='9' y='10' width='1' height='1'/></svg>");
+  --p95-arrow-right: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='6' y='4' width='1' height='1'/><rect x='6' y='5' width='2' height='1'/><rect x='6' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='6' y='9' width='2' height='1'/><rect x='6' y='10' width='1' height='1'/></svg>");
+}
+
 ::-webkit-scrollbar {
-    width: 16px
+  width: calc(16 * var(--u));
+  height: calc(16 * var(--u));
 }
 ::-webkit-scrollbar-track {
-  background-color:  rgb(210, 210, 210);
-  /* background-image: linear-gradient(45deg, rgb(222, 220, 222) 25%, transparent 0px, transparent 75%, rgb(222, 220, 222) 0px, rgb(222, 220, 222)), linear-gradient(45deg, rgb(222, 220, 222) 25%, transparent 0px, transparent 75%, rgb(222, 220, 222) 0px, rgb(222, 220, 222)); */
-  background-position: 0px 0px, -1px -1px;
-  background-size: 2px 2px;
+  background-color: var(--p95-face);
+  background-image: conic-gradient(
+    var(--p95-dither-ink) 25%, transparent 0 50%, var(--p95-dither-ink) 0 75%, transparent 0);
+  background-size: calc(2 * var(--u)) calc(2 * var(--u));
 }
-::-webkit-scrollbar-thumb {
-  background-color: rgb(202, 198, 203);
-  border-color: rgb(202, 198, 203) rgb(70, 65, 71) rgb(70, 65, 71) rgb(202, 198, 203);
-  border-style: solid;
-  border-width: 1px;
-  box-shadow: rgb(255 255 255) 1px 1px 0px 0px inset, rgb(160 153 161) -1px -1px 0px 0px inset;
-  height: 16px;
-  width: 16px;
-  z-index: 1;
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-button:single-button {
+  background-color: var(--p95-face);
+  box-shadow:
+    inset calc(-1 * var(--u)) calc(-1 * var(--u)) var(--p95-dark),
+    inset var(--u) var(--u) var(--p95-hilight),
+    inset calc(-2 * var(--u)) calc(-2 * var(--u)) var(--p95-shadow),
+    inset calc(2 * var(--u)) calc(2 * var(--u)) var(--p95-light);
+}
+::-webkit-scrollbar-button:single-button {
+  display: block;
+  width: calc(16 * var(--u));
+  height: calc(16 * var(--u));
+  background-repeat: no-repeat;
+  background-position: center;
+}
+::-webkit-scrollbar-button:single-button:active {
+  background-position: calc(50% + var(--u)) calc(50% + var(--u));
+  box-shadow:
+    inset 0 0 0 var(--u) var(--p95-shadow);
+}
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+  background-image: var(--p95-arrow-up);
+}
+::-webkit-scrollbar-button:single-button:vertical:increment {
+  background-image: var(--p95-arrow-down);
+}
+::-webkit-scrollbar-button:single-button:horizontal:decrement {
+  background-image: var(--p95-arrow-left);
+}
+::-webkit-scrollbar-button:single-button:horizontal:increment {
+  background-image: var(--p95-arrow-right);
+}
+::-webkit-scrollbar-corner {
+  background: var(--p95-face);
+}
+/* Browsers without ::-webkit-scrollbar (Firefox). Chrome drops its
+   ::-webkit-scrollbar styles under scrollbar-color, so keep it out there. */
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: var(--p95-face) var(--p95-light);
+  }
+}
+
+/* ---------- Text field ---------- */
+
+/* Win95's white field (black in 1-Bit) for a text input, in a classic-inset
+   well. */
+.p95-field {
+  background: var(--p95-icon-light);
+  color: var(--p95-text);
+}
+.p95-field input {
+  background: transparent;
+  color: inherit;
+}
+.p95-field input::placeholder {
+  color: var(--p95-text-disabled);
+}
+.p95-field input:focus-visible {
+  outline: var(--u) dotted var(--p95-text);
+  outline-offset: calc(-1 * var(--u));
 }
 
 /* ---------- Bevels and buttons (Sk3tch paint.css recipes) ---------- */
