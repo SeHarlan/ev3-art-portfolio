@@ -38,7 +38,7 @@ const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen 
       }}    
       className={clsx(
       seedOpen ? "flex flex-col items-start " : "hidden",
-        "p95-chrome bg-windowsGray classic-border p-2 shadow-md absolute top-full left-0 cursor-default z-30",
+        "p95-chrome bg-windowsGray text-windowsText classic-border p-2 shadow-md absolute top-full left-0 cursor-default z-30",
         "w-[20rem] max-w-[calc(100vw-1rem)] pointer-events-auto"
     )}>
       <div className="classic-inset bg-white w-full text-black">

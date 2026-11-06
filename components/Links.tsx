@@ -10,10 +10,10 @@ const Links: FC<{className?: string}> = ({className}) => {
   return (
     <div className={className}>
       <Link href="https://twitter.com/EV3_art" target="_blank">
-        <TwitterIcon colorClass="fill-black" />
+        <TwitterIcon colorClass="fill-current" />
       </Link>
       <Link href="mailto:ev3reth@gmail.com" target="_blank">
-        <EmailIcon colorClass="stroke-black fill-none stroke-[1.5]" />
+        <EmailIcon colorClass="stroke-current fill-none stroke-[1.5]" />
       </Link>
       <Link
         href="https://epoch1.ev3.art/"

@@ -78,6 +78,7 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - 2026-11-06 step 1: Sk3tch palettes on :root, data-p95-theme pre-paint script, ThemeProvider; tsc passes, theme attribute checked in browser (saved bw applies, invalid value falls back to gray); check 2 rerun after step 6
 - 2026-11-06 step 2: 'W95FA UI' face (Sk3tch file + OFL.txt) and .p95-chrome on title/menu/status bars, taskbar, Start menu, dropdowns, desktop labels; tsc passes, font seen in browser; checks 1, 3 rerun at the end
 - 2026-11-06 step 3: classic-button/border/inset/divider/bump/corner rewritten to Sk3tch bevels on tokens (hover/focus dotted rect, pressed sunken + 1px label shift, toggled dither, disabled emboss); window-handle and inset-height removed; tsc passes, hover rect seen in browser
+- 2026-11-06 step 4: Tailwind window colors on --p95-* vars plus select/title/text tokens; menu bar, Start menu and dropdown items get the select highlight on hover/focus; taskbar on windowsGray; tsc passes; gray and bw checked in browser (Start menu hover, taskbar, title bar)
 
 ## Decisions
 
@@ -89,5 +90,8 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - Normal: palette toggles are `classic-button`s with `aria-pressed`, following Sk3tch's pressed-toggle pattern, since Sk3tch has no radio control. Reverse: swap them for a list.
 - Normal: the tray and the window status panes were `classic-button active disabled` (dithered, and `disabled` now greys text). They became `classic-inset`, Sk3tch's sunken status pane (.p95-pane .p95-sunken), so the clock isn't greyed. Reverse: put `classic-button active` back on them in Footer.tsx and Window.tsx.
 - Normal: the 1px label shift moves a button's child elements (Sk3tch's `> *` translate), so bare-text labels got a `<span>`: taskbar items, SeedDropdown clear/use, every window's Go back, the techtonic/on being human Visit links. Reverse: unwrap the spans; bare text then doesn't shift.
+- Normal: added a `windowsHilight` token (--p95-hilight) for inactive title text and the Start menu sidebar text. The plan's `text-windowsGray` / title-fg there is #000 on #404040 in 1-Bit. Reverse: drop the token and use text-windowsGray / text-windowsTitleText.
+- Normal: tray Twitter/email icons use fill-current/stroke-current (Links.tsx) instead of black, so they follow the tray text in 1-Bit and stay black in the Home window's content. Reverse: restore fill-black / stroke-black.
+- Normal: the window menu bar items lost the gap-3 spacing for Sk3tch's 6u item padding (px-1.5) so the select highlight has room. Reverse: restore `gap-3 px-1` and drop px-1.5.
 
 ## Parked asks

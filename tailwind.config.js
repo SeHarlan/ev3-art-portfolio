@@ -7,10 +7,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        windowsBG: "#018583",
-        windowsHeader: "#100084",
-        windowsGray: "#C4C4C4",
-        windowsDarkGray: "#7D8583"
+        // Sk3tch's Win95 palette tokens (styles/globals.css), so every theme
+        // recolors these.
+        windowsBG: "var(--p95-desktop)",
+        windowsHeader: "var(--p95-title-bg)",
+        windowsGray: "var(--p95-face)",
+        windowsDarkGray: "var(--p95-shadow)",
+        windowsHilight: "var(--p95-hilight)",
+        windowsSelect: "var(--p95-select-bg)",
+        windowsSelectText: "var(--p95-select-fg)",
+        windowsTitleText: "var(--p95-title-fg)",
+        windowsText: "var(--p95-text)",
+        windowsTextDisabled: "var(--p95-text-disabled)"
       },
       height: { screen: 'calc(var(--vh) * 100)' },
       maxHeight: { screen: 'calc(var(--vh) * 100)' },

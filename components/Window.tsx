@@ -99,13 +99,13 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
       <div
         className={clsx(
           "p95-chrome p-1 cursor-grab active:cursor-grabbing flex justify-between items-center",
-          isActive ? "bg-windowsHeader " : "bg-windowsDarkGray"
+          isActive ? "bg-windowsHeader text-windowsTitleText" : "bg-windowsDarkGray text-windowsHilight"
         )}
         ref={dragRef}
       >
         <div className="flex items-center gap-2">
           <img src={ICONS[windowKey]} alt="" className="w-5 h-5 object-contain" style={{filter: invertIcon ? "invert(1)" : ""}} />
-          <p className="text-white leading-none">{windowKey}</p>
+          <p className="leading-none">{windowKey}</p>
         </div>
         <div className="flex items-center gap-1">
           <Button className="w-5 h-5 flex justify-center items-center p-1"
@@ -128,11 +128,11 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         </div>
       </div>
 
-      <div className="p95-chrome flex flex-wrap gap-3 px-1 text-stone-500" ref={menuRef}>
+      <div className="p95-chrome flex flex-wrap py-0.5 text-windowsTextDisabled" ref={menuRef}>
         {menu
           ? menu.map(item => {
             return (
-              <button key={item.label} className="text-black relative" onClick={item.function}>
+              <button key={item.label} className="text-windowsText relative px-1.5 hover:bg-windowsSelect hover:text-windowsSelectText focus-visible:bg-windowsSelect focus-visible:text-windowsSelectText focus-visible:outline-none" onClick={item.function}>
                 <span className="underline">{item.label[0]}</span>
                 {item.label.slice(1)}
                 {item.component}
@@ -140,9 +140,9 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
             )
           })
         : <>
-            <p><span className="underline">V</span>iew</p>
-            <p><span className="underline">E</span>dit</p>
-            <p><span className="underline">H</span>elp</p>
+            <p className="px-1.5"><span className="underline">V</span>iew</p>
+            <p className="px-1.5"><span className="underline">E</span>dit</p>
+            <p className="px-1.5"><span className="underline">H</span>elp</p>
           </>
         }
       </div>

@@ -21,9 +21,9 @@ const StartMenu: FC = () => {
             <p className="-mb-0.5">Start</p>
           </Menu.Button>
 
-          <Menu.Items className="p95-chrome absolute bottom-[100%] left-0 z-10 bg-windowsGray classic-border p-1 flex">
+          <Menu.Items className="p95-chrome absolute bottom-[100%] left-0 z-10 bg-windowsGray text-windowsText classic-border p-1 flex">
             <div className="bg-windowsDarkGray w-8 h-full min-h-[14rem] flex items-center justify-center">
-              <p className="text-windowsGray flex-shrink-0 w-[14rem] pl-3 -rotate-90">
+              <p className="text-windowsHilight flex-shrink-0 w-[14rem] pl-3 -rotate-90">
                 EV3
               </p>
             </div>
@@ -36,7 +36,7 @@ const StartMenu: FC = () => {
                   return (
                     <Menu.Item key={windowKey}>
                       <div
-                        className="px-2 py-1 w-36 select-none hover:bg-windowsHeader hover:text-white"
+                        className="px-2 py-1 w-36 select-none hover:bg-windowsSelect hover:text-windowsSelectText ui-active:bg-windowsSelect ui-active:text-windowsSelectText"
                         onClick={handleClick}
                       >
                         <span className="underline">{label[0]}</span>

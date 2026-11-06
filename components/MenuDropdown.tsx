@@ -45,7 +45,7 @@ const MenuDropdown: FC<MenuDropdownProps> = ({
       }}
       className={clsx(
         isOpen ? "flex flex-col items-start " : "hidden",
-        "p95-chrome bg-windowsGray classic-border p-2 shadow-md cursor-default z-30",
+        "p95-chrome bg-windowsGray text-windowsText classic-border p-2 shadow-md cursor-default z-30",
         "w-fit pointer-events-auto",
         className
       )}
@@ -58,7 +58,7 @@ const MenuDropdown: FC<MenuDropdownProps> = ({
               option.onClick();
               setIsOpen(false);
             }}
-            className="w-full p-1 hover:bg-windowsHeader hover:text-white"
+            className="w-full p-1 hover:bg-windowsSelect hover:text-windowsSelectText focus-visible:bg-windowsSelect focus-visible:text-windowsSelectText focus-visible:outline-none"
           >
             {option.label}
           </button>
