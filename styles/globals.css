@@ -17,9 +17,93 @@
     -webkit-font-smoothing : none;
   }
 }
+/* Sk3tch's Win95 palettes (sk3tch paint.css). Classic (win95) is the base;
+   [data-p95-theme] on <html> swaps to gray (Standard) or bw (1-Bit). */
 :root {
   /* fallback for the useVHOverride hook */
   --vh: 1vh; 
+
+  --p95-face: #c0c0c0;
+  --p95-light: #dfdfdf;
+  --p95-hilight: #ffffff;
+  --p95-shadow: #808080;
+  --p95-dark: #000000;
+  --p95-text: #000000;
+  --p95-text-disabled: #808080;
+  --p95-title-bg: #000080;
+  --p95-title-fg: #ffffff;
+  --p95-select-bg: #000080;
+  --p95-select-fg: #ffffff;
+  --p95-workspace: #808080;
+  --p95-desktop: #008080;
+  --p95-full-bg: #000000;
+  --p95-dither-ink: var(--p95-hilight);
+  --p95-icon-ink: #000000;
+  --p95-icon-shadow: #808080;
+  --p95-icon-silver: #c0c0c0;
+  --p95-icon-light: #ffffff;
+  --p95-icon-blue: #000080;
+  --p95-icon-cyan: #008080;
+  --p95-icon-aqua: #00ffff;
+  --p95-icon-yellow: #ffff00;
+  --p95-icon-olive: #808000;
+  --p95-icon-red: #ff0000;
+  --p95-icon-maroon: #800000;
+
+  /* One Win95 pixel. */
+  --u: 1px;
+}
+
+/* Grayscale: Win95 bevels, every hue mapped to a gray. */
+:root[data-p95-theme='gray'] {
+  --p95-face: #d8d8d8;
+  --p95-light: #f2f2f2;
+  /* 64 under the face, as Win95's #808080 is under its #c0c0c0. */
+  --p95-shadow: #989898;
+  --p95-text-disabled: #707070;
+  --p95-title-bg: #2a2a2a;
+  --p95-select-bg: #1a1a1a;
+  --p95-workspace: #404040;
+  --p95-desktop: #606060;
+  --p95-icon-shadow: #505050;
+  --p95-icon-silver: #a8a8a8;
+  --p95-icon-blue: #1a1a1a;
+  --p95-icon-cyan: #606060;
+  --p95-icon-aqua: #d0d0d0;
+  --p95-icon-yellow: #f2f2f2;
+  --p95-icon-olive: #707070;
+  --p95-icon-red: #404040;
+  --p95-icon-maroon: #303030;
+}
+
+/* Black and white. The dither is gray, so the white icons stay visible on an
+   active button. */
+:root[data-p95-theme='bw'] {
+  --p95-face: #000000;
+  --p95-light: #808080;
+  --p95-hilight: #ffffff;
+  --p95-shadow: #404040;
+  --p95-dark: #ffffff;
+  --p95-text: #ffffff;
+  --p95-text-disabled: #606060;
+  --p95-title-bg: #ffffff;
+  --p95-title-fg: #000000;
+  --p95-select-bg: #ffffff;
+  --p95-select-fg: #000000;
+  --p95-workspace: #000000;
+  --p95-desktop: #808080;
+  --p95-dither-ink: #606060;
+  --p95-icon-ink: #ffffff;
+  --p95-icon-shadow: #808080;
+  --p95-icon-silver: #808080;
+  --p95-icon-light: #000000;
+  --p95-icon-blue: #ffffff;
+  --p95-icon-cyan: #ffffff;
+  --p95-icon-aqua: #808080;
+  --p95-icon-yellow: #808080;
+  --p95-icon-olive: #808080;
+  --p95-icon-red: #ffffff;
+  --p95-icon-maroon: #ffffff;
 }
 html, body {
   overflow: hidden;

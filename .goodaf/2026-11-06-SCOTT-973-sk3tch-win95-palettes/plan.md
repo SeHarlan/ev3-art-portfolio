@@ -75,6 +75,7 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 ## Progress
 
 - 2026-11-06 plan written
+- 2026-11-06 step 1: Sk3tch palettes on :root, data-p95-theme pre-paint script, ThemeProvider; tsc passes, theme attribute checked in browser (saved bw applies, invalid value falls back to gray); check 2 rerun after step 6
 
 ## Decisions
 

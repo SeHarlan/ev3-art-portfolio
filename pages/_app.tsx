@@ -1,3 +1,4 @@
+import ThemeProvider from '@/context/ThemeProvider'
 import WindowsProvider from '@/context/WindowsProvider'
 import useVHOverride from '@/hooks/useVHOverride'
 import '@/styles/globals.css'
@@ -16,9 +17,11 @@ import { Analytics } from "@vercel/analytics/react"
 export default function App({ Component, pageProps }: AppProps) {
   useVHOverride()
   return (
-    <WindowsProvider>
-      <Component {...pageProps} />
-      <Analytics />
-    </WindowsProvider>
+    <ThemeProvider>
+      <WindowsProvider>
+        <Component {...pageProps} />
+        <Analytics />
+      </WindowsProvider>
+    </ThemeProvider>
   )
 }
