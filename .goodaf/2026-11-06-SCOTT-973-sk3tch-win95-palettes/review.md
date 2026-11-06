@@ -17,12 +17,12 @@ Counts: 2 fixed, 1 asks, 1 tracked, 0 dropped
 ## Asks
 
 - A1. [must-fix] The DUET and Maurer canvases come out 18px taller than on main at the same window size, because Sk3tch's chrome (22px title bar, 11px menu font, 18px grip) is shorter, and the sketches size their canvas to the content area. Is that acceptable? If left, DUET's "DU"/"ET" text is about 2px larger and sits 6–12px lower than before; the art's drawing code and palette independence are untouched, and the canvas still follows the window when resized or maximized, as before. From F2. Recommend: leave — the only change that restores main's size is undoing Sk3tch's chrome sizing for every window (components/p5/** is off limits), and taller default windows don't help because window sizes are clamped to the screen (hooks/useDragResize.tsx checkResizeBounds); record it in plan.md Decisions as accepted.
-  Answer: —
+  Answer: 2026-11-06 "A1 in - The canvas sizes changing is no problem" → leave
 
 ## Tracked follow-ups
 
 - T1. [touch press feedback] Menu-bar and dropdown items get no selection highlight when tapped on touch screens; port Sk3tch's `@media (hover: none) { .p95-menu-item:active { … } }` rule (paint.css:952-957). From F4.
-  Answer: —
+  Answer: 2026-11-06 "T1 in" → in
 
 ## Worth checking by hand
 
@@ -39,7 +39,7 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 
 ## Bug notes
 
-none
+- B1. 2026-11-06 "the title bar and nav menu buttons seem squished and cut off in some areas. Double check we are using the correct measurements, heights and font sizes."
 
 ## Follow-ups
 
