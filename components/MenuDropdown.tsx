@@ -58,7 +58,7 @@ const MenuDropdown: FC<MenuDropdownProps> = ({
               option.onClick();
               setIsOpen(false);
             }}
-            className="p95-menu-item w-full p-1"
+            className="p95-menu-item w-full h-[18px] px-2 flex items-center justify-center"
           >
             {option.label}
           </button>

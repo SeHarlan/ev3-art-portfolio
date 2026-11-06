@@ -105,7 +105,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
       >
         <div className="flex items-center gap-[5px] min-w-0">
           <img src={ICONS[windowKey]} alt="" className="w-4 h-4 object-contain flex-none" style={{filter: invertIcon ? "invert(1)" : ""}} />
-          <p className="leading-none translate-y-px whitespace-nowrap overflow-hidden">{windowKey}</p>
+          <p className="translate-y-px whitespace-nowrap min-w-0 overflow-x-clip">{windowKey}</p>
         </div>
         <div className="flex items-center">
           <Button className="w-[18px] h-4 flex justify-center items-center"
@@ -131,11 +131,11 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         </div>
       </div>
 
-      <div className="p95-chrome flex flex-wrap py-0.5 text-windowsTextDisabled" ref={menuRef}>
+      <div className="p95-chrome flex flex-wrap pt-[3px] pb-0.5 text-windowsTextDisabled" ref={menuRef}>
         {menu
           ? menu.map(item => {
             return (
-              <button key={item.label} className="p95-menu-item text-windowsText relative px-1.5" onClick={item.function}>
+              <button key={item.label} className="p95-menu-item text-windowsText relative flex items-center h-[18px] px-1.5" onClick={item.function}>
                 <span className="underline">{item.label[0]}</span>
                 {item.label.slice(1)}
                 {item.component}
@@ -143,9 +143,9 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
             )
           })
         : <>
-            <p className="px-1.5"><span className="underline">V</span>iew</p>
-            <p className="px-1.5"><span className="underline">E</span>dit</p>
-            <p className="px-1.5"><span className="underline">H</span>elp</p>
+            <p className="flex items-center h-[18px] px-1.5"><span className="underline">V</span>iew</p>
+            <p className="flex items-center h-[18px] px-1.5"><span className="underline">E</span>dit</p>
+            <p className="flex items-center h-[18px] px-1.5"><span className="underline">H</span>elp</p>
           </>
         }
       </div>
