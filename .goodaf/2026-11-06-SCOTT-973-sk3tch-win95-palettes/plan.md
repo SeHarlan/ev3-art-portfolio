@@ -106,5 +106,12 @@ Port Sk3tch's design system from `/Users/scottharlan/Scottys art/sk3tch/packages
 - Elevated: simplify deleted `public/svg/corner.tsx` (Corner). Situation: the grip glyph replaced its only use in Window.tsx, leaving it unimported. Options: keep it as dead code; delete it. Chose delete; git keeps it. Reverse: `git checkout main -- public/svg/corner.tsx`.
 - Normal: simplify skipped four review suggestions: deleting the unused Sk3tch palette tokens (the plan copies the palettes verbatim), replacing --u with px (Sk3tch's idiom), auto-wrapping Button children in a span (it breaks the flex layouts of the taskbar and title buttons), and giving .classic-border a text color (window content would inherit white text in 1-Bit). Reverse: apply any of them.
 - Elevated: review fix F1 left title-bar icons alone in 1-Bit. Situation: the fix inverts the small-logo bitmaps on Start and taskbar buttons, but the title-bar icon (Window.tsx:107) sits on --p95-title-bg (white in bw) when focused and --p95-shadow (#404040) when not, so inverting it there would turn the focused icon white on white; as is, the unfocused small-logo is dark on #404040 and Maurer's focused title icon (already inverted by `invertIcon`) is white on white. Options: leave it; invert title-bar icons in bw only when unfocused and drop `invertIcon` when focused. Chose leave it, since it hangs on the inactive-title color decision. Reverse: n/a; to fix it, add a bw title-bar rule or a conditional at Window.tsx:107.
+- Normal: review A1 (user answered leave): the DUET and Maurer canvases come out taller than on main at the same window size because Sk3tch's chrome is shorter; accepted, since the art's drawing code is untouched and window sizes are clamped to the screen. Reverse: n/a; restoring main's size means undoing Sk3tch's chrome sizing.
 
 ## Parked asks
+
+## Follow-up 1
+
+Base: 1e66238
+- T1: port Sk3tch's touch press feedback (paint.css:950-957, `@media (hover: none) .p95-menu-item:active`) into globals.css beside the menu-item highlight.
+- B1: title text and menu-bar items are clipped and squished; match Sk3tch's geometry: title text inherits line-height 1.2 (paint.css:245-251), menu bar 23u with 3u/2u padding and 18u items padded 0 6u (paint.css:278-297), dropdown panel 3u padding with 18u items padded 0 8u (paint.css:350-385). Repro: a browser assertion script in this folder.
