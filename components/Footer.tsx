@@ -29,7 +29,7 @@ const Footer: FC = () => {
     return openMap[key] 
   }).sort()
   return (
-    <div className="flex justify-between w-full bg-gray-300 p-1 classic-border z-10">
+    <div className="p95-chrome flex justify-between w-full bg-gray-300 p-1 classic-border z-10">
       <div className={clsx("flex gap-1 relative")}>
         <StartMenu />
         <div className="classic-divider classic-bump h-full mr-2" />

@@ -13,7 +13,7 @@ const Icons: FC = () => {
           return (
             <div
               key={windowKey}
-              className="custom-cursor select-none text-white flex flex-col items-center w-fit text-center"
+              className="p95-chrome custom-cursor text-white flex flex-col items-center w-fit text-center"
               onDoubleClick={handleClick}
               onTouchEnd={handleClick}
             >

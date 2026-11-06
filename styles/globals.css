@@ -10,6 +10,14 @@
     url('./fonts/w95fa.woff2') format('woff2-variations');
 }
 
+/* Sk3tch's UI font (W95FA, SIL OFL 1.1, see fonts/OFL.txt). Its em is 16px per
+   Win95 pixel; size-adjust lands it there from the chrome's 11px. */
+@font-face {
+  font-family: 'W95FA UI';
+  src: url('./fonts/w95fa-ui.woff2') format('woff2');
+  size-adjust: 145.4545%;
+}
+
 @layer base {
   body {
     font-family: "W95FA";
@@ -203,4 +211,14 @@ html, body {
 
 .classic-corner {
   filter: drop-shadow(-1px -1px 0px rgb(222 220 222))
+}
+
+/* Window chrome text at Sk3tch's size; window content keeps the body font. */
+.p95-chrome {
+  font-family: 'W95FA UI', Tahoma, sans-serif;
+  font-size: calc(11 * var(--u));
+  line-height: 1.2;
+  -webkit-font-smoothing: none;
+  user-select: none;
+  -webkit-user-select: none;
 }

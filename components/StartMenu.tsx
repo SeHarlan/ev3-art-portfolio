@@ -21,7 +21,7 @@ const StartMenu: FC = () => {
             <p className="-mb-0.5">Start</p>
           </Menu.Button>
 
-          <Menu.Items className="absolute bottom-[100%] left-0 z-10 bg-windowsGray classic-border p-1 flex">
+          <Menu.Items className="p95-chrome absolute bottom-[100%] left-0 z-10 bg-windowsGray classic-border p-1 flex">
             <div className="bg-windowsDarkGray w-8 h-full min-h-[14rem] flex items-center justify-center">
               <p className="text-windowsGray flex-shrink-0 w-[14rem] pl-3 -rotate-90">
                 EV3

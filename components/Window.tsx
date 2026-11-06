@@ -98,7 +98,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
     >
       <div
         className={clsx(
-          "p-1 cursor-grab active:cursor-grabbing flex justify-between items-center",
+          "p95-chrome p-1 cursor-grab active:cursor-grabbing flex justify-between items-center",
           isActive ? "bg-windowsHeader " : "bg-windowsDarkGray"
         )}
         ref={dragRef}
@@ -128,7 +128,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 px-1 text-stone-500" ref={menuRef}>
+      <div className="p95-chrome flex flex-wrap gap-3 px-1 text-stone-500" ref={menuRef}>
         {menu
           ? menu.map(item => {
             return (
@@ -161,7 +161,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         </div>
       </div>
 
-      <div className="flex gap-1 items-end">
+      <div className="p95-chrome flex gap-1 items-end">
         <div className="w-1/2 h-4 classic-button active"></div>
         <div className="w-1/2 h-4 classic-button active"></div>
         <div
