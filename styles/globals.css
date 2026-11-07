@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 
+/* Sk3tch's W95FA (SIL OFL 1.1, see fonts/OFL.txt), the one font file. Window
+   content uses it as is. */
 @font-face {
   font-family: 'W95FA';
-  src:
-    url('./fonts/w95fa.woff2') format('woff2 supports variations'),
-    url('./fonts/w95fa.woff2') format('woff2-variations');
+  src: url('./fonts/w95fa-ui.woff2') format('woff2');
 }
 
-/* Sk3tch's UI font (W95FA, SIL OFL 1.1, see fonts/OFL.txt). Its em is 16px per
-   Win95 pixel; size-adjust lands it there from the chrome's 11px. */
+/* The UI face: the same file, whose em is 16px per Win95 pixel; size-adjust
+   lands it there from the chrome's 11px. */
 @font-face {
   font-family: 'W95FA UI';
   src: url('./fonts/w95fa-ui.woff2') format('woff2');
@@ -338,23 +338,29 @@ html, body {
   -webkit-user-select: none;
 }
 
+/* Sk3tch's sheet sets its chrome in 'W95FA', the body face here: point it at
+   the size-adjusted UI face. */
+[data-sk3tch-host] .p95-root {
+  --p95-font: 'W95FA UI';
+}
+
 /* Menu bar, Start menu and dropdown items: the selection highlight on hover
    (where there is one), keyboard focus and headlessui's active item. */
 @media (hover: hover) {
-  .p95-menu-item:hover {
+  .ev3-menu-item:hover {
     background: var(--p95-select-bg);
     color: var(--p95-select-fg);
   }
 }
-.p95-menu-item:focus-visible,
-.p95-menu-item[data-headlessui-state~='active'] {
+.ev3-menu-item:focus-visible,
+.ev3-menu-item[data-headlessui-state~='active'] {
   background: var(--p95-select-bg);
   color: var(--p95-select-fg);
   outline: none;
 }
 /* Touch: press feedback without hover. */
 @media (hover: none) {
-  .p95-menu-item:active {
+  .ev3-menu-item:active {
     background: var(--p95-select-bg);
     color: var(--p95-select-fg);
     --p95-icon-ink: var(--p95-select-fg);

@@ -158,7 +158,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
           {menu
             ? menu.map(item => {
               return (
-                <button key={item.label} className="p95-menu-item text-windowsText relative flex items-center h-[18px] px-1.5" onClick={item.function}>
+                <button key={item.label} className="ev3-menu-item text-windowsText relative flex items-center h-[18px] px-1.5" onClick={item.function}>
                   <span className="underline">{item.label[0]}</span>
                   {item.label.slice(1)}
                   {item.component}

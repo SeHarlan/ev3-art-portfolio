@@ -36,7 +36,7 @@ const StartMenu: FC = () => {
                   return (
                     <Menu.Item key={windowKey}>
                       <div
-                        className="p95-menu-item px-2 py-1 w-36 select-none"
+                        className="ev3-menu-item px-2 py-1 w-36 select-none"
                         onClick={handleClick}
                       >
                         <span className="underline">{label[0]}</span>
