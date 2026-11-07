@@ -17,11 +17,16 @@ interface WindowProps {
   initPosition?: Position;
   initSize?: Size
   windowKey: string;
+  /** Shown in the title bar instead of windowKey. */
+  title?: string;
+  /** Title bar only: no menu row, inset or status row. The content box fills
+   *  the rest of the window, with the size grip overlaid at its bottom-right. */
+  bare?: boolean;
   inset?: boolean;
   menu?: WindowMenuItem[];
   wrapperClassName?: string;
 }
-const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, inset = true, menu, wrapperClassName = "bg-windowsGray" }) => {
+const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bare = false, initSize, inset = true, menu, wrapperClassName = "bg-windowsGray" }) => {
   const { dragRef, position, isDragging, resizeRef, containerRef, size, handleMaximize, isMax } = useDragResize(initPosition, initSize, windowKey)
   const {orderState, minimizedState, openState, activeWindow} = useWindowsContext()
   const [orderList, setOrderList] = orderState
@@ -105,7 +110,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
       >
         <div className="flex items-center gap-[5px] min-w-0">
           <img src={ICONS[windowKey]} alt="" className="w-4 h-4 object-contain flex-none" style={{filter: invertIcon ? "invert(1)" : ""}} />
-          <p className="translate-y-px whitespace-nowrap min-w-0 overflow-x-clip">{windowKey}</p>
+          <p className="translate-y-px whitespace-nowrap min-w-0 overflow-x-clip">{title ?? windowKey}</p>
         </div>
         <div className="flex items-center">
           <Button className="w-[18px] h-4 flex justify-center items-center"
@@ -131,49 +136,69 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, initSize, 
         </div>
       </div>
 
-      <div className="p95-chrome flex flex-wrap pt-[3px] pb-0.5 text-windowsTextDisabled" ref={menuRef}>
-        {menu
-          ? menu.map(item => {
-            return (
-              <button key={item.label} className="p95-menu-item text-windowsText relative flex items-center h-[18px] px-1.5" onClick={item.function}>
-                <span className="underline">{item.label[0]}</span>
-                {item.label.slice(1)}
-                {item.component}
-              </button>
-            )
-          })
-        : <>
-            <p className="flex items-center h-[18px] px-1.5"><span className="underline">V</span>iew</p>
-            <p className="flex items-center h-[18px] px-1.5"><span className="underline">E</span>dit</p>
-            <p className="flex items-center h-[18px] px-1.5"><span className="underline">H</span>elp</p>
-          </>
-        }
-      </div>
-
-      <div
-        className={clsx(inset && "classic-inset",
-          "bg-white relative"
-        )} 
-      style={{ height: `calc(100% - ${offsetHeight}px)` }}>
-        <div className={clsx(
-          "overflow-auto h-full",
-          !isActive && "pointer-events-none",
-          wrapperClassName
-        )}>
-          {children}
+      {bare ? (
+        <div className="flex-1 min-h-0 relative">
+          <div className={clsx(
+            "overflow-hidden h-full",
+            !isActive && "pointer-events-none",
+            wrapperClassName
+          )}>
+            {children}
+          </div>
+          <div
+            className="absolute right-px bottom-px flex"
+            ref={resizeRef}
+          >
+            <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+        <div className="p95-chrome flex flex-wrap pt-[3px] pb-0.5 text-windowsTextDisabled" ref={menuRef}>
+          {menu
+            ? menu.map(item => {
+              return (
+                <button key={item.label} className="p95-menu-item text-windowsText relative flex items-center h-[18px] px-1.5" onClick={item.function}>
+                  <span className="underline">{item.label[0]}</span>
+                  {item.label.slice(1)}
+                  {item.component}
+                </button>
+              )
+            })
+          : <>
+              <p className="flex items-center h-[18px] px-1.5"><span className="underline">V</span>iew</p>
+              <p className="flex items-center h-[18px] px-1.5"><span className="underline">E</span>dit</p>
+              <p className="flex items-center h-[18px] px-1.5"><span className="underline">H</span>elp</p>
+            </>
+          }
+        </div>
 
-      <div className="p95-chrome flex gap-1 items-end">
-        <div className="w-1/2 h-4 classic-inset"></div>
-        <div className="w-1/2 h-4 classic-inset"></div>
         <div
-          className="flex flex-none mr-px mb-px"
-          ref={resizeRef}
-        >
-          <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
+          className={clsx(inset && "classic-inset",
+            "bg-white relative"
+          )} 
+        style={{ height: `calc(100% - ${offsetHeight}px)` }}>
+          <div className={clsx(
+            "overflow-auto h-full",
+            !isActive && "pointer-events-none",
+            wrapperClassName
+          )}>
+            {children}
+          </div>
         </div>
-      </div>
+
+        <div className="p95-chrome flex gap-1 items-end">
+          <div className="w-1/2 h-4 classic-inset"></div>
+          <div className="w-1/2 h-4 classic-inset"></div>
+          <div
+            className="flex flex-none mr-px mb-px"
+            ref={resizeRef}
+          >
+            <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
+          </div>
+        </div>
+        </>
+      )}
     </div>
   )
 }
