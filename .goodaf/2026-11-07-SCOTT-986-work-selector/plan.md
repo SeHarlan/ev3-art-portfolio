@@ -41,6 +41,8 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 
 - 2026-11-07 plan written
 - 2026-11-07 user approved downloading the 10 source images and `yarn install --frozen-lockfile` in this worktree
+- 2026-11-07 setup: node_modules already present and yarn.lock matches main, so no install run
+- 2026-11-07 step 1: 10 thumbnails in public/images/thumbs (96×96 JPEG, 3.0–8.1 KB); check 3 ls/sips half passes (grep half lands with step 3)
 
 ## Decisions
 
@@ -48,6 +50,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - Normal: no sketch mounts before the first Open, so opening the window doesn't download a full-size source image. Reverse: initialize the active work to the first item.
 - Normal: About becomes a direct view switch instead of the current sketch/about toggle, since there are now three views. Reverse: restore the `(prev + 1) % n` toggle.
 - Normal: thumbnails 96×96 center-cropped JPEG, square like a Win95 icon cell. Reverse: regenerate with `sips -Z 96` (fit, no crop) and `object-contain`.
+- Normal: The Monitor's ordinals.com URL gives curl a Cloudflare "Just a moment..." challenge page (no image inside), but the browser fetches the real 512×512 WebP. Made its thumbnail from that source image in the browser pane (scaled and center-cropped to 96×96 on a canvas, JPEG 0.85, SHA-256 checked after transfer) instead of a still of the running sketch. Reverse: replace `rmx-the-monitor.jpg` with a cropped screenshot of the sketch after pressing "c".
 - Normal: Refresh keeps its current behavior (remounts the active sketch) and doesn't change the view. Reverse: also set view `"sketch"` in its handler.
 
 ## Parked asks
