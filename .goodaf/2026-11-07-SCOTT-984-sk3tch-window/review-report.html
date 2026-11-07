@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-984</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-984 Sk3tch as a native portfolio window</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-984-sk3tch-window</code>, not merged · reviewed commit <code>de4afbb</code>, final <code>de4afbb</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds</p>
+  <p>Running at <a href="http://localhost:3984">http://localhost:3984</a></p>
+</div>
+
+<h2>Asks</h2>
+<p class="muted">The recommendation happens unless you say otherwise.</p>
+<div class="ask">
+  <p><span class="tag">A1 · parked: spec meaning</span><strong>Done-when 4 says content text has a "dashed bullet", but Sk3tch's font draws the same round • as the old file. Did you mean a different bullet (e.g. a - marker), or is the round • what you expected?</strong></p>
+  <p>If left, list bullets stay the round • they are on main.</p>
+  <p class="rec">Recommend: leave — the font swap does what the spec describes; a dashed marker would be a new style change the spec doesn't describe.</p>
+  <details><summary>Where</summary><p><code>styles/globals.css:6-11</code> — the <code>'W95FA'</code> face now uses Sk3tch's file, whose • matches the old one pixel for pixel; Sk3tch's own stylesheet has no bullet or list-style rule to carry over (F1).</p></details>
+</div>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>Paint a few strokes in Sk3tch, minimize it, restore it from the taskbar → the painting is still there and the brush keeps working</li>
+  <li>Put another window over Sk3tch without minimizing it → Sk3tch keeps animating behind it (only minimize stops the engine; stopping while covered was left as a product call)</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Icon opens Sk3tch window: title, live UI, Win95 text, palettes, drag/resize/max/min/close, engine stop/start</td><td class="pass">pass</td><td>Browser check, 1280x800 → title <code>c95e5f50 · Sk3tch</code>, host frame, root = content box, menu <code>W95FA UI</code> 11px; palettes → <code>win95</code>/<code>bw</code>/<code>gray</code>; drag, grip larger (regular) and smaller (compact), maximize; rAF 122 open / 0 minimized / 121 restored; close → 0 roots; reopen new seed, 1 root. 375x812 → maximized, compact, no new console errors</td></tr>
+  <tr><td>2</td><td>Sk3tch keys only while active</td><td class="pass">pass</td><td>Browser check → active <code>c</code>/<code>z</code> switch brushes; with Settings in front they do nothing; clicking back on Sk3tch restores them</td></tr>
+  <tr><td>3</td><td>Start menu and dropdown items unchanged after Sk3tch opens</td><td class="pass">pass</td><td><code>grep -rn "p95-menu-item" components pages styles</code> → exit 1, no output; Start item <code>4px 8px</code>, dropdown <code>0px 8px</code>, hover <code>rgb(26, 26, 26)</code>/white, all equal the baseline</td></tr>
+  <tr><td>4</td><td>Content text in Sk3tch's font at the same size; stock file gone</td><td class="pass">pass (bullet wording: A1)</td><td><code>test ! -e styles/fonts/w95fa.woff2 &amp;&amp; grep -c "w95fa.woff2'" styles/globals.css</code> → passes, prints <code>0</code>; DUET and it's just noise list and paragraph rects and text widths equal the baseline to the pixel</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0, native <code>import("/sk3tch/app.js")</code> kept</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<ul>
+  <li>Done-when 4's "dashed bullet": the bullets look the same as before, because Sk3tch's font draws the same • as the removed file. Parked as A1.</li>
+  <li>Sk3tch's keys are also off while it's minimized, not only while another window is in front: a minimized window stays last in the order and would otherwise still take keys unseen.</li>
+</ul>
+
+<h2>Elevated decisions</h2>
+<div class="elevated">
+  <p><strong>The plan said to drive setTheme, setKeysEnabled and stop()/start() off refs.</strong></p>
+  <p>Options: keep five refs and a separate startup path inside the import's callback; or hold the mounted engine and shell in one state value and let the effects apply theme, keys and start once mount resolves.</p>
+  <p>Chose: one <code>app</code> state, because it drops five refs and the duplicated startup path while keeping the bundle's boot order (engine starts after <code>mountPaintUi</code>); all checks reran green.</p>
+  <p>Reverse: restore the refs, and call <code>setKeysEnabled</code> and <code>start()</code> inside the import's <code>.then</code>.</p>
+</div>
+
+<h2>Decided for you</h2>
+<details><summary>11 decisions</summary>
+<ul>
+  <li>Bundle location: <code>public/sk3tch/app.js</code>, loaded with a <code>webpackIgnore</code> dynamic import so the finished bundle isn't re-transpiled</li>
+  <li>Types: small local interfaces in <code>Sk3tch.tsx</code> instead of vendoring Sk3tch's whole type tree</li>
+  <li>No sync script: the bundle's header comment says how to update it</li>
+  <li>Sk3tch's chrome font: a <code>[data-sk3tch-host] .p95-root</code> override to <code>'W95FA UI'</code>, not Sk3tch's own font-face rule</li>
+  <li>Shell options: default app mode (Export menu), a new seed each open, no admin</li>
+  <li>Window size: 800x700, in line with R3MIX and DUET</li>
+  <li>Menu class: renamed to <code>ev3-menu-item</code> rather than scoped, since Sk3tch's sheet can't be scoped from the host</li>
+  <li>Keys also off while Sk3tch is minimized</li>
+  <li>Seed: none passed, so the bundle picks a fresh random seed each open</li>
+  <li>Failed load: one line in the box ("Sk3tch didn't load. Reopen the window to try again."), beside the no-WebGL2 line</li>
+  <li>Placement: Sk3tch sits just before Settings on the desktop and in the Start menu</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>The no-WebGL2 and failed-load messages: neither path was run in a browser.</li>
+  <li>The bullet glyph comparison: relies on the executor's pixel comparison of the old and new •; no font tools here to inspect the files directly.</li>
+  <li>Phone check ran as a 375x812 Playwright viewport, not on a real touch device.</li>
+  <li>Key gating was checked with the brush keys (<code>c</code>, <code>z</code>) only.</li>
+  <li>Codex pass skipped: visual diff.</li>
+</ul>
+
+<h2>Review</h2>
+<p>0 fixed · 0 tracked · 0 dropped · 1 ask</p>
+<details><summary>Fixed</summary>
+<ul>
+  <li>None.</li>
+</ul>
+</details>
+<details><summary>Dropped</summary>
+<ul>
+  <li>None.</li>
+</ul>
+</details>
+<p>F1 (the "dashed bullet" isn't visibly met) joined A1 as its evidence.</p>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<p>None.</p>
+
+<footer>
+  <p>Answer in the review session, one line: "A1 leave", "all as recommended", or a bug you found.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-984-sk3tch-window/.goodaf/2026-11-07-SCOTT-984-sk3tch-window/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>
