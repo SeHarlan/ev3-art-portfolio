@@ -82,6 +82,15 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
     return () => clearTimeout(id)
   }, [isMin])
 
+  const grip = (
+    <div
+      className={bare ? "absolute right-px bottom-px flex" : "flex flex-none mr-px mb-px"}
+      ref={resizeRef}
+    >
+      <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
+    </div>
+  )
+
   return (
     <div
       hidden={isHidden}
@@ -136,69 +145,45 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
         </div>
       </div>
 
-      {bare ? (
-        <div className="flex-1 min-h-0 relative">
-          <div className={clsx(
-            "overflow-hidden h-full",
-            !isActive && "pointer-events-none",
-            wrapperClassName
-          )}>
-            {children}
-          </div>
-          <div
-            className="absolute right-px bottom-px flex"
-            ref={resizeRef}
-          >
-            <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
-          </div>
-        </div>
-      ) : (
-        <>
-        <div className="p95-chrome flex flex-wrap pt-[3px] pb-0.5 text-windowsTextDisabled" ref={menuRef}>
-          {menu
-            ? menu.map(item => {
-              return (
-                <button key={item.label} className="ev3-menu-item text-windowsText relative flex items-center h-[18px] px-1.5" onClick={item.function}>
-                  <span className="underline">{item.label[0]}</span>
-                  {item.label.slice(1)}
-                  {item.component}
-                </button>
-              )
-            })
-          : <>
-              <p className="flex items-center h-[18px] px-1.5"><span className="underline">V</span>iew</p>
-              <p className="flex items-center h-[18px] px-1.5"><span className="underline">E</span>dit</p>
-              <p className="flex items-center h-[18px] px-1.5"><span className="underline">H</span>elp</p>
-            </>
-          }
-        </div>
+      {!bare && <div className="p95-chrome flex flex-wrap pt-[3px] pb-0.5 text-windowsTextDisabled" ref={menuRef}>
+        {menu
+          ? menu.map(item => {
+            return (
+              <button key={item.label} className="ev3-menu-item text-windowsText relative flex items-center h-[18px] px-1.5" onClick={item.function}>
+                <span className="underline">{item.label[0]}</span>
+                {item.label.slice(1)}
+                {item.component}
+              </button>
+            )
+          })
+        : <>
+            <p className="flex items-center h-[18px] px-1.5"><span className="underline">V</span>iew</p>
+            <p className="flex items-center h-[18px] px-1.5"><span className="underline">E</span>dit</p>
+            <p className="flex items-center h-[18px] px-1.5"><span className="underline">H</span>elp</p>
+          </>
+        }
+      </div>}
 
-        <div
-          className={clsx(inset && "classic-inset",
-            "bg-white relative"
-          )} 
-        style={{ height: `calc(100% - ${offsetHeight}px)` }}>
-          <div className={clsx(
-            "overflow-auto h-full",
-            !isActive && "pointer-events-none",
-            wrapperClassName
-          )}>
-            {children}
-          </div>
+      <div
+        className={clsx(bare ? "flex-1 min-h-0" : inset && "classic-inset",
+          "bg-white relative"
+        )} 
+      style={bare ? undefined : { height: `calc(100% - ${offsetHeight}px)` }}>
+        <div className={clsx(
+          bare ? "overflow-hidden h-full" : "overflow-auto h-full",
+          !isActive && "pointer-events-none",
+          wrapperClassName
+        )}>
+          {children}
         </div>
+        {bare && grip}
+      </div>
 
-        <div className="p95-chrome flex gap-1 items-end">
-          <div className="w-1/2 h-4 classic-inset"></div>
-          <div className="w-1/2 h-4 classic-inset"></div>
-          <div
-            className="flex flex-none mr-px mb-px"
-            ref={resizeRef}
-          >
-            <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
-          </div>
-        </div>
-        </>
-      )}
+      {!bare && <div className="p95-chrome flex gap-1 items-end">
+        <div className="w-1/2 h-4 classic-inset"></div>
+        <div className="w-1/2 h-4 classic-inset"></div>
+        {grip}
+      </div>}
     </div>
   )
 }

@@ -40,20 +40,13 @@ const Sk3tchWindow: FC = () => {
 
   const [title, setTitle] = useState(WINDOWS.SK3TCH)
   const [error, setError] = useState<string | null>(null)
+  // The mounted engine and shell; the effects below keep them in step.
+  const [app, setApp] = useState<{ engine: Sk3tchEngine, ui: PaintUiHandle } | null>(null)
 
   const boxRef = useRef<HTMLDivElement | null>(null)
-  const engineRef = useRef<Sk3tchEngine | null>(null)
-  const uiRef = useRef<PaintUiHandle | null>(null)
 
-  // The mount reads these once it resolves; the effects below keep it in step.
-  const themeRef = useRef(theme)
-  const keysEnabledRef = useRef(keysEnabled)
-  const isMinRef = useRef(isMin)
-  themeRef.current = theme
-  keysEnabledRef.current = keysEnabled
-  isMinRef.current = isMin
-
-  // Boot order from the bundle: createEngine (not started), mountPaintUi, start.
+  // Boot order from the bundle: createEngine (not started), mountPaintUi, then
+  // the isMin effect starts it.
   useEffect(() => {
     const box = boxRef.current
     if (!box) return
@@ -63,26 +56,23 @@ const Sk3tchWindow: FC = () => {
     let canvas: HTMLCanvasElement | null = null
 
     import(/* webpackIgnore: true */ APP_URL)
-      .then((app: Sk3tchApp) => {
+      .then((sk3tch: Sk3tchApp) => {
         if (cancelled) return
         canvas = document.createElement("canvas")
         try {
-          engine = app.createEngine({ canvas })
+          engine = sk3tch.createEngine({ canvas })
         } catch (err) {
           console.error("Sk3tch: engine creation failed", err)
           setError("Sk3tch needs WebGL2, which this browser doesn't have.")
           return
         }
-        ui = app.mountPaintUi(engine, box, {
+        ui = sk3tch.mountPaintUi(engine, box, {
           frame: "host",
           newSeed: true,
-          theme: themeRef.current,
+          theme,
           onTitle: setTitle,
         })
-        ui.setKeysEnabled(keysEnabledRef.current)
-        if (!isMinRef.current) engine.start()
-        engineRef.current = engine
-        uiRef.current = ui
+        setApp({ engine, ui })
       })
       .catch(err => {
         if (cancelled) return
@@ -95,23 +85,21 @@ const Sk3tchWindow: FC = () => {
       ui?.destroy()
       engine?.destroy()
       canvas?.remove()
-      engineRef.current = null
-      uiRef.current = null
     }
   }, [])
 
   useEffect(() => {
-    uiRef.current?.setTheme(theme)
-  }, [theme])
+    app?.ui.setTheme(theme)
+  }, [app, theme])
 
   useEffect(() => {
-    uiRef.current?.setKeysEnabled(keysEnabled)
-  }, [keysEnabled])
+    app?.ui.setKeysEnabled(keysEnabled)
+  }, [app, keysEnabled])
 
   useEffect(() => {
-    if (isMin) engineRef.current?.stop()
-    else engineRef.current?.start()
-  }, [isMin])
+    if (isMin) app?.engine.stop()
+    else app?.engine.start()
+  }, [app, isMin])
 
   const initSize = {
     h: 700,
