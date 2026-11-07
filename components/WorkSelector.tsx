@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { FC, KeyboardEvent, useRef, useState } from "react";
+import Button from "./Button";
 
 export interface Work {
   id: string;
@@ -36,26 +37,26 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const i = works.findIndex((w) => w.id === selected);
-    const moves: Record<string, number> = {
-      ArrowLeft: i - 1,
-      ArrowRight: i + 1,
-      ArrowUp: i - columnCount(),
-      ArrowDown: i + columnCount(),
-      Home: 0,
-      End: works.length - 1,
+    const moves: Record<string, () => number> = {
+      ArrowLeft: () => i - 1,
+      ArrowRight: () => i + 1,
+      ArrowUp: () => i - columnCount(),
+      ArrowDown: () => i + columnCount(),
+      Home: () => 0,
+      End: () => works.length - 1,
     };
     if (e.key === "Enter") {
       e.preventDefault();
       if (selected) onOpen(selected);
     } else if (e.key in moves) {
       e.preventDefault();
-      select(moves[e.key]);
+      select(moves[e.key]());
     }
   };
 
   return (
     // classic-inset redraws the sunken well this covers.
-    <div className="p95-chrome classic-inset absolute inset-0 flex flex-col bg-[var(--p95-field-bg)] text-windowsText">
+    <div className="p95-chrome p95-field classic-inset absolute inset-0 flex flex-col">
       <div
         ref={gridRef}
         role="listbox"
@@ -95,13 +96,13 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
       </div>
 
       <div className="flex-none flex justify-end p-1.5 bg-windowsGray">
-        <button
-          className="classic-button min-w-[75px] h-[23px] px-3"
+        <Button
+          className="[--p95-dots:4px] min-w-[75px] h-[23px] px-2"
           disabled={!selected}
           onClick={() => selected && onOpen(selected)}
         >
           <span>Open</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

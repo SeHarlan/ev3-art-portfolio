@@ -362,13 +362,12 @@ html, body {
 }
 
 /* Large Icons view (WorkSelector): a 50% dither in the selection color over
-   the selected thumbnail (--p95-dither is fixed to its ink at :root, so the
-   gradient is spelled out), and the dotted focus rect on its label while the
-   grid has focus. */
+   the selected thumbnail (--p95-dither as a mask, since its ink is fixed at
+   :root), and the dotted focus rect on its label while the grid has focus. */
 .p95-icon-dither {
-  background: conic-gradient(
-    var(--p95-select-bg) 25%, transparent 0 50%, var(--p95-select-bg) 0 75%, transparent 0)
-    0 0 / calc(2 * var(--u)) calc(2 * var(--u));
+  background: var(--p95-select-bg);
+  -webkit-mask: var(--p95-dither);
+  mask: var(--p95-dither);
 }
 .p95-icon-grid:focus .p95-icon[aria-selected='true'] .p95-icon-label {
   outline: var(--u) dotted var(--p95-select-fg);
