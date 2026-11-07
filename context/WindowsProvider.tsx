@@ -40,6 +40,7 @@ export const WINDOWS = {
   SOMEDAYS: "some days",
   TECHTONIC: "techtonic",
   OBH: "on being human",
+  SK3TCH: "Sk3tch",
   SETTINGS: "Settings",
 }
 
@@ -54,6 +55,7 @@ type WINDOWS = {
   GP: string;
   TECHTONIC: string;
   OBH: string;
+  SK3TCH: string;
   SETTINGS: string;
 }
 
@@ -68,6 +70,7 @@ export const ICONS = {
   [WINDOWS.ITB]: "/images/ITB-icon.png",
   [WINDOWS.TECHTONIC]: "/images/small-logo.png",
   [WINDOWS.OBH]: "/images/small-logo.png",
+  [WINDOWS.SK3TCH]: "/svg/sk3tch-icon.svg",
   [WINDOWS.SETTINGS]: "/svg/settings-icon.svg",
 };
 
