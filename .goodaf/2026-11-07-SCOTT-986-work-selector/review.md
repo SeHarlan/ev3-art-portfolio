@@ -36,7 +36,7 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 
 ## Bug notes
 
-none
+- B1. 2026-11-07 "I want some hover state, like maybe we use a dashed border when a mouse is hovering over an option."
 
 ## Follow-ups
 
