@@ -40,6 +40,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 ## Progress
 
 - 2026-11-07 plan written
+- 2026-11-07 user approved downloading the 10 source images and `yarn install --frozen-lockfile` in this worktree
 
 ## Decisions
 
