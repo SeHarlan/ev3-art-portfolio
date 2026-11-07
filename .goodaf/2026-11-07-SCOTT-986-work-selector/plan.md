@@ -43,6 +43,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - 2026-11-07 user approved downloading the 10 source images and `yarn install --frozen-lockfile` in this worktree
 - 2026-11-07 setup: node_modules already present and yarn.lock matches main, so no install run
 - 2026-11-07 step 1: 10 thumbnails in public/images/thumbs (96×96 JPEG, 3.0–8.1 KB); check 3 ls/sips half passes (grep half lands with step 3)
+- 2026-11-07 step 2: components/WorkSelector.tsx + two globals.css rules (selected-thumb dither, label focus rect); `npx tsc --noEmit` exit 0; checks 1–2 need the windows, run after step 3
 
 ## Decisions
 
@@ -51,6 +52,10 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - Normal: About becomes a direct view switch instead of the current sketch/about toggle, since there are now three views. Reverse: restore the `(prev + 1) % n` toggle.
 - Normal: thumbnails 96×96 center-cropped JPEG, square like a Win95 icon cell. Reverse: regenerate with `sips -Z 96` (fit, no crop) and `object-contain`.
 - Normal: The Monitor's ordinals.com URL gives curl a Cloudflare "Just a moment..." challenge page (no image inside), but the browser fetches the real 512×512 WebP. Made its thumbnail from that source image in the browser pane (scaled and center-cropped to 96×96 on a canvas, JPEG 0.85, SHA-256 checked after transfer) instead of a still of the running sketch. Reverse: replace `rmx-the-monitor.jpg` with a cropped screenshot of the sketch after pressing "c".
+- Normal: the selected-thumb dither is its own `.p95-icon-dither` rule with the gradient spelled out in `--p95-select-bg`, because `--p95-dither` resolves its ink at `:root` and an element-level `--p95-dither-ink` override doesn't reach it. Reverse: redeclare `--p95-dither` on the element alongside the ink.
+- Normal: the whole selector uses `p95-chrome` (W95FA UI 11px), since Large Icons labels are Explorer UI text, not window content. Reverse: drop `p95-chrome` from the outer div and put it on the button bar only.
+- Normal: Up/Down column count is read from the laid-out items (how many share the first row's top), which follows the wrap exactly instead of dividing the container width. Reverse: `Math.floor(grid.clientWidth / 112)`.
+- Normal: the selector mounts only while shown, so each return to it starts with the open work selected. Reverse: render it always and hide it with a class.
 - Normal: Refresh keeps its current behavior (remounts the active sketch) and doesn't change the view. Reverse: also set view `"sketch"` in its handler.
 
 ## Parked asks
