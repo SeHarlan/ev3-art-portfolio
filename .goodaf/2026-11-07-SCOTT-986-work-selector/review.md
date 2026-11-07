@@ -37,6 +37,7 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 ## Bug notes
 
 - B1. 2026-11-07 "I want some hover state, like maybe we use a dashed border when a mouse is hovering over an option."
+- B2. 2026-11-07 "I want the open button to be closer so its obvious what needs to happen if they only click once, I'm not sure the best way to make this look good though" → answered "1a": a Win95 Open-dialog bar that sits directly under the last row of thumbnails (sticking to the bottom only once items overflow), with a sunken "File name:" field showing the selected title and Open beside it.
 
 ## Follow-ups
 
