@@ -60,9 +60,9 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <p class="muted">The recommendation happens unless you say otherwise.</p>
 <div class="ask">
   <p><span class="tag">A1 · parked: spec meaning</span><strong>Done-when 4 says content text has a "dashed bullet", but Sk3tch's font draws the same round • as the old file. Did you mean a different bullet (e.g. a - marker), or is the round • what you expected?</strong></p>
-  <p>If left, list bullets stay the round • they are on main.</p>
-  <p class="rec">Recommend: leave — the font swap does what the spec describes; a dashed marker would be a new style change the spec doesn't describe.</p>
-  <details><summary>Where</summary><p><code>styles/globals.css:6-11</code> — the <code>'W95FA'</code> face now uses Sk3tch's file, whose • matches the old one pixel for pixel; Sk3tch's own stylesheet has no bullet or list-style rule to carry over (F1).</p></details>
+  <p>If left, list bullets stay the round • they are on main, not the small dashed line you described at intake.</p>
+  <p class="rec">Recommend: change — inspect the font's glyph table, find the dashed bullet glyph and point content list markers at it, keeping text sizes; if the file has no such glyph, report back and leave the bullets. (plan.md's default was leave; your intake note says the dashed bullet is what you wanted.)</p>
+  <details><summary>Where</summary><p><code>styles/globals.css:6-11</code> — the <code>'W95FA'</code> face now uses Sk3tch's only W95FA file (byte-identical to <code>packages/sketch-engine/assets/ui-font.woff2</code>), whose • (U+2022) matches the old one pixel for pixel, so any dashed glyph sits at another character; Sk3tch's stylesheet has no bullet or list-style rule to carry over (F1).</p></details>
 </div>
 
 <h2>Worth checking by hand</h2>
@@ -83,7 +83,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h2>Deviations from the spec</h2>
 <ul>
-  <li>Done-when 4's "dashed bullet": the bullets look the same as before, because Sk3tch's font draws the same • as the removed file. Parked as A1.</li>
+  <li>Done-when 4's "dashed bullet": the bullets look the same as before, because Sk3tch's font draws the same • (U+2022) as the removed file. Open as A1.</li>
   <li>Sk3tch's keys are also off while it's minimized, not only while another window is in front: a minimized window stays last in the order and would otherwise still take keys unseen.</li>
 </ul>
 
