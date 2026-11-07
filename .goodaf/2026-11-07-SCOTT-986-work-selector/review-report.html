@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-986</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-986 In-window work selector for R3MIX and 3xGP</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-986-work-selector</code>, not merged · reviewed commit <code>22217b1</code>, final <code>22217b1</code> · follow-up 1 (B1, B2) final <code>74816ae</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 reviewed by a general reviewer, nothing to fix</p>
+  <p>Running at <a href="http://localhost:3986">http://localhost:3986</a></p>
+</div>
+
+<h2>Asks</h2>
+<p>None.</p>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>Open R3MIX and press the arrow keys before clicking anything → nothing moves until you click an item or Tab into the grid (T1)</li>
+  <li>Try the selector on a real phone, including a double-tap on a thumbnail → a tap selects, Open runs the work, and no dashed hover box is left behind; double-tap wasn't checked on a touch device</li>
+  <li>Make the browser window short enough that the thumbnails scroll → the File name bar stays pinned at the bottom; with room to spare it sits right under the last row</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Selector is the default full content view, Win95 Large Icons, no dropdown</td><td class="pass">pass</td><td>Browser check: R3MIX opens on 7 items, 3xGP on 3, first selected (navy title, dithered thumb), no sketch mounted, three palettes render. <code>grep -rn "MenuDropdown" components/windows</code> → exit 1, no output</td></tr>
+  <tr><td>2</td><td>Opening a work runs it; menu bar returns to the selector from the work and from About</td><td class="pass">pass</td><td>Browser check: Open button, double-click and ArrowRight + Enter each ran a work; Choose R3MIX / Choose Prelude reached the selector from a sketch and from About; Open on the open work resumed it (same canvases); at 375px tap-select + tap Open ran Seeing Beyond. Only console error is a pre-existing hydration warning from <code>Window.tsx</code>/<code>Home.tsx</code></td></tr>
+  <tr><td>3</td><td>Thumbnails are small committed files</td><td class="pass">pass</td><td><code>ls -l public/images/thumbs &amp;&amp; sips … &amp;&amp; grep -n "images/thumbs" …</code> → exit 0; 10 JPEGs, 96×96, 3.0–8.1 KB; all 10 works point at <code>/images/thumbs/…</code></td></tr>
+  <tr><td>1–3</td><td>Rerun after follow-up 1 (hover outline, File name bar)</td><td class="pass">pass</td><td>Browser: both windows open on the selector with the File name bar 0px under the last row and the selection in its field; three palettes take their colors from tokens; Open, double-click and Choose R3MIX / Choose Prelude still work; at 375×420 the bar stays pinned and End keeps In Bloom clear of it. MenuDropdown grep → exit 1, no output; thumbnail check → exit 0</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → exit 0; <code>yarn test</code> → exit 0 (1 pass, follow-up 1); <code>yarn build</code> → exit 0</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<ul>
+  <li>More: Home and End jump to the first and last item, beyond the spec's arrow keys. Kept because Explorer does the same (F2, dropped).</li>
+  <li>More, from your bug notes: a dashed hover outline on items (B1), and a Win95 Open-dialog bar with a File name field under the last row in place of the bottom-right Open button (B2).</li>
+</ul>
+
+<h2>Elevated decisions</h2>
+<div class="elevated">
+  <p><strong>The repo had no test runner, and B2's repro test needs one</strong></p>
+  <p>Options: a browser assertion only (nothing committed), vitest (a new dev dependency and a yarn.lock change), or Node's built-in <code>node:test</code> with the TypeScript and react-dom already installed</p>
+  <p>Chose: <code>node:test</code> — <code>tsconfig.test.json</code> compiles <code>components/**/*.test.tsx</code> into <code>node_modules/.cache/test-build</code> and <code>yarn test</code> runs it, with no new package</p>
+  <p>Reverse: delete <code>tsconfig.test.json</code>, <code>components/WorkSelector.test.tsx</code> and the <code>test</code> script in <code>package.json</code></p>
+</div>
+
+<h2>Decided for you</h2>
+<details><summary>18 decisions</summary>
+<ul>
+  <li>Cancel button: none; the menu bar's Choose and About do its job, since the selector is a tab, not a modal</li>
+  <li>First open: no sketch mounts until the first Open, so opening the window downloads no full-size image</li>
+  <li>About: a direct view switch instead of the old sketch/about toggle</li>
+  <li>Thumbnails: 96×96 center-cropped JPEG, square like a Win95 icon cell</li>
+  <li>The Monitor's thumbnail: made in the browser from its 512×512 WebP source, because curl gets a Cloudflare challenge page</li>
+  <li>Selected-thumb dither: <code>.p95-icon-dither</code>, the select color masked by the shared <code>--p95-dither</code></li>
+  <li>Selector root uses the existing <code>.p95-field</code> class; Open is the shared <code>Button</code> with Settings' dialog-button sizing</li>
+  <li>Skipped: moving the containing block into <code>Window.tsx</code>, since it would move every window's About panel</li>
+  <li>Skipped: unmounting the hidden sketch, since reopening the same work would then restart it</li>
+  <li>Selector text: <code>p95-chrome</code> (W95FA UI 11px), as Explorer UI text</li>
+  <li>Up/Down: column count read from laid-out items sharing the first row's top</li>
+  <li>Selector root carries <code>classic-inset</code> to redraw the well's bevel it covers</li>
+  <li>Selector mounts only while shown, so each return starts with the open work selected</li>
+  <li>Refresh: keeps remounting the active sketch without changing the view</li>
+  <li>Hover (B1): a 1px dashed outline around the whole item, inset so nothing shifts, only for mouse pointers so a tap leaves none</li>
+  <li>B1's repro: a browser assertion on the hovered item's outline, since hover is CSS-only</li>
+  <li>File name field (B2): a read-only box labelled by "File name:", not an input, so it adds no tab stop or caret</li>
+  <li>Scrollbar (B2): now runs beside the bar too, since the bar scrolls with the grid to sit under the last row</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>Palettes: the review's browser check switched Classic and 1-Bit by setting <code>data-p95-theme</code> in its own tab (to leave your saved palette alone), not through Settings; execute's check used Settings</li>
+  <li>Mobile: checked in a 375px emulated viewport with mouse clicks, not on a touch device; double-tap to open wasn't tried there</li>
+  <li>Thumbnail-to-work match: checked by eye for the works opened (DEGEN DOLLAR, 7 years, The Monitor, Seeing Beyond, icarus), not compared against every source image</li>
+  <li>Follow-up 1: B1's repro is a browser assertion, not a committed test; B2's committed test checks the bar's markup, not its placement (T2), which the browser check covered</li>
+  <li>Follow-up 1 palettes: the new bar was checked by setting <code>data-p95-theme</code> in a separate tab, not through Settings</li>
+  <li>Codex pass: skipped, visual diff</li>
+</ul>
+
+<h2>Review</h2>
+<p>0 fixed · 2 tracked · 1 dropped · 0 asks</p>
+<details><summary>Dropped</summary>
+<ul>
+  <li>F2 Home and End keys go beyond the spec's arrow keys — no wrong output, no done-when affected, matches Explorer</li>
+</ul>
+</details>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<h3>selector keyboard focus</h3>
+<ul>
+  <li>T1 Focus the selector grid when it appears (window open, or Choose R3MIX / Choose Prelude), so arrow keys, Enter and the dotted focus box work without a click first</li>
+</ul>
+<h3>test coverage of layout</h3>
+<ul>
+  <li>T2 The B2 test checks only markup order, so it would still pass if the File name bar moved back to the window bottom; assert its nesting, or rename the test so it doesn't claim placement</li>
+</ul>
+
+<footer>
+  <p>Answer in the review session, one line: "T1 in", "T2 in", or a bug you found.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-986-work-selector/.goodaf/2026-11-07-SCOTT-986-work-selector/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>

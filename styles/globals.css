@@ -366,3 +366,24 @@ html, body {
     --p95-icon-ink: var(--p95-select-fg);
   }
 }
+
+/* Large Icons view (WorkSelector): a 50% dither in the selection color over
+   the selected thumbnail (--p95-dither as a mask, since its ink is fixed at
+   :root), and the dotted focus rect on its label while the grid has focus. */
+.p95-icon-dither {
+  background: var(--p95-select-bg);
+  -webkit-mask: var(--p95-dither);
+  mask: var(--p95-dither);
+}
+/* Hover: a dashed box around the item, for mouse pointers only so a tap
+   leaves none behind. */
+@media (hover: hover) {
+  .p95-icon:hover {
+    outline: var(--u) dashed var(--p95-text);
+    outline-offset: calc(-1 * var(--u));
+  }
+}
+.p95-icon-grid:focus .p95-icon[aria-selected='true'] .p95-icon-label {
+  outline: var(--u) dotted var(--p95-select-fg);
+  outline-offset: calc(-1 * var(--u));
+}
