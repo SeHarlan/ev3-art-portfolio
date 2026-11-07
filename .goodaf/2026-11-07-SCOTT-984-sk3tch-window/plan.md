@@ -52,6 +52,7 @@ Sk3tch's sheet (`paint.css`, injected once into `<head>` by `ensurePaintStyles`,
 
 - 2026-11-07 plan written
 - 2026-11-07 sk3tch app bundle built at sk3tch root `bf7757f5` (tree clean): `packages/sketch-engine/dist/app.js`, 216979 bytes
+- 2026-11-07 user approved `yarn install --frozen-lockfile` in this worktree; run, exit 0 (yarn.lock unchanged from main)
 
 ## Decisions
 
