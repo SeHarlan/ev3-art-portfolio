@@ -14,7 +14,7 @@ interface WorkSelectorProps {
   onOpen: (id: string) => void;
 }
 
-/** Explorer's "Large Icons" view of a collection, with an Open button. Fills its parent. */
+/** Explorer's "Large Icons" view of a collection, with an Open button. Fills its positioned parent. */
 const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
   const [selected, setSelected] = useState(selectedId ?? works[0]?.id);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,8 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
   };
 
   return (
-    <div className="p95-chrome absolute inset-0 flex flex-col bg-[var(--p95-field-bg)] text-windowsText">
+    // classic-inset redraws the sunken well this covers.
+    <div className="p95-chrome classic-inset absolute inset-0 flex flex-col bg-[var(--p95-field-bg)] text-windowsText">
       <div
         ref={gridRef}
         role="listbox"

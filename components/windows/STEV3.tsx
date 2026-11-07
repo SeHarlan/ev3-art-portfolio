@@ -4,7 +4,7 @@ import { FC, useEffect, useMemo, useRef, useState } from "react"
 import dynamic from "next/dynamic";
 import clsx from "clsx";
 import Link from "next/link";
-import MenuDropdown from "../MenuDropdown";
+import WorkSelector, { Work } from "../WorkSelector";
 
 const STEV3_3 = dynamic(() => import("../p5/Strakts/STEV3-n3/STEV3-n3"), {
   ssr: false,
@@ -19,14 +19,19 @@ const STEV3_1 = dynamic(() => import("../p5/Strakts/STEV3-n1/STEV3-n1"), {
 }) as any;
 
 
-const contentOptions = ["sketch", "about"]
+type View = "selector" | "sketch" | "about"
+
+const works: Work[] = [
+  { id: "1", title: "that which blooms in the desert", thumb: "/images/thumbs/3xgp-1.jpg" },
+  { id: "2", title: "floating on taken by the tempest", thumb: "/images/thumbs/3xgp-2.jpg" },
+  { id: "3", title: "icarus never did fall", thumb: "/images/thumbs/3xgp-3.jpg" },
+]
 
 const STEV3_Window: FC = () => {
   const [seed, setSeed] = useState("")
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [activeContent, setActiveContent] = useState(0)
+  const [view, setView] = useState<View>("selector")
   const [sketchCounter, setSketchCounter] = useState(1)
-  const [activeRemix, setActiveRemix] = useState("1")
+  const [activeRemix, setActiveRemix] = useState<string>()
 
   const { activeWindow } = useWindowsContext()
   const isActiveRef = useRef(false)
@@ -46,6 +51,11 @@ const STEV3_Window: FC = () => {
   }
 
 
+  const openWork = (id: string) => {
+    setActiveRemix(id)
+    setView("sketch")
+  }
+
   const menu: WindowMenuItem[] = [
     {
       label: "Refresh",
@@ -55,28 +65,13 @@ const STEV3_Window: FC = () => {
     },
     {
       label: "Choose Prelude",
-      function: () => setMenuOpen(true)
+      function: () => setView("selector")
     },
     {
       label: "About",
-      function: () => setActiveContent(prev => (prev + 1) % contentOptions.length)
+      function: () => setView("about")
     },
 
-  ];
-
-  const menuOptions = [
-    {
-      label: "that which blooms in the desert",
-      onClick: () => setActiveRemix("1"),
-    },
-    {
-      label: "floating on taken by the tempest",
-      onClick: () => setActiveRemix("2"),
-    },
-    {
-      label: "icarus never did fall",
-      onClick: () => setActiveRemix("3"),
-    },
   ];
 
   const content = useMemo(() => { 
@@ -111,6 +106,8 @@ const STEV3_Window: FC = () => {
             isActive={isActiveRef}
           />
         );
+      default:
+        return null;
     }
   }, [activeRemix, sketchCounter, seed, isActiveRef])
 
@@ -123,26 +120,23 @@ const STEV3_Window: FC = () => {
       menu={menu}
       wrapperClassName="bg-amber-50"
     >
-      <MenuDropdown
-        options={menuOptions}
-        isOpen={menuOpen}
-        setIsOpen={setMenuOpen}
-        className="absolute top-0 left-0"
-      />
-
       <div
         className={clsx(
           "w-full h-full duration-200",
-          activeContent === 0 ? "opacity-100" : "opacity-0"
+          view === "sketch" ? "opacity-100" : "opacity-0"
         )}
       >
         {content}
       </div>
 
+      {view === "selector" && (
+        <WorkSelector works={works} selectedId={activeRemix} onOpen={openWork} />
+      )}
+
       <div
         className={clsx(
           "p-4 absolute top-0 left-0 h-full w-full overflow-auto",
-          activeContent === 1 ? "block" : "hidden"
+          view === "about" ? "block" : "hidden"
         )}
       >
         <p className="font-bold">Three Glitch Preludes</p>
@@ -184,7 +178,7 @@ const STEV3_Window: FC = () => {
         <br />
         <button
           className="classic-button px-2"
-          onClick={() => setActiveContent(0)}
+          onClick={() => setView(activeRemix ? "sketch" : "selector")}
         >
           <span>Go back</span>
         </button>

@@ -44,6 +44,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - 2026-11-07 setup: node_modules already present and yarn.lock matches main, so no install run
 - 2026-11-07 step 1: 10 thumbnails in public/images/thumbs (96×96 JPEG, 3.0–8.1 KB); check 3 ls/sips half passes (grep half lands with step 3)
 - 2026-11-07 step 2: components/WorkSelector.tsx + two globals.css rules (selected-thumb dither, label focus rect); `npx tsc --noEmit` exit 0; checks 1–2 need the windows, run after step 3
+- 2026-11-07 step 3: R3MIX and 3xGP on selector/sketch/about views, no MenuDropdown; checks 1, 2, 3 pass. Check 1: both windows open on the selector (7 and 3 items, first selected, navy dithered thumb and title, no canvas mounted) in Standard, Classic and 1-Bit; `grep -rn "MenuDropdown" components/windows` prints nothing (exit 1). Check 2: R3MIX opened DEGEN DOLLAR by Open, 7 years by double-click, The Monitor by click + ArrowRight + Enter; Choose R3MIX reached the selector from a sketch and from About; Open on the open work kept the same canvases (no restart); ArrowDown/Up moved by a row; 3xGP opened icarus by double-click and Choose Prelude returned; at 375px a tap selected Seeing Beyond and a tap on Open ran it. Only console error is a hydration warning from `Window.tsx`'s icon `style` under HomeWindow, a file this diff doesn't touch. Check 3: grep shows all 10 works at `/images/thumbs/…`. `npx tsc --noEmit` exit 0, `yarn build` exit 0
 
 ## Decisions
 
@@ -55,6 +56,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - Normal: the selected-thumb dither is its own `.p95-icon-dither` rule with the gradient spelled out in `--p95-select-bg`, because `--p95-dither` resolves its ink at `:root` and an element-level `--p95-dither-ink` override doesn't reach it. Reverse: redeclare `--p95-dither` on the element alongside the ink.
 - Normal: the whole selector uses `p95-chrome` (W95FA UI 11px), since Large Icons labels are Explorer UI text, not window content. Reverse: drop `p95-chrome` from the outer div and put it on the button bar only.
 - Normal: Up/Down column count is read from the laid-out items (how many share the first row's top), which follows the wrap exactly instead of dividing the container width. Reverse: `Math.floor(grid.clientWidth / 112)`.
+- Normal: the selector's root carries `classic-inset`, because `absolute inset-0` lands on the window's sunken well (its positioned box) and covered the well's 2px bevel; the root now redraws it. Reverse: drop `classic-inset` from the root div.
 - Normal: the selector mounts only while shown, so each return to it starts with the open work selected. Reverse: render it always and hide it with a class.
 - Normal: Refresh keeps its current behavior (remounts the active sketch) and doesn't change the view. Reverse: also set view `"sketch"` in its handler.
 

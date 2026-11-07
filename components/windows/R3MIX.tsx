@@ -4,7 +4,7 @@ import { FC, useEffect, useMemo, useRef, useState } from "react"
 import dynamic from "next/dynamic";
 import clsx from "clsx";
 import Link from "next/link";
-import MenuDropdown from "../MenuDropdown";
+import WorkSelector, { Work } from "../WorkSelector";
 const RMX_dithered_sky = dynamic(
   () => import("../p5/RMX/RMX-dithered-sky/RMX-dithered-sky"),
   { ssr: false }
@@ -31,14 +31,23 @@ const RMX_Bloom = dynamic(() => import("../p5/RMX/RMX-bloom/RMX-bloom"), {
   ssr: false,
 }) as any;
 
-const contentOptions = ["sketch", "about"]
+type View = "selector" | "sketch" | "about"
+
+const works: Work[] = [
+  { id: "dithered_sky", title: "dithered sky 11", thumb: "/images/thumbs/rmx-dithered-sky.jpg" },
+  { id: "degen_dollar", title: "DEGEN DOLLAR", thumb: "/images/thumbs/rmx-degen-dollar.jpg" },
+  { id: "seeing-beyond", title: "Seeing Beyond this Moment", thumb: "/images/thumbs/rmx-seeing-beyond.jpg" },
+  { id: "7_years", title: "7 years", thumb: "/images/thumbs/rmx-7-years.jpg" },
+  { id: "frame35", title: "Frame #35", thumb: "/images/thumbs/rmx-frame35.jpg" },
+  { id: "the-monitor", title: "The Monitor", thumb: "/images/thumbs/rmx-the-monitor.jpg" },
+  { id: "bloom", title: "In Bloom", thumb: "/images/thumbs/rmx-bloom.jpg" },
+]
 
 const R3MIX_Window: FC = () => {
   const [seed, setSeed] = useState("")
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [activeContent, setActiveContent] = useState(0)
+  const [view, setView] = useState<View>("selector")
   const [sketchCounter, setSketchCounter] = useState(1)
-  const [activeRemix, setActiveRemix] = useState("dithered_sky")
+  const [activeRemix, setActiveRemix] = useState<string>()
 
   const { activeWindow } = useWindowsContext()
   const isActiveRef = useRef(false)
@@ -63,7 +72,12 @@ const R3MIX_Window: FC = () => {
 
   const useSeed = (s: string) => {
     setSeed(s)
-    setActiveContent(0)
+    setView("sketch")
+  }
+
+  const openWork = (id: string) => {
+    setActiveRemix(id)
+    setView("sketch")
   }
 
   const menu: WindowMenuItem[] = [
@@ -75,45 +89,14 @@ const R3MIX_Window: FC = () => {
     },
     {
       label: "About",
-      function: () => setActiveContent(prev => (prev + 1) % contentOptions.length)
+      function: () => setView("about")
     },
     {
       label: "Choose R3MIX",
-      function: () => setMenuOpen(true)
+      function: () => setView("selector")
     },
 
   ]
-
-  const menuOptions = [
-    {
-      label: "dithered sky 11",
-      onClick: () => setActiveRemix("dithered_sky"),
-    },
-    {
-      label: "DEGEN DOLLAR",
-      onClick: () => setActiveRemix("degen_dollar"),
-    },
-    {
-      label: "Seeing Beyond this Moment",
-      onClick: () => setActiveRemix("seeing-beyond"),
-    },
-    {
-      label: "7 years",
-      onClick: () => setActiveRemix("7_years"),
-    },
-    {
-      label: "Frame #35",
-      onClick: () => setActiveRemix("frame35"),
-    },
-    {
-      label: "The Monitor",
-      onClick: () => setActiveRemix("the-monitor"),
-    },
-    {
-      label: "In Bloom",
-      onClick: () => setActiveRemix("bloom"),
-    },
-  ];
 
   const content = useMemo(() => { 
     switch (activeRemix) {
@@ -131,19 +114,21 @@ const R3MIX_Window: FC = () => {
         return <RMX_The_Monitor key="the-monitor" className={sketchCounter} menuOpen={false} seed={seed} isActive={isActiveRef} />;
       case "bloom":
         return <RMX_Bloom key="bloom" className={sketchCounter} menuOpen={false} seed={seed} isActive={isActiveRef} />;
+      default:
+        return null;
     }
   }, [activeRemix, sketchCounter, seed, isActiveRef])
 
 
   return (
     <Window windowKey={WINDOWS.R3MIX} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
-      <MenuDropdown options={menuOptions} isOpen={menuOpen} setIsOpen={setMenuOpen} className="absolute top-0 left-0" />
-
-      <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>
+      <div className={clsx("w-full h-full duration-200", view === "sketch" ? "opacity-100" : "opacity-0")}>
         {content}
       </div>
 
-      <div className={clsx("p-4 absolute top-0 left-0 h-full w-full overflow-auto", activeContent === 1 ? "block" : "hidden")}>
+      {view === "selector" && <WorkSelector works={works} selectedId={activeRemix} onOpen={openWork} />}
+
+      <div className={clsx("p-4 absolute top-0 left-0 h-full w-full overflow-auto", view === "about" ? "block" : "hidden")}>
         <p>R3MIX is a series of glitch studies. Existing still art reimagined with constantly evolving movement.</p>
         <br />
         <p>Press "c" to clear the glitch effects and view the original piece</p>        
@@ -160,7 +145,7 @@ const R3MIX_Window: FC = () => {
         </ul>
           
         <br />
-        <button className="classic-button px-2" onClick={() => setActiveContent(0)}>
+        <button className="classic-button px-2" onClick={() => setView(activeRemix ? "sketch" : "selector")}>
           <span>Go back</span>
         </button>
       </div>
