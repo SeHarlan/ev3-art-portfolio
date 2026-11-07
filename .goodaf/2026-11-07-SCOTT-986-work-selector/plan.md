@@ -65,3 +65,9 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - Normal: Refresh keeps its current behavior (remounts the active sketch) and doesn't change the view. Reverse: also set view `"sketch"` in its handler.
 
 ## Parked asks
+
+## Follow-up 1
+
+Base: 2b35d51
+- B1: a dashed outline on a selector item while the mouse hovers over it (hover-capable pointers only).
+- B2: the Open button moves into a Win95 Open-dialog bar right under the last row of thumbnails, sticking to the bottom only once items overflow, with a sunken "File name:" field showing the selected title and Open beside it.
