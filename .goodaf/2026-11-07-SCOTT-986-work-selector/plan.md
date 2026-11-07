@@ -31,7 +31,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 
 ## Hard rules
 
-- Full check: `npx tsc --noEmit` and `yarn build`; lint: none in this repo (`next lint` starts interactive setup).
+- Full check: `npx tsc --noEmit`, `yarn test` and `yarn build`; lint: none in this repo (`next lint` starts interactive setup).
 - Never edit `components/p5/**`; never edit `components/MenuDropdown.tsx` or delete it.
 - Downloaded source images stay in the scratchpad (a fresh empty folder), never in the repo; only the 96×96 outputs are committed. Downloading them needs the user's yes, asked at start; Progress records the answer.
 - Dependencies: the repo uses yarn (`yarn.lock`), outside goodaf's no-ask install exception; Progress records whether the user approved `yarn install --frozen-lockfile` in this worktree.
@@ -47,6 +47,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - 2026-11-07 step 3: R3MIX and 3xGP on selector/sketch/about views, no MenuDropdown; checks 1, 2, 3 pass. Check 1: both windows open on the selector (7 and 3 items, first selected, navy dithered thumb and title, no canvas mounted) in Standard, Classic and 1-Bit; `grep -rn "MenuDropdown" components/windows` prints nothing (exit 1). Check 2: R3MIX opened DEGEN DOLLAR by Open, 7 years by double-click, The Monitor by click + ArrowRight + Enter; Choose R3MIX reached the selector from a sketch and from About; Open on the open work kept the same canvases (no restart); ArrowDown/Up moved by a row; 3xGP opened icarus by double-click and Choose Prelude returned; at 375px a tap selected Seeing Beyond and a tap on Open ran it. Only console error is a hydration warning from `Window.tsx`'s icon `style` under HomeWindow, a file this diff doesn't touch. Check 3: grep shows all 10 works at `/images/thumbs/…`. `npx tsc --noEmit` exit 0, `yarn build` exit 0
 - 2026-11-07 simplify: 4 edits (column count only on Up/Down, `.p95-field`, shared `Button` for Open, mask dither); all checks pass (tsc 0, build 0, MenuDropdown grep empty, 10 thumbs referenced, selector re-checked in browser: dither, arrows, Open)
 - 2026-11-07 follow-up 1 B1: dashed 1px outline on a hovered selector item (`.p95-icon:hover` under `@media (hover: hover)`, `--p95-text` ink); repro: browser assertion, hover DEGEN DOLLAR in R3MIX → `getComputedStyle(item).outlineStyle === 'dashed'`, seen failing with `'none'` (hovered: true) before the fix, `'dashed'` after; checks 1, 3 pass (grep empty, 10 thumbs at 96×96), `npx tsc --noEmit` exit 0, `yarn build` exit 0
+- 2026-11-07 follow-up 1 B2: Open-dialog bar ("File name:" label, sunken field with the selected title, Open) right under the last row, `sticky bottom-0` inside a new scroll wrapper with `scroll-pb-10`; repro `components/WorkSelector.test.tsx` "B2: the Open bar sits under the grid…" (`yarn test`), seen failing before the fix on `AssertionError: a File name: label after the grid`, passes after; browser: bar 0px under the last row in R3MIX and 3xGP, pinned to the bottom when the grid overflows (375×420), End keeps In Bloom clear of the bar, field follows click and keyboard selection, Open/double-click run works, Choose R3MIX / Choose Prelude return with the open work in the field, Standard/Classic/1-Bit colors from tokens; checks 1, 2, 3 pass, `npx tsc --noEmit` exit 0, `yarn test` exit 0, `yarn build` exit 0
 
 ## Decisions
 
@@ -66,6 +67,9 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - Normal: Refresh keeps its current behavior (remounts the active sketch) and doesn't change the view. Reverse: also set view `"sketch"` in its handler.
 - Normal (follow-up 1 B1): hover is a dashed outline, not a border, around the whole item cell, inset 1px so nothing shifts, only under `@media (hover: hover)` so a tap leaves no box on touch screens. Reverse: delete the `.p95-icon:hover` rule in `styles/globals.css`.
 - Normal (follow-up 1 B1): B1's repro is a browser assertion, not a committed test: `:hover` is CSS-only and the repo has no test runner. Reverse: none needed.
+- Elevated (follow-up 1 B2): the repo had no test runner, and the bug's repro test needs one. Options: browser assertion only (nothing committed), vitest (new dev dependency, yarn.lock change), or `node:test` with the TypeScript and react-dom already installed. Chose `node:test`: `tsconfig.test.json` compiles `components/**/*.test.tsx` to CommonJS in `node_modules/.cache/test-build` and `yarn test` runs it, no new package. Reverse: delete `tsconfig.test.json`, `components/WorkSelector.test.tsx` and the `test` script in `package.json`.
+- Normal (follow-up 1 B2): the File name field is a read-only `div` labelled by its "File name:" span (`useId`, so two open selectors don't share an id), not an input, so it adds no tab stop or caret. Reverse: a `readOnly` input with a `<label htmlFor>`.
+- Normal (follow-up 1 B2): the scrollbar now runs beside the bar too, since the bar lives inside the scroll wrapper to sit under the last row. Reverse: move the bar back outside the wrapper (it then stays at the bottom of the window).
 
 ## Parked asks
 
