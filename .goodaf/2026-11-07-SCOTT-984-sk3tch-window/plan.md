@@ -72,6 +72,7 @@ Sk3tch's sheet (`paint.css`, injected once into `<head>` by `ensurePaintStyles`,
 - Normal: Sk3tch's keys are also off while it's minimized (`activeWindow === SK3TCH && !isMin`): minimizing doesn't change the window order, so a minimized Sk3tch would otherwise still take keys unseen. Reverse: drop `&& !isMin`.
 - Normal: `createEngine({ canvas })` with no `seed`: the bundle defaults to `randomUserSeed()` (`e.seed ?? Vr()`), which gives the fresh seed per open. Reverse: pass `seed`.
 - Normal: a failed bundle load shows one line too ("Sk3tch didn't load. Reopen the window to try again."), beside the plan's no-WebGL2 line. Reverse: drop the `.catch` message.
+- Elevated: the plan's Approach drives `setTheme`, `setKeysEnabled` and `stop()`/`start()` "off refs". In simplify, the mounted engine and shell moved into one `app` state instead, and the `[app, …]` effects apply theme, keys and start once mount resolves (the engine still starts after `mountPaintUi`, keeping the bundle's boot order). Why: it drops 5 refs and the duplicated startup path; all checks rerun green. Reverse: restore the refs, and call `setKeysEnabled` and `start()` inside the import's `.then`.
 - Normal: `SK3TCH` sits before `SETTINGS` in `WINDOWS`, so its desktop icon and Start item come just before Settings. Reverse: move the key.
 
 ## Parked asks
