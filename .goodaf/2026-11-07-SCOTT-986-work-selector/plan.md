@@ -46,6 +46,7 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - 2026-11-07 step 2: components/WorkSelector.tsx + two globals.css rules (selected-thumb dither, label focus rect); `npx tsc --noEmit` exit 0; checks 1–2 need the windows, run after step 3
 - 2026-11-07 step 3: R3MIX and 3xGP on selector/sketch/about views, no MenuDropdown; checks 1, 2, 3 pass. Check 1: both windows open on the selector (7 and 3 items, first selected, navy dithered thumb and title, no canvas mounted) in Standard, Classic and 1-Bit; `grep -rn "MenuDropdown" components/windows` prints nothing (exit 1). Check 2: R3MIX opened DEGEN DOLLAR by Open, 7 years by double-click, The Monitor by click + ArrowRight + Enter; Choose R3MIX reached the selector from a sketch and from About; Open on the open work kept the same canvases (no restart); ArrowDown/Up moved by a row; 3xGP opened icarus by double-click and Choose Prelude returned; at 375px a tap selected Seeing Beyond and a tap on Open ran it. Only console error is a hydration warning from `Window.tsx`'s icon `style` under HomeWindow, a file this diff doesn't touch. Check 3: grep shows all 10 works at `/images/thumbs/…`. `npx tsc --noEmit` exit 0, `yarn build` exit 0
 - 2026-11-07 simplify: 4 edits (column count only on Up/Down, `.p95-field`, shared `Button` for Open, mask dither); all checks pass (tsc 0, build 0, MenuDropdown grep empty, 10 thumbs referenced, selector re-checked in browser: dither, arrows, Open)
+- 2026-11-07 follow-up 1 B1: dashed 1px outline on a hovered selector item (`.p95-icon:hover` under `@media (hover: hover)`, `--p95-text` ink); repro: browser assertion, hover DEGEN DOLLAR in R3MIX → `getComputedStyle(item).outlineStyle === 'dashed'`, seen failing with `'none'` (hovered: true) before the fix, `'dashed'` after; checks 1, 3 pass (grep empty, 10 thumbs at 96×96), `npx tsc --noEmit` exit 0, `yarn build` exit 0
 
 ## Decisions
 
@@ -63,6 +64,8 @@ Add one shared `WorkSelector` component, an Explorer "Large Icons" view, and mak
 - Normal: the selector's root carries `classic-inset`, because `absolute inset-0` lands on the window's sunken well (its positioned box) and covered the well's 2px bevel; the root now redraws it. Reverse: drop `classic-inset` from the root div.
 - Normal: the selector mounts only while shown, so each return to it starts with the open work selected. Reverse: render it always and hide it with a class.
 - Normal: Refresh keeps its current behavior (remounts the active sketch) and doesn't change the view. Reverse: also set view `"sketch"` in its handler.
+- Normal (follow-up 1 B1): hover is a dashed outline, not a border, around the whole item cell, inset 1px so nothing shifts, only under `@media (hover: hover)` so a tap leaves no box on touch screens. Reverse: delete the `.p95-icon:hover` rule in `styles/globals.css`.
+- Normal (follow-up 1 B1): B1's repro is a browser assertion, not a committed test: `:hover` is CSS-only and the repo has no test runner. Reverse: none needed.
 
 ## Parked asks
 
