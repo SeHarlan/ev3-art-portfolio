@@ -58,12 +58,15 @@ test("B8: each OBH page hides its still behind a flashing W95FA Loading... until
   }
 });
 
-test("B11: each OBH page's Loading... is 16px, W95FA's native size, in the engine UI's green #00ff80", () => {
+test("B11, B12: each OBH page's Loading... is 16px, W95FA's native size, in the action bar's resting green #00ff8099", () => {
   for (const id of pages) {
     const { head } = read(id);
     const rule = head.match(/#art:has\(#fallback\)::after \{ content: "Loading\.\.\."; [^}]*\}/);
     assert.ok(rule, `${id}: the Loading... rule in <head>`);
-    assert.ok(rule![0].includes("color: #00ff80;"), `${id}: Loading... in the engine UI's green`);
+    // The engine's .tt-action-bar-btn resting text; #00ff80 alone is its pressed/active color.
+    const html = readFileSync(join(process.cwd(), "public/obh", `${id}.html`), "utf8");
+    assert.match(html, /\.tt-action-bar-btn\{[^}]*color:#00ff8099/, `${id}: the engine's resting bar green is #00ff8099`);
+    assert.ok(rule![0].includes("color: #00ff8099;"), `${id}: Loading... in the action bar's resting green`);
     assert.ok(rule![0].includes("font-size: 16px;"), `${id}: Loading... at 16px`);
   }
 });

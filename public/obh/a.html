@@ -80,7 +80,7 @@
   @font-face { font-family: 'W95FA'; src: url('/obh/w95fa.woff2') format('woff2'); font-display: block; }
   #fallback { visibility: hidden; }
   html.obh-failed #fallback { visibility: visible; }
-  #art:has(#fallback)::after { content: "Loading..."; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: #00ff80; font-family: 'W95FA'; font-size: 16px; -webkit-font-smoothing: none; animation: obh-loading 1s steps(1, end) infinite; }
+  #art:has(#fallback)::after { content: "Loading..."; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: #00ff8099; font-family: 'W95FA'; font-size: 16px; -webkit-font-smoothing: none; animation: obh-loading 1s steps(1, end) infinite; }
   html.obh-failed #art:has(#fallback)::after { content: none; }
   @keyframes obh-loading { 50% { opacity: 0; } }
   /* The System button opens a host app's menu, which the portfolio doesn't have:
