@@ -71,6 +71,8 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   Reference: the chunked image is the page's fallback `<img id="fallback">` (the thumbnail PNG), which the engine removes on its first frame (`onFirstFrame: () => J8?.remove()`); the engine still needs the thumbnail as its base frame (A1), so hide the `<img>`, don't stop the download. Check the font's name and how the portfolio loads W95FA, and whether the iframe page can use it.
 - B9. 2026-11-10 "disable the system menu button."
   Reference: read as the piece's own action-bar "System" button (☰, shortcut `Q`, "Open the external system menu" in the engine's menu), which does nothing here because the vendored pages pass no `onAppMenu`; disable both the button and its `Q` shortcut without editing engine bytes if possible.
+- B10. 2026-11-10 "redo the window select thumbnails so they maintain their original aspect ratios"
+  Reference: `public/images/thumbs/obh-{a..e}.jpg` are 96×96 center crops (step 1, `sips`) of the thumbnail PNGs, which are 1080×1920 portrait except C, 1920×1080 landscape; redo them uncropped at their own aspect within the selector's 96px box (`WorkSelector`'s `<img>` is a fixed `w-24 h-24`, shared with 3xGP and R3MIX, whose thumbs are square).
 
 ## Follow-ups
 
