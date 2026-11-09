@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-989</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-989 on being human window: live pieces with selector</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>8756021</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds</p>
+  <p>Running at <a href="http://localhost:3089">http://localhost:3089</a></p>
+</div>
+
+<h2>Asks</h2>
+<p>None.</p>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>With another window in front, click once on the OBH piece, then again → the first click only brings OBH forward; the second reaches the piece (brush, keys)</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Selector of five; opening one runs it; other windows' keys unaffected</td><td class="pass">pass</td><td>Browser, opened from the Start menu: five thumbs and titles A–E; each piece's canvas changes over 1.5s (C 1920×1080, letterboxed); with Sk3tch open, <code>s</code>/<code>f</code> in the piece reached only the iframe, and in Sk3tch only the page</td></tr>
+  <tr><td>2</td><td>Images from Vercel Blob, none from Irys</td><td class="pass">pass</td><td><code>grep -o "gateway.irys.xyz/[A-Za-z0-9]*" public/obh/*.html | sort -u</code> → one <code>jsonUri</code> id per file; each piece's iframe requested only <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> from the Blob host (200), no gateway.irys.xyz request</td></tr>
+  <tr><td>3</td><td>Purchase opens the piece's marketplace page; Choose piece and About work</td><td class="pass">pass</td><td>On D, Purchase called <code>window.open(".../0x4759A45c80eB04571902df74200F0D8d6c83F070/4", "_blank", "noopener")</code>; Choose piece returned with D selected; About and Go back work; <code>curl</code> on the OpenSea URL → 200</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → exit 0; <code>yarn test</code> → 1 pass; <code>yarn build</code> → exit 0</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<p>None.</p>
+
+<h2>Elevated decisions</h2>
+<p>None.</p>
+
+<h2>Decided for you</h2>
+<details><summary>10 decisions</summary>
+<ul>
+  <li>Purchase target: OpenSea's per-token page, built from the contract and token ID</li>
+  <li>Purchase appears only once a piece has been opened, since it acts on that piece</li>
+  <li>Selector order: A–E, matching the token IDs</li>
+  <li>Each page's 2KB engine-state <code>jsonUri</code> stays on Irys (the pages embed their engine block, so it isn't fetched)</li>
+  <li>No stop-on-minimize, matching 3xGP and R3MIX</li>
+  <li>No <code>pointer-events-none</code> on the iframe while dragging: a title-bar drag across the piece already works</li>
+  <li>No extra focus handling: the first click on an inactive OBH window brings it forward, later clicks reach the piece</li>
+  <li>About gets its own cream background over the window's black, like 3xGP's About</li>
+  <li>Purchase opens with <code>noopener</code></li>
+  <li>The window was built before the Blob upload; only the vendored pages changed afterwards</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>Purchase was checked by capturing the <code>window.open</code> call, not by opening a real tab; the OpenSea URL itself returned 200 to <code>curl</code>.</li>
+  <li>The "still first, then moving" start of each piece wasn't timed; each piece was checked moving about 6s after opening.</li>
+  <li>Not checked on a Vercel deploy: Blob URLs were checked from localhost only (each returns 200 with <code>access-control-allow-origin: *</code>).</li>
+</ul>
+
+<h2>Review</h2>
+<p>0 fixed · 1 tracked · 0 dropped · 0 asks</p>
+<details><summary>Fixed</summary>
+<p>None.</p>
+</details>
+<details><summary>Dropped</summary>
+<p>None.</p>
+</details>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<h3>3xGP key handling (pre-existing)</h3>
+<ul>
+  <li>T1 3xGP's sketches check the active window against R3MIX instead of 3xGP (<code>components/windows/STEV3.tsx:40</code>), so keys such as <code>c</code> only work while R3MIX is active. One-line fix, already on main.</li>
+</ul>
+
+<footer>
+  <p>Answer in the review session, one line: "T1 in", "all as recommended", or a bug you found.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window/.goodaf/2026-11-09-SCOTT-989-obh-window/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>
