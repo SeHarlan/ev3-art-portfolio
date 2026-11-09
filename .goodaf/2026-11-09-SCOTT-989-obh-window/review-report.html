@@ -51,8 +51,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h1>SCOTT-989 on being human window: live pieces with selector</h1>
 <div class="status">
   <p class="verdict ok">Ready for your check</p>
-  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>3034a08</code> (after follow-up 4) · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked · follow-up 3 (B8–B10): general reviewer, no findings · follow-up 4 (B11): general reviewer, no findings</p>
+  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>7ed3e49</code> (after follow-up 5) · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked · follow-up 3 (B8–B10): general reviewer, no findings · follow-up 4 (B11): general reviewer, no findings · follow-up 5 (B12): general reviewer, no findings</p>
   <p>Running at <a href="http://localhost:3089">http://localhost:3089</a></p>
 </div>
 
@@ -67,7 +67,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h2>Worth checking by hand</h2>
 <ul>
-  <li>Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "Loading..." blinks in the center at half its old size, in the action bar's green, until the piece starts moving</li>
+  <li>Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "Loading..." blinks in the center, small, in the same dim green as the action bar's "TOOLS" label, until the piece starts moving</li>
 </ul>
 
 <h2>Outcome</h2>
@@ -81,6 +81,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <tr><td>—</td><td>Follow-up 2 rerun (<code>ecd3809</code>)</td><td class="pass">pass</td><td>1: opened from the desktop's new person icon; titles read "A: there must be something" … "E: something was found"; 12 piece switches through Choose piece (C four times) and C three times maximized all removed the still and ran, no console error. 2: grep → one <code>jsonUri</code> id per file; each page requests <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> only from the Blob host, no Irys request. 3: Purchase called <code>window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")</code> from the selector, before any piece was opened; the URL returns 200; Choose piece returned with D selected; About shows the new copy, inset, with 16px padding, and Go back works. Full check: <code>yarn test</code> → 9 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
   <tr><td>—</td><td>Follow-up 3 rerun (<code>15503a5</code>)</td><td class="pass">pass</td><td>1: the selector shows the thumbs at their own shape (A, B, D, E 54×96, C 96×54) in 96×96 boxes; opening A–E and C again through Choose piece, each removed its still and ran, none failed; with Sk3tch open, <code>s</code>/<code>f</code> in Sk3tch reached only the page, and in the piece only the iframe. 2: grep → one <code>jsonUri</code> id per file; each page requests its thumb and imagein only from the Blob host, no Irys request. 3: Purchase called <code>window.open</code> with the Manifold page (200 to <code>curl</code>); Choose piece returned with C selected; About and Go back work. Full check: <code>yarn test</code> → 13 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
   <tr><td>—</td><td>Follow-up 4 rerun (<code>3034a08</code>)</td><td class="pass">pass</td><td>B11: in each page, "Loading..." is now 16px in <code>#00ff80</code>; in the browser it computed to rgb(0, 255, 128), 16px, W95FA, drawn small and green at the center. 1: opened from the Start menu, selector of five; C ran (1920×1080, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; C requested only its thumb and imagein from the Blob host. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (C selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 5 rerun (<code>7ed3e49</code>)</td><td class="pass">pass</td><td>B12: "Loading..." now uses <code>#00ff8099</code>, the bar's resting text color; in the browser it and the bar's buttons both compute to rgba(0, 255, 128, 0.6), the same tone as "TOOLS". 1: opened from the Start menu, selector of five; D ran (1080×1920, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; D requested only its thumb and imagein from the Blob host. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (D selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
@@ -128,7 +129,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Follow-up 3: "Loading..." is white, 32px (twice the font's pixel size), with a hard one-second on/off blink; the font is a 7KB copy of the portfolio's W95FA at <code>public/obh/w95fa.woff2</code>, since the iframe page can't reach the bundled one</li>
   <li>Follow-up 3: the System button is dimmed and unclickable rather than hidden, so Tools doesn't shift; the engine's own help list in the Tools drawer still names it</li>
   <li>Follow-up 3: the selection highlight covers only the thumbnail, not the empty space beside a tall one, as in Win95; each icon space stays 96×96 so the grid doesn't move</li>
-  <li>Follow-up 4: "smaller" is 16px, the pixel font's own size, so it stays crisp; the green is <code>#00ff80</code>, the engine's solid UI green (its action bar labels use it at 60% opacity)</li>
+  <li>Follow-up 4: "smaller" is 16px, the pixel font's own size, so it stays crisp; the green was first <code>#00ff80</code>, the engine's pressed-button green; your B12 note moved it to <code>#00ff8099</code>, the bar's resting text</li>
 </ul>
 </details>
 
@@ -143,7 +144,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Follow-up 3: the "Loading..." screen was checked by putting a still back into a running page (it drew in W95FA over the canvas and blinked), and on a real first load the piece came up black with no still, then ran; a long throttled load wasn't watched end to end.</li>
   <li>Follow-up 3: the engine-failure path was checked by logging the engine's failure message by hand (the still showed, "Loading..." went), not by a real failure. If the engine ever fails without logging one of its two messages, or an image download hangs, "Loading..." stays up.</li>
   <li>Follow-up 3: the B8 and B9 tests check the page files' rules, not how they draw; drawing was checked in Chromium only.</li>
-  <li>Follow-up 4: the new look was checked by putting a still back into a running page, as in follow-up 3, not on a real slow load. The key-isolation part of check 1 (Sk3tch) wasn't rerun, since B11 changed only the pages' Loading CSS.</li>
+  <li>Follow-up 4: the new look was checked by putting a still back into a running page, as in follow-up 3, not on a real slow load. The key-isolation part of check 1 (Sk3tch) wasn't rerun, since B11 changed only the pages' Loading CSS. Follow-up 5 (B12) was checked the same way.</li>
 </ul>
 
 <h2>Review</h2>

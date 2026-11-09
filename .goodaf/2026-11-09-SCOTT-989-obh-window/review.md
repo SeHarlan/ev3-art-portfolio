@@ -1,10 +1,10 @@
 # Review: SCOTT-989 on being human window: live pieces with selector
 
 Tier: Standard (visual)
-Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final 3034a08 (follow-up 4)
-Panel: general; no Codex pass: visual or device diff (follow-ups 1–4: same)
+Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final 7ed3e49 (follow-up 5)
+Panel: general; no Codex pass: visual or device diff (follow-ups 1–5: same)
 Oracle check: no oracles
-Rounds: 0 (no admitted findings); follow-up 2: 1 (F3 fixed; the re-review found it fixed and nothing new); follow-up 3: 0 (no findings); follow-up 4: 0 (no findings)
+Rounds: 0 (no admitted findings); follow-up 2: 1 (F3 fixed; the re-review found it fixed and nothing new); follow-up 3: 0 (no findings); follow-up 4: 0 (no findings); follow-up 5: 0 (no findings)
 Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 
 ## Acceptance checks
@@ -17,6 +17,7 @@ Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 - Follow-up 2 rerun (ecd3809): 1 pass — opened from the desktop icon (the new person icon), selector of five titled "A: there must be something" … "E: something was found"; switching pieces through Choose piece 12 times (C four times) and C three times with the window maximized, every piece removed its still and ran, no console error; 2 pass — the grep lists one `jsonUri` id per file; each page's Resource Timing lists `<letter>-thumb.png` (link) and `<letter>-imagein` (fetch, twice: the `<head>` fetch and the engine's, which reuses it), all from the Blob host, no gateway.irys.xyz request; 3 pass, as changed by B5 — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` from the selector, before any piece was opened (captured with a stub); the URL returns 200 to `curl -sL`; Choose piece returned to the selector with D selected; About showed the new copy, inset, with 16px padding, and Go back returned to the piece (or the selector with none open); full check pass — `yarn test` → 9 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 - Follow-up 3 rerun (15503a5): 1 pass — opened from the desktop icon; the selector shows the five thumbs at their own shape (A, B, D, E 54×96, C 96×54) in 96×96 boxes; opening A, B, C, D, E, then C again through Choose piece, each iframe removed its still and ran (A, B, D, E canvas 1080x1920, C 1920x1080), none marked failed; C's canvas pixels changed over 1.5s; with Sk3tch open, `s` and `f` pressed in Sk3tch reached only the page (iframe log empty), and pressed in the piece reached only the iframe (page log unchanged); 2 pass — the grep lists one `jsonUri` id per file; each page's Resource Timing lists `<letter>-thumb.png` (link) and `<letter>-imagein` (fetch) from the Blob host, no gateway.irys.xyz request; 3 pass — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` (captured with a stub), which returns 200 to `curl -sL`; Choose piece returned to the selector with C selected; About showed the copy and Go back returned to the piece; full check pass — `yarn test` → 13 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 - Follow-up 4 rerun (3034a08): 1 pass — opened from the Start menu, selector of five; piece C ran (canvas 1920x1080, pixels changed over 1.5s, still removed, not marked failed); the Sk3tch key part not rerun (B11 changed only the pages' Loading CSS); 2 pass — the grep lists one `jsonUri` id per file; C's iframe requested only `c-thumb.png` and `c-imagein` from the Blob host, no gateway.irys.xyz request; 3 pass — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` (captured with a stub); About showed the copy and Go back returned to the piece; Choose piece returned to the selector with C selected; full check pass — `yarn test` → 14 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
+- Follow-up 5 rerun (7ed3e49): 1 pass — opened from the Start menu, selector of five (A, B, D, E 54×96, C 96×54); piece D ran (canvas 1080x1920, pixels changed over 1.5s, still removed, not marked failed); the Sk3tch key part not rerun (B12 changed only the pages' Loading color); 2 pass — the grep lists one `jsonUri` id per file; D's iframe requested only `d-thumb.png` and `d-imagein` from the Blob host, no gateway.irys.xyz request; 3 pass — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` (captured with a stub); About showed the copy and Go back returned to the piece; Choose piece returned to the selector with D selected; full check pass — `yarn test` → 14 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 
 ## Asks
 
@@ -33,10 +34,11 @@ Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 ## Worth checking by hand
 
 Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window · dev server: http://localhost:3089
-- Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "Loading..." blinks in the center at half its old size, in the action bar's green, until the piece starts moving
+- Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "Loading..." blinks in the center, small, in the same dim green as the action bar's "TOOLS" label, until the piece starts moving
 
 ## Findings
 
+- Follow-up 5: no findings (general reviewer, 98c0a3a..7ed3e49).
 - Follow-up 4: no findings (general reviewer, 5aaa5fb..3034a08).
 - Follow-up 3: no findings (general reviewer, 1905739..15503a5).
 - Follow-up 1: no findings (general reviewer, e599830..2aa1e37).
@@ -83,6 +85,7 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   Done: 2026-11-10, 3034a08, repro "B11: each OBH page's Loading... is 16px, W95FA's native size, in the engine UI's green #00ff80" (failed on `a: Loading... in the engine UI's green` before the fix). B8's test is unchanged; the new test pins the color and size.
 - B12. 2026-11-10 "thats not the same green as the engine UI, its too bright"
   Reference: B11 used `#00ff80`, which the engine uses only on pressed or active action-bar buttons (`.tt-action-bar-btn:active`, `.tt-active`); the bar's resting text ("TOOLS" and the button labels) is `#00ff8099` (`.tt-action-bar-btn`, `.tt-action-bar-label:before/:after`), 60% alpha, about `#00994d` on black. Match that resting color in each page's Loading rule and update the B11 test.
+  Done: 2026-11-10, 7ed3e49, repro "B11, B12: each OBH page's Loading... is 16px, W95FA's native size, in the action bar's resting green #00ff8099" (failed on `a: Loading... in the action bar's resting green` before the fix). Loading and the bar's buttons now both compute to rgba(0, 255, 128, 0.6).
 
 ## Follow-ups
 
@@ -90,3 +93,4 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 - 2026-11-10 follow-up 2: base fb0c58e, head ecd3809; did B2, B3, B4, B5, B6, B7; review: general, no Codex pass: visual or device diff, 1 fixed (F3), 0 new asks, 1 tracked (T2), 0 dropped
 - 2026-11-10 follow-up 3: base 1905739, head 15503a5; did B8, B9, B10; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 0 tracked, 0 dropped
 - 2026-11-10 follow-up 4: base 5aaa5fb, head 3034a08; did B11; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 0 tracked, 0 dropped
+- 2026-11-10 follow-up 5: base 98c0a3a, head 7ed3e49; did B12; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 0 tracked, 0 dropped
