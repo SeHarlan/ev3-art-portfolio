@@ -51,16 +51,16 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h1>SCOTT-989 on being human window: live pieces with selector</h1>
 <div class="status">
   <p class="verdict ok">Ready for your check</p>
-  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>2aa1e37</code> (after follow-up 1) · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1) reviewed by a general reviewer, no findings</p>
+  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>ecd3809</code> (after follow-up 2) · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked</p>
   <p>Running at <a href="http://localhost:3089">http://localhost:3089</a></p>
 </div>
 
 <h2>Asks</h2>
 <p class="muted">The recommendation happens unless you say otherwise.</p>
 <div class="ask">
-  <p><span class="tag">A1 · parked: spec meaning</span><strong>Your image-priority note (B1) asked for the thumbnail to load only if the engine fails, but the engine uses that thumbnail as its own first frame, so it can't be held back. The follow-up instead starts both engine images at page load. Keep it that way?</strong></p>
-  <p>Left as is, each piece downloads the same two files as before, now side by side instead of one after the other, and the still shows until the first frame at no extra cost.</p>
+  <p><span class="tag">A1 · parked: spec meaning</span><strong>Your image-priority note (B1) asked for the thumbnail to load only if the engine fails, but the engine uses that thumbnail as its own first frame, so it can't be held back. Instead, both engine images start downloading at page load. Keep it that way?</strong></p>
+  <p>Left as is, each piece downloads the same two files as before, side by side instead of one after the other, and the still shows until the first frame at no extra cost. Since follow-up 2 (B2), the imagein starts with a <code>fetch()</code> in the page's <code>&lt;head&gt;</code> rather than a preload; the preload broke the engine once the file was cached.</p>
   <p class="rec">Recommend: leave — holding the thumbnail back would block the engine, and lowering the fallback's priority would slow the engine's first frame.</p>
   <details><summary>Where</summary><p><code>public/obh/a.html</code> (all five pages) — the engine calls <code>loadSession(seed, …, thumbnailUrl, …)</code>, which loads the thumbnail with <code>new Image()</code>, before it fetches the imagein; the fallback <code>&lt;img&gt;</code> shares that same download.</p></details>
 </div>
@@ -68,7 +68,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h2>Worth checking by hand</h2>
 <ul>
   <li>With another window in front, click once on the OBH piece, then again → the first click only brings OBH forward; the second reaches the piece (brush, keys)</li>
-  <li>Open a piece with DevTools' Network panel open and Disable cache ticked → <code>&lt;letter&gt;-imagein</code> and <code>&lt;letter&gt;-thumb.png</code> start together at page load (initiator: link), each requested once</li>
+  <li>Open a piece with DevTools' Network panel open and Disable cache ticked → <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> start together at page load; the engine's own <code>&lt;letter&gt;-imagein</code> request finishes with the first one rather than downloading the file again</li>
+  <li>Open a piece, then use Choose piece to open others, C included and with the window maximized → each shows its still, then starts moving</li>
 </ul>
 
 <h2>Outcome</h2>
@@ -76,27 +77,34 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
   <tr><td>1</td><td>Selector of five; opening one runs it; other windows' keys unaffected</td><td class="pass">pass</td><td>Browser, opened from the Start menu: five thumbs and titles A–E; each piece's canvas changes over 1.5s (C 1920×1080, letterboxed); with Sk3tch open, <code>s</code>/<code>f</code> in the piece reached only the iframe, and in Sk3tch only the page</td></tr>
   <tr><td>2</td><td>Images from Vercel Blob, none from Irys</td><td class="pass">pass</td><td><code>grep -o "gateway.irys.xyz/[A-Za-z0-9]*" public/obh/*.html | sort -u</code> → one <code>jsonUri</code> id per file; each piece's iframe requested only <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> from the Blob host (200), no gateway.irys.xyz request</td></tr>
-  <tr><td>3</td><td>Purchase opens the piece's marketplace page; Choose piece and About work</td><td class="pass">pass</td><td>On D, Purchase called <code>window.open(".../0x4759A45c80eB04571902df74200F0D8d6c83F070/4", "_blank", "noopener")</code>; Choose piece returned with D selected; About and Go back work; <code>curl</code> on the OpenSea URL → 200</td></tr>
+  <tr><td>3</td><td>Purchase opens the marketplace page; Choose piece and About work</td><td class="pass">pass</td><td>Originally: on D, Purchase opened OpenSea's token 4 page. Since B5, it opens the Manifold collection page; see the follow-up 2 row</td></tr>
   <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → exit 0; <code>yarn test</code> → 1 pass; <code>yarn build</code> → exit 0</td></tr>
-  <tr><td>—</td><td>Follow-up 1 rerun (<code>2aa1e37</code>)</td><td class="pass">pass</td><td>1: piece C opened from the selector runs in the window (canvas 1920×1080). 2: grep → one <code>jsonUri</code> id per file; each page (A–E) requests <code>&lt;letter&gt;-imagein</code> and <code>&lt;letter&gt;-thumb.png</code> once each, both started by the preload, from the Blob host; no Irys request; no preload warning. Full check: <code>yarn test</code> → 2 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 1 rerun (<code>2aa1e37</code>)</td><td class="pass">pass</td><td>1: piece C runs in the window. 2: grep → one <code>jsonUri</code> id per file; each page requests its imagein and thumb from the Blob host, no Irys request. Full check: <code>yarn test</code> → 2 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 2 rerun (<code>ecd3809</code>)</td><td class="pass">pass</td><td>1: opened from the desktop's new person icon; titles read "A: there must be something" … "E: something was found"; 12 piece switches through Choose piece (C four times) and C three times maximized all removed the still and ran, no console error. 2: grep → one <code>jsonUri</code> id per file; each page requests <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> only from the Blob host, no Irys request. 3: Purchase called <code>window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")</code> from the selector, before any piece was opened; the URL returns 200; Choose piece returned with D selected; About shows the new copy, inset, with 16px padding, and Go back works. Full check: <code>yarn test</code> → 9 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
-<p>None.</p>
+<ul>
+  <li>Purchase opens the Manifold collection page, the same for every piece, and is in the menu before a piece is opened. The spec said the open piece's marketplace page; your B5 note asked for this instead.</li>
+</ul>
 
 <h2>Elevated decisions</h2>
 <div class="elevated">
   <p><strong>B1 asked for the thumbnail to load only if the engine fails, but the engine loads the thumbnail itself as its base frame, and the imagein only after it.</strong></p>
-  <p>Options: load the thumbnail only on failure (blocks the engine); mark the fallback <code>fetchpriority="low"</code> as Sk3tch does (slows the engine's base frame, since it shares the download); preload both engine images in <code>&lt;head&gt;</code>, Sk3tch's other half.</p>
-  <p>Chose: two preload lines in each page's <code>&lt;head&gt;</code> (imagein <code>as="fetch"</code>, thumbnail <code>as="image"</code>, both <code>crossorigin</code>), fallback untouched. The imagein no longer waits for the thumbnail. This relaxes the plan's rule that only the three image URLs change in the vendored pages; scripts and engine bytes are untouched.</p>
-  <p>Reverse: delete the two <code>&lt;link rel="preload"&gt;</code> lines in each page and the B1 test.</p>
+  <p>Options: load the thumbnail only on failure (blocks the engine); mark the fallback <code>fetchpriority="low"</code> as Sk3tch does (slows the engine's base frame, since it shares the download); start both engine images in <code>&lt;head&gt;</code>.</p>
+  <p>Chose: start both at page load, fallback untouched (as amended by B2 below). This relaxes the plan's rule that only the three image URLs change in the vendored pages; engine bytes are untouched.</p>
+  <p>Reverse: delete the two added <code>&lt;head&gt;</code> lines in each page and the B1 test.</p>
+</div>
+<div class="elevated">
+  <p><strong>B2: B1's <code>&lt;link rel="preload" as="fetch" crossorigin&gt;</code> for the imagein made the engine's own fetch fail with "Failed to fetch" once the file was cached, so a piece showed its still and never moved.</strong></p>
+  <p>Options: drop the imagein preload (the engine fetches it only after the thumbnail, about 2.5s slower cold in one test run); a preload without <code>crossorigin</code> (Chrome doesn't use it, "credentials mode does not match", so the file would download twice); a plain <code>fetch()</code> in <code>&lt;head&gt;</code>.</p>
+  <p>Chose: <code>&lt;script&gt;fetch("&lt;imagein&gt;").catch(() =&gt; {})&lt;/script&gt;</code> in each page's <code>&lt;head&gt;</code>. It uses the same request mode as the engine's fetch, so the engine reuses it. In a cold run, both requests finished at the same moment. This adds a new one-line script to each vendored page; the existing scripts and engine bytes are untouched.</p>
+  <p>Reverse: delete that line in each page (the imagein then loads after the thumbnail).</p>
 </div>
 
 <h2>Decided for you</h2>
-<details><summary>10 decisions</summary>
+<details><summary>14 decisions</summary>
 <ul>
-  <li>Purchase target: OpenSea's per-token page, built from the contract and token ID</li>
-  <li>Purchase appears only once a piece has been opened, since it acts on that piece</li>
   <li>Selector order: A–E, matching the token IDs</li>
   <li>Each page's 2KB engine-state <code>jsonUri</code> stays on Irys (the pages embed their engine block, so it isn't fetched)</li>
   <li>No stop-on-minimize, matching 3xGP and R3MIX</li>
@@ -105,22 +113,31 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>About gets its own cream background over the window's black, like 3xGP's About</li>
   <li>Purchase opens with <code>noopener</code></li>
   <li>The window was built before the Blob upload; only the vendored pages changed afterwards</li>
+  <li>Follow-up 2: the person icon is a white head and a teal body with a black outline, in Win95 colors</li>
+  <li>Follow-up 2: the works list, the Purchase URL and the About view moved to <code>components/windows/obh.tsx</code> so tests can load them</li>
+  <li>Follow-up 2: Purchase is always in the menu, since the collection page doesn't depend on a piece (replaces "only once a piece is open")</li>
+  <li>Follow-up 2: Purchase goes to Manifold's collection page (replaces OpenSea's per-token page)</li>
+  <li>Follow-up 2: "inset" means Win95's sunken bevel on the About view; the cream background stays</li>
+  <li>Follow-up 2: the About view keeps its bold "on being human" heading above your new copy</li>
 </ul>
 </details>
 
 <h2>Not verified or skipped</h2>
 <ul>
-  <li>Purchase was checked by capturing the <code>window.open</code> call, not by opening a real tab; the OpenSea URL itself returned 200 to <code>curl</code>.</li>
-  <li>The "still first, then moving" start of each piece wasn't timed; each piece was checked moving about 6s after opening.</li>
+  <li>Purchase was checked by capturing the <code>window.open</code> call, not by opening a real tab; the Manifold URL returned 200 to <code>curl</code>.</li>
   <li>Not checked on a Vercel deploy: Blob URLs were checked from localhost only (each returns 200 with <code>access-control-allow-origin: *</code>).</li>
-  <li>Follow-up 1: the speed-up wasn't timed on a cold cache; the browser pane served both images from its cache, so the check shows one request per image started by the preload, not download times.</li>
-  <li>Follow-up 1: check 3 (Purchase, Choose piece, About) wasn't rerun; the window's code didn't change.</li>
+  <li>Follow-up 2: the claim that the imagein downloads only once rests on Chromium. In a cold run, the engine's request finished at the same moment as the <code>&lt;head&gt;</code> fetch. Download sizes weren't visible: the Blob host sends no <code>Timing-Allow-Origin</code>. Firefox and Safari weren't tried; if they don't share the in-flight download, the file downloads twice there, but pieces still run.</li>
+  <li>Follow-up 2: cold-load timings were taken with the browser pane hidden (throttled), so they compare the options rather than measure real load times.</li>
+  <li>Follow-up 2: the B2 test only checks the page files (no <code>as="fetch"</code> preload). Whether pieces start after switching was checked in the browser, not by a test.</li>
+  <li>Follow-up 2: the tests check the About view's classes, not its rendered padding; the 16px was read in the browser.</li>
 </ul>
 
 <h2>Review</h2>
-<p>0 fixed · 1 tracked · 0 dropped · 1 ask</p>
+<p>1 fixed · 2 tracked · 0 dropped · 1 ask</p>
 <details><summary>Fixed</summary>
-<p>None.</p>
+<ul>
+  <li>F3 Follow-up 2's inset style (B6) overrode the About view's padding, leaving its text 2px from the edge instead of 16px — <code>ecd3809</code></li>
+</ul>
 </details>
 <details><summary>Dropped</summary>
 <p>None.</p>
@@ -128,13 +145,17 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h2>Tracked follow-ups</h2>
 <p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<h3>OBH test coverage (window wiring)</h3>
+<ul>
+  <li>T2 The B5 test pins the Purchase URL, but nothing tests that the menu's Purchase uses it (<code>components/windows/OnBeingHuman.tsx:41</code>); the window can't be rendered by the node tests, whose build doesn't resolve its <code>@/</code> imports.</li>
+</ul>
 <h3>3xGP key handling (pre-existing)</h3>
 <ul>
-  <li>T1 3xGP's sketches check the active window against R3MIX instead of 3xGP (<code>components/windows/STEV3.tsx:40</code>), so keys such as <code>c</code> only work while R3MIX is active. One-line fix, already on main.</li>
+  <li>T1 3xGP's sketches check the active window against R3MIX instead of 3xGP (<code>components/windows/STEV3.tsx:40</code>). Answered: filed as its own ticket, SCOTT-991.</li>
 </ul>
 
 <footer>
-  <p>Answer in the review session, one line: "A1 leave", "all as recommended", or a bug you found.</p>
+  <p>Answer in the review session, one line: "A1 leave, T2 in", "all as recommended", or a bug you found.</p>
   <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window/.goodaf/2026-11-09-SCOTT-989-obh-window/review.md</code></p>
 </footer>
 

@@ -1,11 +1,11 @@
 # Review: SCOTT-989 on being human window: live pieces with selector
 
 Tier: Standard (visual)
-Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final 2aa1e37 (follow-up 1)
-Panel: general; no Codex pass: visual or device diff (follow-up 1: same)
+Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final ecd3809 (follow-up 2)
+Panel: general; no Codex pass: visual or device diff (follow-ups 1 and 2: same)
 Oracle check: no oracles
-Rounds: 0 (no admitted findings)
-Counts: 0 fixed, 1 ask, 1 tracked, 0 dropped
+Rounds: 0 (no admitted findings); follow-up 2: 1 (F3 fixed; the re-review found it fixed and nothing new)
+Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 
 ## Acceptance checks
 
@@ -14,26 +14,32 @@ Counts: 0 fixed, 1 ask, 1 tracked, 0 dropped
 - 3 Purchase opens the piece's marketplace page; Choose piece and About work: pass — browser: on piece D, Purchase called `window.open("https://opensea.io/assets/ethereum/0x4759A45c80eB04571902df74200F0D8d6c83F070/4", "_blank", "noopener")` (captured with a stub, no tab opened); Choose piece returned to the selector with D selected; About showed the series text and its Go back returned to the running piece; `curl -sIL -o /dev/null -w "%{http_code}" https://opensea.io/assets/ethereum/0x4759A45c80eB04571902df74200F0D8d6c83F070/4` → 200
 - Full check: pass — `npx tsc --noEmit` → exit 0; `yarn test` → 1 pass, 0 fail; `yarn build` → exit 0
 - Follow-up 1 rerun (2aa1e37): 1 pass — opened from the Start menu, selector of five, piece C runs in the window (canvas 1920x1080, fallback removed); 2 pass — the grep lists one `jsonUri` id per file, and each page's Resource Timing (A–E) lists exactly `<letter>-imagein` and `<letter>-thumb.png`, once each, both `initiatorType: link`, from the Blob host, no gateway.irys.xyz request, no preload console warning; 3 not rerun (menu code unchanged since 8756021); full check pass — `yarn test` → 2 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
+- Follow-up 2 rerun (ecd3809): 1 pass — opened from the desktop icon (the new person icon), selector of five titled "A: there must be something" … "E: something was found"; switching pieces through Choose piece 12 times (C four times) and C three times with the window maximized, every piece removed its still and ran, no console error; 2 pass — the grep lists one `jsonUri` id per file; each page's Resource Timing lists `<letter>-thumb.png` (link) and `<letter>-imagein` (fetch, twice: the `<head>` fetch and the engine's, which reuses it), all from the Blob host, no gateway.irys.xyz request; 3 pass, as changed by B5 — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` from the selector, before any piece was opened (captured with a stub); the URL returns 200 to `curl -sL`; Choose piece returned to the selector with D selected; About showed the new copy, inset, with 16px padding, and Go back returned to the piece (or the selector with none open); full check pass — `yarn test` → 9 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 
 ## Asks
 
-- A1. [parked: spec meaning] B1 asked for the thumbnail to load only if the engine fails, but the thumbnail is the engine's own base image (it loads it as its first frame before anything else), so it can't be held back; the follow-up instead preloads both engine images at page start, so the second one (the imagein) no longer waits for the thumbnail, and leaves the still-image fallback as is (it shares the engine's download, no extra bytes). Should it stay that way? Left as is, each piece downloads the same two files as before, now in parallel, and the still shows until the first frame. From B1 and plan.md. Recommend: leave — deferring the thumbnail would block the engine; the only other lever, a low priority on the fallback, would slow the engine's first frame.
+- A1. [parked: spec meaning] B1 asked for the thumbnail to load only if the engine fails, but the thumbnail is the engine's own base image (it loads it as its first frame before anything else), so it can't be held back; the follow-up instead preloads both engine images at page start, so the second one (the imagein) no longer waits for the thumbnail, and leaves the still-image fallback as is (it shares the engine's download, no extra bytes). Should it stay that way? Left as is, each piece downloads the same two files as before, now in parallel, and the still shows until the first frame. From B1 and plan.md. Recommend: leave — deferring the thumbnail would block the engine; the only other lever, a low priority on the fallback, would slow the engine's first frame. Follow-up 2 (B2): the imagein is now started by a `fetch()` in `<head>` instead of a preload, since the preload broke the engine once cached; the thumbnail is still preloaded.
   Answer: —
 
 ## Tracked follow-ups
 
 - T1. [3xGP key handling (pre-existing)] 3xGP's sketches check the active window against R3MIX instead of 3xGP (`components/windows/STEV3.tsx:40`), so their keys (such as `c` to clear glitch) only work while R3MIX is the active window; a one-line fix, already on main. From F1.
   Answer: 2026-11-09 "t1 - lets actually expand this into its own ticket, be default windows should only accept key inputs when they are the active window, inactive windows should stop listening/refuse input" → leave: filed as its own ticket SCOTT-991 (Backlog)
+- T2. [OBH test coverage (window wiring)] The B5 test pins `PURCHASE_URL`'s value but nothing tests that the menu's Purchase uses it (`components/windows/OnBeingHuman.tsx:41`); the window itself can't be rendered by the node tests, whose build doesn't resolve its `@/` imports. From F2.
+  Answer: —
 
 ## Worth checking by hand
 
 Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window · dev server: http://localhost:3089
 - With another window in front, click once on the OBH piece, then again → the first click only brings OBH forward; the second reaches the piece (brush, keys)
-- Open a piece with DevTools' Network panel open and Disable cache ticked → `<letter>-imagein` and `<letter>-thumb.png` start together at page load (initiator: link), each requested once
+- Open a piece with DevTools' Network panel open and Disable cache ticked → `<letter>-thumb.png` and `<letter>-imagein` start together at page load; the engine's own `<letter>-imagein` request finishes with the first one rather than downloading the file again
+- Open a piece, then use Choose piece to open others, C included and with the window maximized → each shows its still, then starts moving
 
 ## Findings
 
 - Follow-up 1: no findings (general reviewer, e599830..2aa1e37).
+- F2. [tracked T2] components/windows/obh.test.tsx:28-33 The B5 test checks only the exported constant, so deleting or rewiring the menu's Purchase item would still pass. Found by: general (follow-up 2). Verifier: track — accurate, but nothing is wrong today, the test failed before B5, and the menu wiring is covered by check 3's browser run; closing it needs the window rendered in the test build.
+- F3. [fixed ecd3809] components/windows/obh.tsx:26 B6's `classic-inset` overrode the About view's `p-4` (`.classic-inset` sets its own padding later in styles/globals.css), dropping the text's padding from 16px to 2px. Found by: general (follow-up 2, as unverified), browser check. Verifier: admit — introduced by B6 and not asked for; `!p-4`, as `components/Footer.tsx:79` does. Re-review: fixed, no new findings.
 - F1. [tracked T1] components/windows/STEV3.tsx:40 `isActiveRef` compares against `WINDOWS.R3MIX` while the window is `WINDOWS.GP`, so 3xGP's sketch keys run only when R3MIX is active. Found by: general. Verifier: track — real but pre-existing; STEV3.tsx isn't in main...HEAD, OBH doesn't copy the ref, and no done-when line depends on it.
 
 ## Bug notes
@@ -43,11 +49,16 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   Done: 2026-11-10, 2aa1e37, repro "B1: each OBH page's <head> preloads its engine buffers, the imagein as fetch and the thumb as image, both crossorigin" (failed on `a: preload for its imageInUrl in <head>` before the fix). The thumbnail is the engine's base frame, so it can't wait for a failure; see A1.
 - B2. 2026-11-10 "when I first loaded a piece it took loaded the image in chunks and took a while to load the code, but worse is that when I went to choose another piece it loaded the thumbnail but never loaded the code. After refreshing the code loads right away for all of them except for C when I had the window expanded, when its a small window it loads."
   Reference: reported after follow-up 1 (2aa1e37) added the `<head>` preloads; check whether they're involved before anything else. C is the only landscape piece (1920x1080), so "fails only when the window is expanded" points at canvas or WebGL size or context limits; a second piece opened after the first points at the old iframe's engine or WebGL context not being released when `key={id}` swaps the iframe.
+  Done: 2026-11-10, 54b3f1e, repro "B2: no OBH page preloads its imagein as fetch, which makes the engine's own fetch fail once the response is cached" (failed on `a: no as="fetch" preload in <head>` before the fix). Cause: follow-up 1's `as="fetch"` preload; once the imagein is cached, the engine's fetch matched to it throws "Failed to fetch" and the engine never starts, leaving the still up. The window size didn't matter: C and A failed at the same small size, and C runs maximized now. The imagein download now starts with a `fetch()` in each page's `<head>`.
 - B3. 2026-11-10 "I want an simple person/user icon as the icon for OBH."
+  Done: 2026-11-10, fc2a96a, repro "B3: OBH's icon is its own person icon in public/svg"
 - B4. 2026-11-10 "the titles should include the letter like this "A: there must be something""
+  Done: 2026-11-10, 4896c2b, repro "B4: each piece's title starts with its letter"
 - B5. 2026-11-10 "the purchase link should always go to the manifold collection page, not opensea"
   Reference: contract `0x4759A45c80eB04571902df74200F0D8d6c83F070` (Manifold Creator ERC-721); "always" means the same collection URL whichever piece is open, and replaces the Normal decision on the OpenSea per-token page.
+  Done: 2026-11-10, 4fc72e5, repro "B5: Purchase opens the Manifold collection page, the same for every piece". The page is `https://manifold.xyz/@ev3/contract/124346608`; Purchase is now in the menu before a piece is opened too.
 - B6. 2026-11-10 "make the about page inset"
+  Done: 2026-11-10, 177926c (padding restored in ecd3809, F3), repro "B6: the About view is drawn inset, with the sunken bevel over the window's well"
 - B7. 2026-11-10 "for the about copy. replace the current text with the following:" "A series of personal photographs glitched to enshrine the emotions and moments they hold.
 
   A: there must be something
@@ -55,7 +66,9 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   C: was it all a dream
   D: the abyss gazes back
   E: something was found"
+  Done: 2026-11-10, 1d5fb1b, repro "B7: the About copy is the series line, then the five lettered titles". The bold "on being human" heading stays above it.
 
 ## Follow-ups
 
 - 2026-11-10 follow-up 1: base e599830, head 2aa1e37; did B1; review: general, no Codex pass: visual or device diff, 0 fixed, 1 new ask (A1), 0 tracked, 0 dropped
+- 2026-11-10 follow-up 2: base fb0c58e, head ecd3809; did B2, B3, B4, B5, B6, B7; review: general, no Codex pass: visual or device diff, 1 fixed (F3), 0 new asks, 1 tracked (T2), 0 dropped
