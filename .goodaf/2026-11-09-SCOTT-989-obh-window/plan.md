@@ -75,6 +75,11 @@ Base: 1905739
 Base: 5aaa5fb
 - B11: B8's "Loading..." drawn smaller (16px, W95FA's native size) in the engine UI's green `#00ff80`, in each page's `<head>` rule; a new B11 test pins both (B8's test unchanged)
 
+## Follow-up 5
+
+Base: 98c0a3a
+- B12: the Loading color matches the action bar's resting text, `#00ff8099` (`.tt-action-bar-btn`), instead of the pressed-button `#00ff80`; the B11 test updated to pin it
+
 ## Progress
 
 - 2026-11-09 plan written
