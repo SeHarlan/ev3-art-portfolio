@@ -51,8 +51,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h1>SCOTT-989 on being human window: live pieces with selector</h1>
 <div class="status">
   <p class="verdict ok">Ready for your check</p>
-  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>ecd3809</code> (after follow-up 2) · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked</p>
+  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>15503a5</code> (after follow-up 3) · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked · follow-up 3 (B8–B10): general reviewer, no findings</p>
   <p>Running at <a href="http://localhost:3089">http://localhost:3089</a></p>
 </div>
 
@@ -67,9 +67,9 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h2>Worth checking by hand</h2>
 <ul>
-  <li>With another window in front, click once on the OBH piece, then again → the first click only brings OBH forward; the second reaches the piece (brush, keys)</li>
-  <li>Open a piece with DevTools' Network panel open and Disable cache ticked → <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> start together at page load; the engine's own <code>&lt;letter&gt;-imagein</code> request finishes with the first one rather than downloading the file again</li>
-  <li>Open a piece, then use Choose piece to open others, C included and with the window maximized → each shows its still, then starts moving</li>
+  <li>Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → a black piece with "Loading..." blinking in the center in the pixel font, no chunked still, until the piece starts moving</li>
+  <li>On a running piece, look at the action bar → the ☰ System button on the left is dimmed and does nothing when clicked; <code>Q</code> does nothing either</li>
+  <li>Open the selectors of 3xGP and R3MIX as well as OBH → OBH's thumbs are tall (C wide), centered in their icon space; 3xGP's and R3MIX's square thumbs look as before</li>
 </ul>
 
 <h2>Outcome</h2>
@@ -81,6 +81,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → exit 0; <code>yarn test</code> → 1 pass; <code>yarn build</code> → exit 0</td></tr>
   <tr><td>—</td><td>Follow-up 1 rerun (<code>2aa1e37</code>)</td><td class="pass">pass</td><td>1: piece C runs in the window. 2: grep → one <code>jsonUri</code> id per file; each page requests its imagein and thumb from the Blob host, no Irys request. Full check: <code>yarn test</code> → 2 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
   <tr><td>—</td><td>Follow-up 2 rerun (<code>ecd3809</code>)</td><td class="pass">pass</td><td>1: opened from the desktop's new person icon; titles read "A: there must be something" … "E: something was found"; 12 piece switches through Choose piece (C four times) and C three times maximized all removed the still and ran, no console error. 2: grep → one <code>jsonUri</code> id per file; each page requests <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> only from the Blob host, no Irys request. 3: Purchase called <code>window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")</code> from the selector, before any piece was opened; the URL returns 200; Choose piece returned with D selected; About shows the new copy, inset, with 16px padding, and Go back works. Full check: <code>yarn test</code> → 9 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 3 rerun (<code>15503a5</code>)</td><td class="pass">pass</td><td>1: the selector shows the thumbs at their own shape (A, B, D, E 54×96, C 96×54) in 96×96 boxes; opening A–E and C again through Choose piece, each removed its still and ran, none failed; with Sk3tch open, <code>s</code>/<code>f</code> in Sk3tch reached only the page, and in the piece only the iframe. 2: grep → one <code>jsonUri</code> id per file; each page requests its thumb and imagein only from the Blob host, no Irys request. 3: Purchase called <code>window.open</code> with the Manifold page (200 to <code>curl</code>); Choose piece returned with C selected; About and Go back work. Full check: <code>yarn test</code> → 13 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
@@ -101,9 +102,15 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <p>Chose: <code>&lt;script&gt;fetch("&lt;imagein&gt;").catch(() =&gt; {})&lt;/script&gt;</code> in each page's <code>&lt;head&gt;</code>. It uses the same request mode as the engine's fetch, so the engine reuses it. In a cold run, both requests finished at the same moment. This adds a new one-line script to each vendored page; the existing scripts and engine bytes are untouched.</p>
   <p>Reverse: delete that line in each page (the imagein then loads after the thumbnail).</p>
 </div>
+<div class="elevated">
+  <p><strong>B8: with the still hidden, a piece whose engine fails to start would show "Loading..." forever, where it used to show the still (and your B1 note asked for the still on failure). The engine only logs its failures to the console.</strong></p>
+  <p>Options: accept "Loading..." forever on a failure; show the still after a timeout (on a slow first load that brings back the chunked still B8 removes); catch the engine's two failure messages.</p>
+  <p>Chose: a small <code>&lt;script&gt;</code> in each page's <code>&lt;head&gt;</code> wraps <code>console.error</code>; on "[epoch-one] loadNft failed" or "[epoch-one] mount threw" it marks the page, which shows the still and drops "Loading...". Every message still reaches the console. It adds another script block to each vendored page; the existing scripts and engine bytes are untouched.</p>
+  <p>Reverse: delete the B8 <code>&lt;script&gt;</code> block and the two <code>html.obh-failed</code> rules in each page.</p>
+</div>
 
 <h2>Decided for you</h2>
-<details><summary>14 decisions</summary>
+<details><summary>17 decisions</summary>
 <ul>
   <li>Selector order: A–E, matching the token IDs</li>
   <li>Each page's 2KB engine-state <code>jsonUri</code> stays on Irys (the pages embed their engine block, so it isn't fetched)</li>
@@ -119,6 +126,9 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Follow-up 2: Purchase goes to Manifold's collection page (replaces OpenSea's per-token page)</li>
   <li>Follow-up 2: "inset" means Win95's sunken bevel on the About view; the cream background stays</li>
   <li>Follow-up 2: the About view keeps its bold "on being human" heading above your new copy</li>
+  <li>Follow-up 3: "Loading..." is white, 32px (twice the font's pixel size), with a hard one-second on/off blink; the font is a 7KB copy of the portfolio's W95FA at <code>public/obh/w95fa.woff2</code>, since the iframe page can't reach the bundled one</li>
+  <li>Follow-up 3: the System button is dimmed and unclickable rather than hidden, so Tools doesn't shift; the engine's own help list in the Tools drawer still names it</li>
+  <li>Follow-up 3: the selection highlight covers only the thumbnail, not the empty space beside a tall one, as in Win95; each icon space stays 96×96 so the grid doesn't move</li>
 </ul>
 </details>
 
@@ -130,6 +140,9 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Follow-up 2: cold-load timings were taken with the browser pane hidden (throttled), so they compare the options rather than measure real load times.</li>
   <li>Follow-up 2: the B2 test only checks the page files (no <code>as="fetch"</code> preload). Whether pieces start after switching was checked in the browser, not by a test.</li>
   <li>Follow-up 2: the tests check the About view's classes, not its rendered padding; the 16px was read in the browser.</li>
+  <li>Follow-up 3: the "Loading..." screen was checked by putting a still back into a running page (it drew in W95FA over the canvas and blinked), and on a real first load the piece came up black with no still, then ran; a long throttled load wasn't watched end to end.</li>
+  <li>Follow-up 3: the engine-failure path was checked by logging the engine's failure message by hand (the still showed, "Loading..." went), not by a real failure. If the engine ever fails without logging one of its two messages, or an image download hangs, "Loading..." stays up.</li>
+  <li>Follow-up 3: the B8 and B9 tests check the page files' rules, not how they draw; drawing was checked in Chromium only.</li>
 </ul>
 
 <h2>Review</h2>

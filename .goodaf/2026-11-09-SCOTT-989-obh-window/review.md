@@ -1,10 +1,10 @@
 # Review: SCOTT-989 on being human window: live pieces with selector
 
 Tier: Standard (visual)
-Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final ecd3809 (follow-up 2)
-Panel: general; no Codex pass: visual or device diff (follow-ups 1 and 2: same)
+Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final 15503a5 (follow-up 3)
+Panel: general; no Codex pass: visual or device diff (follow-ups 1, 2 and 3: same)
 Oracle check: no oracles
-Rounds: 0 (no admitted findings); follow-up 2: 1 (F3 fixed; the re-review found it fixed and nothing new)
+Rounds: 0 (no admitted findings); follow-up 2: 1 (F3 fixed; the re-review found it fixed and nothing new); follow-up 3: 0 (no findings)
 Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 
 ## Acceptance checks
@@ -15,6 +15,7 @@ Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 - Full check: pass — `npx tsc --noEmit` → exit 0; `yarn test` → 1 pass, 0 fail; `yarn build` → exit 0
 - Follow-up 1 rerun (2aa1e37): 1 pass — opened from the Start menu, selector of five, piece C runs in the window (canvas 1920x1080, fallback removed); 2 pass — the grep lists one `jsonUri` id per file, and each page's Resource Timing (A–E) lists exactly `<letter>-imagein` and `<letter>-thumb.png`, once each, both `initiatorType: link`, from the Blob host, no gateway.irys.xyz request, no preload console warning; 3 not rerun (menu code unchanged since 8756021); full check pass — `yarn test` → 2 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 - Follow-up 2 rerun (ecd3809): 1 pass — opened from the desktop icon (the new person icon), selector of five titled "A: there must be something" … "E: something was found"; switching pieces through Choose piece 12 times (C four times) and C three times with the window maximized, every piece removed its still and ran, no console error; 2 pass — the grep lists one `jsonUri` id per file; each page's Resource Timing lists `<letter>-thumb.png` (link) and `<letter>-imagein` (fetch, twice: the `<head>` fetch and the engine's, which reuses it), all from the Blob host, no gateway.irys.xyz request; 3 pass, as changed by B5 — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` from the selector, before any piece was opened (captured with a stub); the URL returns 200 to `curl -sL`; Choose piece returned to the selector with D selected; About showed the new copy, inset, with 16px padding, and Go back returned to the piece (or the selector with none open); full check pass — `yarn test` → 9 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
+- Follow-up 3 rerun (15503a5): 1 pass — opened from the desktop icon; the selector shows the five thumbs at their own shape (A, B, D, E 54×96, C 96×54) in 96×96 boxes; opening A, B, C, D, E, then C again through Choose piece, each iframe removed its still and ran (A, B, D, E canvas 1080x1920, C 1920x1080), none marked failed; C's canvas pixels changed over 1.5s; with Sk3tch open, `s` and `f` pressed in Sk3tch reached only the page (iframe log empty), and pressed in the piece reached only the iframe (page log unchanged); 2 pass — the grep lists one `jsonUri` id per file; each page's Resource Timing lists `<letter>-thumb.png` (link) and `<letter>-imagein` (fetch) from the Blob host, no gateway.irys.xyz request; 3 pass — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` (captured with a stub), which returns 200 to `curl -sL`; Choose piece returned to the selector with C selected; About showed the copy and Go back returned to the piece; full check pass — `yarn test` → 13 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 
 ## Asks
 
@@ -31,12 +32,13 @@ Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 ## Worth checking by hand
 
 Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window · dev server: http://localhost:3089
-- With another window in front, click once on the OBH piece, then again → the first click only brings OBH forward; the second reaches the piece (brush, keys)
-- Open a piece with DevTools' Network panel open and Disable cache ticked → `<letter>-thumb.png` and `<letter>-imagein` start together at page load; the engine's own `<letter>-imagein` request finishes with the first one rather than downloading the file again
-- Open a piece, then use Choose piece to open others, C included and with the window maximized → each shows its still, then starts moving
+- Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → a black piece with "Loading..." blinking in the center in the pixel font, no chunked still, until the piece starts moving
+- On a running piece, look at the action bar → the ☰ System button on the left is dimmed and does nothing when clicked; `Q` does nothing either
+- Open the selectors of 3xGP and R3MIX as well as OBH → OBH's thumbs are tall (C wide), centered in their icon space; 3xGP's and R3MIX's square thumbs look as before
 
 ## Findings
 
+- Follow-up 3: no findings (general reviewer, 1905739..15503a5).
 - Follow-up 1: no findings (general reviewer, e599830..2aa1e37).
 - F2. [tracked T2] components/windows/obh.test.tsx:28-33 The B5 test checks only the exported constant, so deleting or rewiring the menu's Purchase item would still pass. Found by: general (follow-up 2). Verifier: track — accurate, but nothing is wrong today, the test failed before B5, and the menu wiring is covered by check 3's browser run; closing it needs the window rendered in the test build.
 - F3. [fixed ecd3809] components/windows/obh.tsx:26 B6's `classic-inset` overrode the About view's `p-4` (`.classic-inset` sets its own padding later in styles/globals.css), dropping the text's padding from 16px to 2px. Found by: general (follow-up 2, as unverified), browser check. Verifier: admit — introduced by B6 and not asked for; `!p-4`, as `components/Footer.tsx:79` does. Re-review: fixed, no new findings.
@@ -69,12 +71,16 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   Done: 2026-11-10, 1d5fb1b, repro "B7: the About copy is the series line, then the five lettered titles". The bold "on being human" heading stays above it.
 - B8. 2026-11-10 "I don't like the thumbnail loading in chunks, lets hide it and replace it with "Loading..." flashing in the W95FA font in the center of the page till the code is ready to play"
   Reference: the chunked image is the page's fallback `<img id="fallback">` (the thumbnail PNG), which the engine removes on its first frame (`onFirstFrame: () => J8?.remove()`); the engine still needs the thumbnail as its base frame (A1), so hide the `<img>`, don't stop the download. Check the font's name and how the portfolio loads W95FA, and whether the iframe page can use it.
+  Done: 2026-11-10, 725340a, repro "B8: each OBH page hides its still behind a flashing W95FA Loading... until the engine's first frame, and shows the still again only if the engine fails" (failed on `a: a W95FA @font-face in <head>` before the fix). The still is hidden, not stopped (the engine still needs it); "Loading..." blinks in W95FA (a copy at `public/obh/w95fa.woff2`) until the engine's first frame; if the engine logs a start failure, the still shows instead.
 - B9. 2026-11-10 "disable the system menu button."
   Reference: read as the piece's own action-bar "System" button (☰, shortcut `Q`, "Open the external system menu" in the engine's menu), which does nothing here because the vendored pages pass no `onAppMenu`; disable both the button and its `Q` shortcut without editing engine bytes if possible.
+  Done: 2026-11-10, 0b3a568, repro "B9: each OBH page draws the action bar's System button disabled, unclickable, as the engine's tt-disabled does" (failed on `a: #tt-btn-system disabled in <head>` before the fix). Dimmed and unclickable by CSS, the engine's own disabled look; `Q` already did nothing here, so it's left alone.
 - B10. 2026-11-10 "redo the window select thumbnails so they maintain their original aspect ratios"
   Reference: `public/images/thumbs/obh-{a..e}.jpg` are 96×96 center crops (step 1, `sips`) of the thumbnail PNGs, which are 1080×1920 portrait except C, 1920×1080 landscape; redo them uncropped at their own aspect within the selector's 96px box (`WorkSelector`'s `<img>` is a fixed `w-24 h-24`, shared with 3xGP and R3MIX, whose thumbs are square).
+  Done: 2026-11-10, 15503a5, repro "B10: the selector thumbs keep their pieces' aspect, 54×96 portrait and C 96×54 landscape" (failed on the deep-equal, `w: 96` for `w: 54`) and "B10 (SCOTT-989): a thumb shows at its own shape, centered in the 96×96 icon box, not stretched square" (failed on `the img isn't forced to 96×96`). The selection dither covers only the image.
 
 ## Follow-ups
 
 - 2026-11-10 follow-up 1: base e599830, head 2aa1e37; did B1; review: general, no Codex pass: visual or device diff, 0 fixed, 1 new ask (A1), 0 tracked, 0 dropped
 - 2026-11-10 follow-up 2: base fb0c58e, head ecd3809; did B2, B3, B4, B5, B6, B7; review: general, no Codex pass: visual or device diff, 1 fixed (F3), 0 new asks, 1 tracked (T2), 0 dropped
+- 2026-11-10 follow-up 3: base 1905739, head 15503a5; did B8, B9, B10; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 0 tracked, 0 dropped
