@@ -53,6 +53,16 @@ URLs are `https://gateway.irys.xyz/<id>`. Each page references three Irys URLs: 
 Base: e599830
 - B1: each vendored page's `<head>` preloads its engine buffers (`<link rel="preload" as="fetch" crossorigin>` for the imagein, `as="image" crossorigin` for the thumb), the Sk3tch bake's pattern, so the imagein downloads alongside the thumb instead of after it; repro test `components/windows/obhPages.test.tsx`
 
+## Follow-up 2
+
+Base: fb0c58e
+- B2: a piece's engine fails to start when another piece is opened after it, and C fails in an expanded window; find the cause (the B1 preloads, the swapped iframe's engine or WebGL context not being released, or C's canvas size), fix it with a repro test
+- B3: a simple person icon for OBH (`public/svg/obh-icon.svg`, 16×16 like `settings-icon.svg`), set in `ICONS`
+- B4: titles read "A: there must be something" (selector, iframe title)
+- B5: Purchase always opens the Manifold collection page `https://manifold.xyz/@ev3/contract/124346608`, whichever piece is open
+- B6: the About view drawn inset (`classic-inset`), like the selector
+- B7: the About copy replaced with the user's text
+
 ## Progress
 
 - 2026-11-09 plan written
