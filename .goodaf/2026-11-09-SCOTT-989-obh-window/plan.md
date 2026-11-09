@@ -80,6 +80,11 @@ Base: 5aaa5fb
 Base: 98c0a3a
 - B12: the Loading color matches the action bar's resting text, `#00ff8099` (`.tt-action-bar-btn`), instead of the pressed-button `#00ff80`; the B11 test updated to pin it
 
+## Follow-up 6
+
+Base: b63b296
+- B13: the Loading rule copies the "TOOLS" label's text style: `"Courier New", monospace`, 10px, weight 400, letter-spacing 2px, uppercase, `#00ff8099`, no `-webkit-font-smoothing: none`; the blink stays; the now-unused W95FA `@font-face` and `public/obh/w95fa.woff2` go; the B8 and B11/B12 tests updated
+
 ## Progress
 
 - 2026-11-09 plan written
