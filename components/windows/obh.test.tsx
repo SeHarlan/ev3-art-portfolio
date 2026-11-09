@@ -38,6 +38,14 @@ test("B6: the About view is drawn inset, with the sunken bevel over the window's
   assert.ok(root.includes("classic-inset"), "the About root has classic-inset");
 });
 
+test("F3: the About view keeps its 16px padding under classic-inset's 2px", () => {
+  // .classic-inset sets padding after @tailwind utilities, so plain p-4 loses; !p-4 wins, as in Footer.
+  const html = renderToStaticMarkup(<About visible onBack={() => {}} />);
+  const root = html.match(/^<div class="([^"]*)"/)![1].split(" ");
+  assert.ok(root.includes("!p-4"), "the About root has !p-4");
+  assert.ok(!root.includes("p-4"), "no plain p-4, which classic-inset overrides");
+});
+
 test("B7: the About copy is the series line, then the five lettered titles", () => {
   const html = renderToStaticMarkup(<About visible onBack={() => {}} />);
   const text = Array.from(html.matchAll(/<p[^>]*>([^<]*)<\/p>/g), (m) => m[1]);
