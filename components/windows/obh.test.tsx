@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
+import { renderToStaticMarkup } from "react-dom/server";
 import { ICONS, WINDOWS } from "../../context/WindowsProvider";
 import * as obh from "./obh";
-import { works } from "./obh";
+import { About, works } from "./obh";
 
 test("B3: OBH's icon is its own person icon in public/svg", () => {
   assert.equal(ICONS[WINDOWS.OBH], "/svg/obh-icon.svg");
@@ -29,4 +30,10 @@ test("B5: Purchase opens the Manifold collection page, the same for every piece"
     (obh as Record<string, unknown>).PURCHASE_URL,
     "https://manifold.xyz/@ev3/contract/124346608",
   );
+});
+
+test("B6: the About view is drawn inset, with the sunken bevel over the window's well", () => {
+  const html = renderToStaticMarkup(<About visible onBack={() => {}} />);
+  const root = html.match(/^<div class="([^"]*)"/)![1].split(" ");
+  assert.ok(root.includes("classic-inset"), "the About root has classic-inset");
 });
