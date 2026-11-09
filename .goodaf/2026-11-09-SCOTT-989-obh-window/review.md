@@ -21,7 +21,7 @@ none
 ## Tracked follow-ups
 
 - T1. [3xGP key handling (pre-existing)] 3xGP's sketches check the active window against R3MIX instead of 3xGP (`components/windows/STEV3.tsx:40`), so their keys (such as `c` to clear glitch) only work while R3MIX is the active window; a one-line fix, already on main. From F1.
-  Answer: —
+  Answer: 2026-11-09 "t1 - lets actually expand this into its own ticket, be default windows should only accept key inputs when they are the active window, inactive windows should stop listening/refuse input" → leave: filed as its own ticket SCOTT-991 (Backlog)
 
 ## Worth checking by hand
 
@@ -34,7 +34,8 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 
 ## Bug notes
 
-none
+- B1. 2026-11-09 "I want to change the image download priority, so that the thumbnail image only loads if the engine fails and the image buffers used in the engine get priority download. Look at Sk3tch baked nfts for an example of how I want it done"
+  Reference: `~/Scottys art/sk3tch/server/src/vendor/bake/index.js:763-800` (`buildSketchBakedHtml`): `<link rel="preload" as="fetch" crossorigin>` for each engine buffer in `<head>`, and the fallback `<img id="fallback" fetchpriority="low">`. Note: Sk3tch still loads its fallback at low priority rather than only on failure; the user's words ask for only-on-failure. Check whether the OBH engine reads `<letter>-thumb.png` itself as a base frame before deferring it.
 
 ## Follow-ups
 
