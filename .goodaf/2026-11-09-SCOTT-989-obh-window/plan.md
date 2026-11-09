@@ -52,6 +52,9 @@ URLs are `https://gateway.irys.xyz/<id>`. Each page references three Irys URLs: 
 
 - 2026-11-09 plan written
 - 2026-11-09 step 1: vendored five pages byte for byte (145–146KB each) into public/obh/, made 96×96 JPEG thumbs (3–5KB) from the thumbnail PNGs; checks —
+- 2026-11-09 user approved `yarn install --frozen-lockfile` (yarn.lock same as main) and the Blob store + upload (answers 1a, 2a)
+- 2026-11-09 step 2 partial: Blob store `ev3-obh-pieces` (store_K4XW43AjR4eh6RE3, public, iad1) created with the Vercel CLI; the MCP's create returned 403. Connecting it to the project (to get the upload token) was refused by the session's permission classifier as a secret-store write; parked for the user. Nothing uploaded yet
+- 2026-11-09 step 4: OnBeingHuman.tsx rewritten (selector → iframe piece → About; Choose piece, About, Purchase); done ahead of steps 2–3 since it doesn't depend on them; checks 1, 3 pass (images still from Irys until step 3)
 
 ## Decisions
 
@@ -60,6 +63,13 @@ URLs are `https://gateway.irys.xyz/<id>`. Each page references three Irys URLs: 
 - Normal: the selector is ordered A–E (matching the token IDs), not the snapshot order A, E, C, D, B. Reverse: reorder `works`.
 - Normal: `jsonUri` stays on Irys: 2KB, and the engine falls back to the page's own settings if it fails. Reverse: upload it to Blob too and rewrite it.
 - Normal: no stop-on-minimize, matching 3xGP and R3MIX. Reverse: unmount the iframe while minimized.
+- Normal: no `pointer-events-none` on the iframe while dragging: a title-bar drag ending over the iframe moved the window and didn't stick (the browser keeps mouse events with the frame that got the mousedown). Reverse: expose `isDragging` from `Window` and add the class.
+- Normal: no extra focus handling for the iframe: `Window` already makes an inactive window's content `pointer-events-none`, so a first click on the piece brings the window to the front and later clicks reach the piece. Reverse: add a window `blur` listener that moves OBH to the end of `orderState` when the iframe takes focus.
+- Normal: the About view gets its own `bg-amber-50` over the window's black wrapper, so it reads like 3xGP's About. Reverse: drop the class.
+- Normal: Purchase calls `window.open(url, "_blank", "noopener")`. Reverse: drop `"noopener"`.
+- Normal: step 4 built before steps 2–3, which were waiting on the Blob connection; the order doesn't matter because only the vendored pages change in step 3. Reverse: n/a.
 
 ## Parked asks
+
+- Blob store connection (blocks steps 2–3 and check 2): store `ev3-obh-pieces` exists but isn't connected to the `ev3-art-portfolio` project, so there's no upload token. The session's permission check refused the connect call (and refused deleting the store to recreate it already connected). The user connects it in the Vercel dashboard (Storage → ev3-obh-pieces → Connect Project → ev3-art-portfolio), then a session uploads with `vercel blob put … --cwd <a folder linked to the project>` and finishes steps 2–3.
 
