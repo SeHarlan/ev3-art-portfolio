@@ -34,16 +34,13 @@ test("B2: no OBH page preloads its imagein as fetch, which makes the engine's ow
   }
 });
 
-test("B8: each OBH page hides its still behind a flashing W95FA Loading... until the engine's first frame, and shows the still again only if the engine fails", () => {
+test("B8: each OBH page hides its still behind a flashing Loading... until the engine's first frame, and shows the still again only if the engine fails", () => {
   for (const id of pages) {
     const { head } = read(id);
-    const font = head.match(/@font-face \{ font-family: 'W95FA'; src: url\('([^']+)'\)/);
-    assert.ok(font, `${id}: a W95FA @font-face in <head>`);
-    assert.ok(existsSync(join(process.cwd(), "public", font![1])), `${id}: its font file is in public/`);
     assert.ok(head.includes("#fallback { visibility: hidden; }"), `${id}: the still is hidden`);
     assert.ok(
-      /#art:has\(#fallback\)::after \{ content: "Loading\.\.\."; [^}]*font-family: 'W95FA';[^}]*animation: obh-loading /.test(head),
-      `${id}: a flashing W95FA Loading... while the still is in the page`,
+      /#art:has\(#fallback\)::after \{ content: "Loading\.\.\."; [^}]*animation: obh-loading /.test(head),
+      `${id}: a flashing Loading... while the still is in the page`,
     );
     assert.ok(head.includes("html.obh-failed #fallback { visibility: visible; }"), `${id}: the still shows when the engine fails`);
     // Same selector as the Loading rule plus the class, so it outranks it (#fallback in :has counts as an ID).
@@ -58,17 +55,30 @@ test("B8: each OBH page hides its still behind a flashing W95FA Loading... until
   }
 });
 
-test("B11, B12: each OBH page's Loading... is 16px, W95FA's native size, in the action bar's resting green #00ff8099", () => {
+test("B11–B13: each OBH page's Loading... is drawn like the action bar's TOOLS label: Courier New, uppercase, its size and spacing, its resting green", () => {
   for (const id of pages) {
     const { head } = read(id);
     const rule = head.match(/#art:has\(#fallback\)::after \{ content: "Loading\.\.\."; [^}]*\}/);
     assert.ok(rule, `${id}: the Loading... rule in <head>`);
-    // The engine's .tt-action-bar-btn resting text; #00ff80 alone is its pressed/active color.
+    // The engine's own .tt-action-bar-btn text style, which TOOLS shows; #00ff80 alone is its pressed/active color.
     const html = readFileSync(join(process.cwd(), "public/obh", `${id}.html`), "utf8");
-    assert.match(html, /\.tt-action-bar-btn\{[^}]*color:#00ff8099/, `${id}: the engine's resting bar green is #00ff8099`);
-    assert.ok(rule![0].includes("color: #00ff8099;"), `${id}: Loading... in the action bar's resting green`);
-    assert.ok(rule![0].includes("font-size: 16px;"), `${id}: Loading... at 16px`);
+    assert.match(
+      html,
+      /\.tt-action-bar-btn\{[^}]*color:#00ff8099;font-family:Courier New,monospace;font-size:11px;text-transform:uppercase;letter-spacing:3px;/,
+      `${id}: the engine's bar text is Courier New 11px, uppercase, 3px spacing, #00ff8099`,
+    );
+    assert.match(html, /@media\(max-width:480px\)\{[^@]*\.tt-action-bar-btn\{font-size:10px;letter-spacing:2px\}/, `${id}: and 10px, 2px spacing at 480px or less`);
+    for (const decl of ['color: #00ff8099;', 'font-family: "Courier New", monospace;', "font-size: 11px;", "font-weight: 400;", "letter-spacing: 3px;", "text-transform: uppercase;"]) {
+      assert.ok(rule![0].includes(decl), `${id}: Loading... has ${decl}`);
+    }
+    assert.ok(!rule![0].includes("font-smoothing"), `${id}: Loading... keeps the default font smoothing, as TOOLS does`);
+    assert.ok(
+      head.includes('@media (max-width: 480px) { #art:has(#fallback)::after { font-size: 10px; letter-spacing: 2px; } }'),
+      `${id}: Loading... drops to 10px, 2px spacing at 480px or less, as TOOLS does`,
+    );
+    assert.ok(!head.includes("W95FA"), `${id}: no W95FA left in <head>`);
   }
+  assert.ok(!existsSync(join(process.cwd(), "public/obh/w95fa.woff2")), "the unused W95FA copy is gone");
 });
 
 test("B9: each OBH page draws the action bar's System button disabled, unclickable, as the engine's tt-disabled does", () => {
