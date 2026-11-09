@@ -48,6 +48,11 @@ URLs are `https://gateway.irys.xyz/<id>`. Each page references three Irys URLs: 
 - Never edit a vendored page's `<script>` or engine bytes; only the three image URL strings change.
 - No new npm package (`@vercel/blob` included): the page uses only the public Blob URLs.
 
+## Follow-up 1
+
+Base: e599830
+- B1: each vendored page's `<head>` preloads its engine buffers (`<link rel="preload" as="fetch" crossorigin>` for the imagein, `as="image" crossorigin` for the thumb), the Sk3tch bake's pattern, so the imagein downloads alongside the thumb instead of after it; repro test `components/windows/obhPages.test.tsx`
+
 ## Progress
 
 - 2026-11-09 plan written
