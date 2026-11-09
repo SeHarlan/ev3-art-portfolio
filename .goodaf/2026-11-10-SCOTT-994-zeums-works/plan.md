@@ -133,6 +133,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 
 - 2026-11-10 plan written
 - 2026-11-10 plan check: 6 must-fix fixed, 4 notes adopted, 0 dismissed
+- 2026-11-10 user approved `yarn install --frozen-lockfile` in this worktree
 
 ## Decisions
 
