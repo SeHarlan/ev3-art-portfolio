@@ -51,8 +51,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h1>SCOTT-989 on being human window: live pieces with selector</h1>
 <div class="status">
   <p class="verdict ok">Ready for your check</p>
-  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>7ed3e49</code> (after follow-up 5) · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked · follow-up 3 (B8–B10): general reviewer, no findings · follow-up 4 (B11): general reviewer, no findings · follow-up 5 (B12): general reviewer, no findings</p>
+  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>714bec7</code> (after follow-up 6) · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked · follow-up 3 (B8–B10): general reviewer, no findings · follow-up 4 (B11): general reviewer, no findings · follow-up 5 (B12): general reviewer, no findings · follow-up 6 (B13): general reviewer, no findings</p>
   <p>Running at <a href="http://localhost:3089">http://localhost:3089</a></p>
 </div>
 
@@ -67,7 +67,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h2>Worth checking by hand</h2>
 <ul>
-  <li>Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "Loading..." blinks in the center, small, in the same dim green as the action bar's "TOOLS" label, until the piece starts moving</li>
+  <li>Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "LOADING..." blinks in the center in the same font, size, spacing and green as the action bar's "TOOLS" label, until the piece starts moving; maximize the window and both grow to 11px together</li>
 </ul>
 
 <h2>Outcome</h2>
@@ -82,6 +82,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <tr><td>—</td><td>Follow-up 3 rerun (<code>15503a5</code>)</td><td class="pass">pass</td><td>1: the selector shows the thumbs at their own shape (A, B, D, E 54×96, C 96×54) in 96×96 boxes; opening A–E and C again through Choose piece, each removed its still and ran, none failed; with Sk3tch open, <code>s</code>/<code>f</code> in Sk3tch reached only the page, and in the piece only the iframe. 2: grep → one <code>jsonUri</code> id per file; each page requests its thumb and imagein only from the Blob host, no Irys request. 3: Purchase called <code>window.open</code> with the Manifold page (200 to <code>curl</code>); Choose piece returned with C selected; About and Go back work. Full check: <code>yarn test</code> → 13 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
   <tr><td>—</td><td>Follow-up 4 rerun (<code>3034a08</code>)</td><td class="pass">pass</td><td>B11: in each page, "Loading..." is now 16px in <code>#00ff80</code>; in the browser it computed to rgb(0, 255, 128), 16px, W95FA, drawn small and green at the center. 1: opened from the Start menu, selector of five; C ran (1920×1080, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; C requested only its thumb and imagein from the Blob host. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (C selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
   <tr><td>—</td><td>Follow-up 5 rerun (<code>7ed3e49</code>)</td><td class="pass">pass</td><td>B12: "Loading..." now uses <code>#00ff8099</code>, the bar's resting text color; in the browser it and the bar's buttons both compute to rgba(0, 255, 128, 0.6), the same tone as "TOOLS". 1: opened from the Start menu, selector of five; D ran (1080×1920, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; D requested only its thumb and imagein from the Blob host. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (D selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 6 rerun (<code>714bec7</code>)</td><td class="pass">pass</td><td>B13: "Loading..." now copies the "TOOLS" label: Courier New, uppercase, normal weight, the same green, 10px with 2px spacing up to 480px wide and 11px with 3px above, as the engine's label does. In the browser the two matched on every text property at 310px and 900px wide, and on black they read the same. 1: opened from the Start menu, selector of five; D ran (1080×1920, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; D requested only its thumb and imagein from the Blob host, no font request. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (D selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
@@ -108,9 +109,15 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <p>Chose: a small <code>&lt;script&gt;</code> in each page's <code>&lt;head&gt;</code> wraps <code>console.error</code>; on "[epoch-one] loadNft failed" or "[epoch-one] mount threw" it marks the page, which shows the still and drops "Loading...". Every message still reaches the console. It adds another script block to each vendored page; the existing scripts and engine bytes are untouched.</p>
   <p>Reverse: delete the B8 <code>&lt;script&gt;</code> block and the two <code>html.obh-failed</code> rules in each page.</p>
 </div>
+<div class="elevated">
+  <p><strong>B13: with "Loading..." in the "TOOLS" font, the copy of the pixel font that B8 added (<code>public/obh/w95fa.woff2</code>, 7KB) and the <code>@font-face</code> line in each page were no longer used.</strong></p>
+  <p>Options: keep them; delete them.</p>
+  <p>Chose: delete them; a test checks the file is gone. The portfolio's own W95FA in <code>styles/fonts/</code> is untouched.</p>
+  <p>Reverse: restore <code>public/obh/w95fa.woff2</code> from commit <code>725340a</code> and the <code>@font-face</code> line in each page.</p>
+</div>
 
 <h2>Decided for you</h2>
-<details><summary>18 decisions</summary>
+<details><summary>19 decisions</summary>
 <ul>
   <li>Selector order: A–E, matching the token IDs</li>
   <li>Each page's 2KB engine-state <code>jsonUri</code> stays on Irys (the pages embed their engine block, so it isn't fetched)</li>
@@ -130,6 +137,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Follow-up 3: the System button is dimmed and unclickable rather than hidden, so Tools doesn't shift; the engine's own help list in the Tools drawer still names it</li>
   <li>Follow-up 3: the selection highlight covers only the thumbnail, not the empty space beside a tall one, as in Win95; each icon space stays 96×96 so the grid doesn't move</li>
   <li>Follow-up 4: "smaller" is 16px, the pixel font's own size, so it stays crisp; the green was first <code>#00ff80</code>, the engine's pressed-button green; your B12 note moved it to <code>#00ff8099</code>, the bar's resting text</li>
+  <li>Follow-up 6: "Loading..." copies the "TOOLS" label's uppercase too, so it reads "LOADING...", and its size step at 480px wide, so the two still match in a maximized window</li>
 </ul>
 </details>
 
@@ -144,7 +152,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Follow-up 3: the "Loading..." screen was checked by putting a still back into a running page (it drew in W95FA over the canvas and blinked), and on a real first load the piece came up black with no still, then ran; a long throttled load wasn't watched end to end.</li>
   <li>Follow-up 3: the engine-failure path was checked by logging the engine's failure message by hand (the still showed, "Loading..." went), not by a real failure. If the engine ever fails without logging one of its two messages, or an image download hangs, "Loading..." stays up.</li>
   <li>Follow-up 3: the B8 and B9 tests check the page files' rules, not how they draw; drawing was checked in Chromium only.</li>
-  <li>Follow-up 4: the new look was checked by putting a still back into a running page, as in follow-up 3, not on a real slow load. The key-isolation part of check 1 (Sk3tch) wasn't rerun, since B11 changed only the pages' Loading CSS. Follow-up 5 (B12) was checked the same way.</li>
+  <li>Follow-up 4: the new look was checked by putting a still back into a running page, as in follow-up 3, not on a real slow load. The key-isolation part of check 1 (Sk3tch) wasn't rerun, since B11 changed only the pages' Loading CSS. Follow-up 5 (B12) was checked the same way. Follow-up 6 (B13) compared the two texts' computed styles at 310px and 900px wide, and looked at them on a black background; a real slow load wasn't watched.</li>
 </ul>
 
 <h2>Review</h2>
