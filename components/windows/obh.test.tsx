@@ -37,3 +37,17 @@ test("B6: the About view is drawn inset, with the sunken bevel over the window's
   const root = html.match(/^<div class="([^"]*)"/)![1].split(" ");
   assert.ok(root.includes("classic-inset"), "the About root has classic-inset");
 });
+
+test("B7: the About copy is the series line, then the five lettered titles", () => {
+  const html = renderToStaticMarkup(<About visible onBack={() => {}} />);
+  const text = Array.from(html.matchAll(/<p[^>]*>([^<]*)<\/p>/g), (m) => m[1]);
+  assert.deepEqual(text, [
+    "on being human",
+    "A series of personal photographs glitched to enshrine the emotions and moments they hold.",
+    "A: there must be something",
+    "B: there is nothing else",
+    "C: was it all a dream",
+    "D: the abyss gazes back",
+    "E: something was found",
+  ]);
+});

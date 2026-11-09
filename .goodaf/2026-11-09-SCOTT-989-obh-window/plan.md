@@ -79,6 +79,7 @@ Base: fb0c58e
 - 2026-11-10 follow-up 2 B4: titles in `works` read "A: there must be something" … "E: something was found" (the selector labels, File name field, iframe title and About list all read them); `works`, `purchaseUrl` and the About view moved unchanged from `OnBeingHuman.tsx` to `components/windows/obh.tsx` so a node test can load them without the `@/` alias; repro test `components/windows/obh.test.tsx` "B4: each piece's title starts with its letter" failed on the deep-equal (`'there must be something'` for `'A: there must be something'`) before, passes after; checks —, `yarn test` 5/5, `npx tsc --noEmit` exit 0
 - 2026-11-10 follow-up 2 B5: Purchase opens `PURCHASE_URL`, the Manifold collection page `https://manifold.xyz/@ev3/contract/124346608` ("on being human (OBH)", 5 works, contract 0x4759…f070, found from the @ev3 profile in the browser), and is always in the menu; the per-token OpenSea URL and the `token` fields are gone; repro test `components/windows/obh.test.tsx` "B5: Purchase opens the Manifold collection page…" failed on `undefined` !== the Manifold URL before, passes after; checks 3 (menu part) rechecked in the browser at the end, `yarn test` 6/6, `npx tsc --noEmit` exit 0
 - 2026-11-10 follow-up 2 B6: the About view's root gets `classic-inset`, redrawing the sunken well it covers as `WorkSelector` does; repro test `components/windows/obh.test.tsx` "B6: the About view is drawn inset…" failed on `the About root has classic-inset` before, passes after; browser look checked at the end; `yarn test` 7/7
+- 2026-11-10 follow-up 2 B7: the About copy is the bold "on being human" heading, the user's series line, then the five lettered titles read from `works` (no quotes); the "Photographic, generative…" and "Each piece shows its still…" lines are gone; repro test `components/windows/obh.test.tsx` "B7: the About copy is the series line, then the five lettered titles" failed on the deep-equal (quoted titles, the old lines) before, passes after; `yarn test` 8/8, `npx tsc --noEmit` exit 0
 
 ## Decisions
 
@@ -98,6 +99,7 @@ Base: fb0c58e
 - Normal: `works`, `purchaseUrl` and the About view live in `components/windows/obh.tsx`, imported by `OnBeingHuman.tsx`, so the node tests can import them (the window's `@/` imports don't resolve under `tsc -p tsconfig.test.json`). Reverse: inline them back into `OnBeingHuman.tsx` and drop the B4–B7 tests.
 - Normal: follow-up 2 B5: Purchase is always in the menu, the selector and About too, since the collection page doesn't depend on the open piece. Reverse: list it only while `active` is set.
 - Normal: follow-up 2 B6 reads "inset" as Win95's sunken bevel (`classic-inset`) on the About view, which paints over the window's own inset well; the amber background stays. Reverse: drop `classic-inset` from `About` in `components/windows/obh.tsx`.
+- Normal: follow-up 2 B7 keeps the bold "on being human" heading above the user's copy, as 3xGP's About has its title, and replaces everything else. Reverse: drop the heading `<p>` in `About`.
 
 ## Parked asks
 

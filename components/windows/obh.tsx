@@ -29,18 +29,11 @@ export const About: FC<AboutProps> = ({ visible, onBack }) => (
   >
     <p className="font-bold">on being human</p>
     <br />
+    <p>A series of personal photographs glitched to enshrine the emotions and moments they hold.</p>
+    <br />
     {works.map(w => (
-      <p key={w.id}>“{w.title}”</p>
+      <p key={w.id}>{w.title}</p>
     ))}
-    <br />
-    <p>
-      Photographic, generative glitch art by EV3. An original photo
-      modified by the Epoch One engine.
-    </p>
-    <br />
-    <p>
-      Each piece shows its still first, then starts moving.
-    </p>
     <br />
     <button
       className="classic-button px-2"
