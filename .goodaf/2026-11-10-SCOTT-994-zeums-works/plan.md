@@ -135,6 +135,8 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - 2026-11-10 plan check: 6 must-fix fixed, 4 notes adopted, 0 dismissed
 - 2026-11-10 user approved `yarn install --frozen-lockfile` in this worktree
 - 2026-11-10 step 1: vercel link + env pull (`.vercel/`, `.env.local` both ignored); `yarn install --frozen-lockfile` exit 0
+- 2026-11-10 step 2: gathered all sources into the scratchpad: 50 media (CEASEFIRE 1 vid, s34s0ns 4 img, Isaac 1 vid, A Single Path 14 img, T3RRA 18 img + 5 vid, Flower 1 vid, Tune Out 6 vid), 22 HTML (Progress, 12 Solana, 9 Tezos folders with p5) and every preview; 153 files checked complete (PNG IEND, JPEG EOI, MP4 decoded to the last second). Solana mint order from oldest `blockTime` of the 12 mints read off mallow; Tezos order from TzKT `firstTime` (0–6, 9, 10)
+- 2026-11-10 step 4: 72 selector thumbnails in `public/images/thumbs/<slug>-<title>.jpg` (longest side 96, `sips -Z 96`, from each item's own preview); 9 icons `public/images/<slug>-icon.png` at 56×56
 - 2026-11-10 step 5: vendored `public/pieces/progress` (arweave original, p5 src → `./p5.min.js` = cdnjs p5 1.7.0 min) and `public/pieces/remember` (engine from "Nineteen and tripping", `rememberTitle` = empty template string, p5 1.11.9 from Tezos token 0's folder). 21-file engine diff (rememberTitle literal, p5 script tags and the Tezos `<!-- p5 -->` comment stripped, whitespace-free): 20 equal, "Stuck at an Italian winery" differs only by a missing `;` after `initPreview = false`. `grep -noE 'https?://' public/pieces/*/index.html` prints nothing (exit 1); check 4 command part passes
 
 ## Decisions
@@ -147,5 +149,9 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - Normal: the new deep-link keys (`?window=<key>`) are CEASEFIRE, REMEMBER, SEASONS, ISAAC, PROGRESS, SINGLEPATH, TERRA, FLOWER and TUNEOUT. Reverse: rename the `WINDOWS` keys; nothing links to them yet.
 - Normal: Blob paths are `zeums/<slug>/<original filename>`. Reverse: re-upload under another prefix and update `data/zeums.ts`.
 - Normal: new `WINDOWS` entries sit after SK3TCH, newest first, so the existing desktop order doesn't move. Reverse: reorder the object.
+- Elevated (taste): icons. Singles (Isaac, "Progress", Flower) use their own preview image cropped square; CEASEFIRE uses its video frame at 0.5 s cropped on the figure, since its preview image is nearly black at 56px; galleries (remember.exe, s34s0ns, A Single Path, T3RRA, Tune Out) use a 2×2 collage of their first four items. Reverse: regenerate `public/images/<slug>-icon.png` from another source (scratchpad `scripts/icons.py`).
+- Normal: the s34s0ns image folder is `uploaded-image/`, confirmed by a range request returning `206 image/png` rather than in the browser pane. Reverse: none needed.
+- Normal: Exaltation of Isaac's video was fetched from `turbo-gateway.com`, since arweave.net returns 404 for that transaction; same transaction ID, 93.7 MB, decodes fully. Reverse: none needed.
+- Normal: Isaac's Blob filename gets `.mp4` (its zeums URL has no `ext`). Reverse: re-upload under another name.
 
 ## Parked asks
