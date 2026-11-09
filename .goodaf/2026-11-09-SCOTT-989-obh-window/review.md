@@ -81,6 +81,8 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 - B11. 2026-11-10 "make the loading text smaller and in the OBH engine UI green color"
   Reference: B8's "Loading..." is the `#art:has(#fallback)::after` rule in each `public/obh/<letter>.html` `<head>` (white, 32px); W95FA's native pixel size is 16px, so smaller keeps it crisp at 16px. The engine's UI green is `#00ff80` (menu.css; the action bar labels use `#00ff8099`, 60% alpha). Update B8's test in `components/windows/obhPages.test.tsx` to match.
   Done: 2026-11-10, 3034a08, repro "B11: each OBH page's Loading... is 16px, W95FA's native size, in the engine UI's green #00ff80" (failed on `a: Loading... in the engine UI's green` before the fix). B8's test is unchanged; the new test pins the color and size.
+- B12. 2026-11-10 "thats not the same green as the engine UI, its too bright"
+  Reference: B11 used `#00ff80`, which the engine uses only on pressed or active action-bar buttons (`.tt-action-bar-btn:active`, `.tt-active`); the bar's resting text ("TOOLS" and the button labels) is `#00ff8099` (`.tt-action-bar-btn`, `.tt-action-bar-label:before/:after`), 60% alpha, about `#00994d` on black. Match that resting color in each page's Loading rule and update the B11 test.
 
 ## Follow-ups
 
