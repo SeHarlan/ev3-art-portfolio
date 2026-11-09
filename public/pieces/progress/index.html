@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <script src="./p5.min.js"></script>
+    <meta charset="utf-8" />
+    <style>
+      html, body {
+        background-color: rgb(0, 0, 0);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        height: 100svh;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <!-- <script src="sketch.js"></script> -->
+    <script>
+      let blockBrushes = []
+        let lifes = []
+        let flowFields = []
+        let blockSize;
+        let blockSizes = [50, 100, 200]
+        let speed = 5
+        let maxBlockLifeSpan = 1000
+
+        let palette
+        let patternSet
+        let font
+        let canvas
+        let brushColIndex = 0
+        let newPaletteChance = 0;
+        let resizeTimeout;
+        let fbHeight;
+        let fbWidth;
+
+        function getPalette() {
+          return random([
+            [color(279, 18, 84), color(336, 26, 65), color(337, 39, 45), color(342, 40, 48), color(158, 31, 7)], //pinks
+            [color(30, 11, 4), color(199, 27, 18), color(31, 33, 88), color(32, 33, 67), color(33, 20, 31)], //earthy
+            [color(254, 31, 40), color(311, 18, 83), color(189, 100, 97), color(182, 42, 72), color(225, 54, 14)], //ice purple
+            [color(85, 61, 93), color(67, 8, 80), color(261, 9, 69), color(285, 92, 9), color(268, 44, 35)], //muted ice purple
+            [color(40, 23, 3), color(227, 10, 28), color(350, 49, 29), color(350, 51, 38), color(60, 100, 99)], //red, b&w
+            [color(45, 4, 20), color(62, 25, 22), color(36, 59, 31), color(32, 75, 49), color(34, 100, 61)], //yellow rust
+            [color(31, 91, 87), color(57, 35, 74), color(34, 10, 52), color(265, 9, 37), color(223, 23, 30)],//earthy navy
+            [color(31, 90, 69), color(23, 90, 69), color(15, 87, 66), color(9, 85, 65), color(3, 86, 64)],// peachy
+            [color(196, 98, 63), color(185, 38, 56), color(146, 18, 63), color(55, 82, 81), color(2, 51, 88)],//ice cream
+            [color(293, 54, 15), color(269, 9, 45), color(28, 10, 63), color(27, 59, 67), color(359, 23, 47)],//earthy purple
+            [color(15, 94, 7), color(10, 85, 21), color(7, 85, 31), color(16, 92, 38), color(39, 92, 54)],//vivid rust
+            [color(20, 6, 9), color(358, 68, 16), color(351, 25, 30), color(335, 19, 43), color(284, 16, 66)],//romance
+            [color(0, 0, 0), color(229, 13, 24), color(250, 6, 43), color(180, 9, 55), color(79, 10, 68)],//muted forrest
+            [color(225, 59, 11), color(225, 40, 18), color(213, 30, 32), color(179, 44, 55), color(171, 100, 72)],//aqua
+          ])
+        }
+
+        const numBlocks = {
+          50: 7,
+          100: 5,
+          200: 3
+        }
+
+        const patterns = {
+          DIAG: "diag",
+          BLOCKS: "blocks",
+          BARS_HOR: "bars-horizontal",
+          BARS_VERT: "bars-vertical",
+          DOTS: "dots",
+          BLACK: "black",
+          WHITE: "white",
+          BORDER_WHITE: "border-white",
+          BORDER_BLACK: "border-black",
+          X_BLACK: "x-black",
+          X_WHITE: "x-white",
+        }
+
+        const pause = async (ms = 250) => new Promise(resolve => setTimeout(resolve, ms))
+
+        const floorToBucket = (num, bucketSize) => {
+          return bucketSize * floor(num / bucketSize)
+        }
+
+        function seedRandom(s) {
+          let x = Math.sin(s) * 10000;
+          return x - Math.floor(x);
+        }
+
+        function initCanvas() {
+          blockSize = random(blockSizes)
+          patternSet = Object.values(patterns).sort((a, b) => random() < 0.5 ? -1 : 1).slice(0, 3)
+
+          const dubBS = blockSize * 2
+          let cw = floorToBucket(window.innerWidth * 0.95, dubBS)
+          let ch = floorToBucket(window.innerHeight * 0.95, dubBS)
+
+          cw = max(cw, dubBS)
+          ch = max(ch, dubBS)
+
+          fbHeight = ch
+          fbWidth = cw
+
+          brushColIndex = 0
+          newPaletteChance = 0;
+
+          if (canvas) {
+            resizeCanvas(cw, ch);
+          } else {
+            canvas = createCanvas(cw, ch);
+          }
+        }
+
+        function setup() {
+
+          colorMode(HSL)
+
+          palette = getPalette()
+
+          initCanvas()
+
+          initBlocks()
+        }
+
+        function draw() {
+          blockBrushes.forEach(block => {
+            block.draw();
+            block.move();
+            if (frameCount % 200 === 0) {
+              if (!block.inSpace || block.lifeSpan < 0) block.reset()
+              block.flowField.shiftField()
+            }
+          })
+
+          for (let i = lifes.length - 1; i >= 0; i--) {
+            const life = lifes[i]
+            life.checkDeath()
+            if (life.isDead) {
+              lifes.splice(i, 1)
+              continue;
+            }
+            life.show()
+            life.move()
+            if (random() < 0.09) {
+              life.birth()
+            }
+          }
+
+
+          if (frameCount % 300 === 0 && random() < 0.66) {
+            initLifes()
+          }
+          drawBorder()
+
+
+        }
+
+
+        function drawBorder() {
+          strokeWeight(speed * 2)
+          stroke(palette?.[floor(palette.length / 2)] || color(0, 0, 100))
+          line(0, 0, width - 0, 0)
+          line(width - 0, 0, width - 0, height - 0)
+          line(width - 0, height - 0, 0, height - 0)
+          line(0, height - 0, 0, 0)
+        }
+
+
+        function initBlocks() {
+
+          background(0, 0, 0);
+
+          blockSize = random(blockSizes)
+          patternSet = Object.values(patterns).sort((a, b) => random() < 0.5 ? -1 : 1).slice(0, 3)
+
+          initFlowFields()
+
+          palette = getPalette()
+          blockBrushes = []
+          const dim = max(width, height)
+
+          const dubBS = blockSize * 2
+
+          const baseNumBlocks = numBlocks[blockSize]
+          const numBlock = ceil(random(baseNumBlocks / 2, baseNumBlocks))
+          const baseMult = max(floorToBucket(dim / numBlock, dubBS), dubBS);
+
+          const multY = baseMult * (dim === height ? 2 : 1);
+          const multX = baseMult * (dim === width ? 2 : 1);
+
+          const h = height - blockSize
+          const w = width - blockSize
+          for (let sy = 0; sy < h; sy += multY) {
+            for (let sx = 0; sx < w; sx += multX) {
+              blockBrushes.push(
+                new BlockBrush(sx, sy, blockSize, 5, blockBrushes.length + 1)
+              )
+            }
+          }
+
+          lifes = []
+          initLifes()
+
+        }
+
+
+
+        function initLifes(xs, ys) {
+          const notClicked = !xs && !ys
+
+          if (notClicked) {
+            if (random() < newPaletteChance) {
+              palette = getPalette()
+              newPaletteChance = 0
+
+              blockBrushes.forEach(block => {
+                block.randomizePattern()
+              })
+            } else {
+              newPaletteChance += 0.075
+            }
+          }
+
+          let x = floorToBucket(xs || random(width), speed)
+          let y = floorToBucket(ys || random(height), speed)
+
+          occupied = blockBrushes.find(block => {
+            const blockX1 = block.position.x
+            const blockY1 = block.position.y
+            const blockX2 = blockX1 + block.size
+            const blockY2 = blockY1 + block.size
+
+            const xIntersect = x >= blockX1 && x <= blockX2 || x + this.speed >= blockX1 && x + this.speed <= blockX2
+            const yIntersect = y >= blockY1 && y <= blockY2 || y + this.speed >= blockY1 && y + this.speed <= blockY2
+            return xIntersect && yIntersect
+          })
+          if (occupied) return
+
+          for (let i = 0; i < 4; i++) {
+            direction = map(i, 0, 4, 0, TWO_PI)
+            const index = floor(random(palette.length - 1))
+            lifes.push(new Life(x, y, direction, speed, palette, index))
+          }
+        }
+
+        const initFlowFields = () => {
+          flowFields = []
+          const numFields = 3
+          for (let i = 0; i < numFields; i++) {
+            const flowField = new FlowField(blockSize, random(1000))
+            flowFields.push(flowField)
+          }
+        }
+        class Life {
+          constructor(x, y, direction, speed, palette, paletteIndex, lifeSpan = null, lifeOrigin = null) {
+            this.pos = createVector(x, y)
+            this.direction = floorToBucket(direction, PI / 2)
+            this.speed = speed
+            this.palette = palette
+            this.paletteIndex = paletteIndex
+            this.isDead = false
+            this.lifeSpan = lifeSpan ?? min(width, height) / speed * random(0.25, 1)
+
+            this.lifeOrigin = lifeOrigin || createVector(x, y)
+          }
+
+          show() {
+            noStroke()
+            fill(this.palette[this.paletteIndex])
+            square(this.pos.x, this.pos.y, this.speed)
+          }
+
+          move() {
+            const newX = this.pos.x + cos(this.direction) * this.speed
+            const newY = this.pos.y + sin(this.direction) * this.speed
+            this.pos = createVector(newX, newY)
+            this.lifeSpan--
+          }
+          birth() {
+            const isGridAligned = this.pos.x % this.speed === 0 && this.pos.y % this.speed === 0
+            if (!isGridAligned) return
+
+            let newDirection = this.direction + random([-PI / 2, PI / 2])
+
+            const newIndex = random() < 0.6
+              ? this.paletteIndex
+              : constrain(this.paletteIndex + random([-1, 1]), 0, this.palette.length - 1);
+
+            const lifeSpan = this.lifeSpan * random(0.25, 1.1)
+            lifes.push(new Life(this.pos.x, this.pos.y, newDirection, this.speed, this.palette, newIndex, lifeSpan, this.lifeOrigin));
+          }
+          checkDeath() {
+            //if off screen, die
+            if (this.lifeSpan <= 0) {
+              return this.isDead = true
+            }
+            if (this.pos.x < 0 || this.pos.x > width || this.pos.y < 0 || this.pos.y > height) {
+              return this.isDead = true
+            }
+          }
+        }
+        class FlowField {
+          constructor(blockSize, offSet) {
+            this.blockSize = blockSize
+            this.angles = []
+            this.offSet = offSet
+            this.offSetShift = 0.1
+            this.ratio = 0.001;
+
+
+            this.buildField()
+          }
+
+          buildField() {
+            this.angles = []
+            const yMax = height / this.blockSize
+            const xMax = width / this.blockSize
+            for (let yInd = 0; yInd < yMax; yInd++) {
+              this.angles.push([])
+              for (let xInd = 0; xInd < xMax; xInd++) {
+                const x = xInd * this.blockSize
+                const y = yInd * this.blockSize
+                const angle = this.getFlowAngleValue(x, y, this.offSet, this.ratio)
+                this.angles[yInd][xInd] = angle
+              }
+            }
+          }
+
+          shiftField() {
+            this.offSet += this.offSetShift
+            this.buildField()
+          }
+
+          getFlowAngleValue(x, y, offSet, ratio) {
+            const fullOffset = offSet + (frameCount * ratio / 2)
+            const normAN = noise(x * ratio + fullOffset, y * ratio + fullOffset)
+            const angle = floor(map(normAN, 0, 1, 0, 8)) * PI / 2
+            return angle
+          }
+
+          getAngle(x, y) {
+            const cx = constrain(x, 0, width)
+            const cy = constrain(y, 0, height)
+            let xInd = floor(cx / this.blockSize)
+            let yInd = floor(cy / this.blockSize)
+            return this.angles?.[yInd]?.[xInd] || 0;
+          }
+
+          draw() {
+            this.angles.forEach((row, yInd) => {
+              row.forEach((angle, xInd) => {
+                if (angle === null) return;
+                const len = this.blockSize / 2
+                const x1 = (xInd * this.blockSize) + len / 2
+                const y1 = (yInd * this.blockSize) + len / 2
+                fill(0, 0, 100)
+                circle(x1, y1, len)
+
+                const x2 = x1 + cos(angle) * len
+                const y2 = y1 + sin(angle) * len
+                stroke(0, 0, 0)
+
+                line(x1, y1, x2, y2)
+              })
+            })
+          }
+        }
+
+
+        class BlockBrush {
+          constructor(x, y, size, space, id = random(1000)) {
+            this.position = createVector(x, y)
+            this.size = size
+            this.space = space
+            this.pattern = []
+            this.moveSpeed = space
+            this.shiftRatio = 0.01
+            this.prevAngle = null
+            this.id = id
+            this.flowField = flowFields[floor(id % flowFields.length)]
+            this.lifeSpan = maxBlockLifeSpan
+
+
+            this.patternType = random(Object.values(patternSet))
+
+            let yInd = 0
+            for (let py = y; py < y + size; py += space) {
+              this.pattern.push([])
+              let xInd = 0
+              for (let px = x; px < x + size; px += space) {
+                this.pattern[yInd].push(this.getRandColor(xInd, yInd, size / space))
+                xInd++
+              }
+              yInd++
+            }
+            brushColIndex = (brushColIndex + 1) % 2
+          }
+
+          getRandColor(x, y, length = this.pattern.length) {
+            const blockColors = [color(0, 0, 0), color(0, 0, 100)]
+
+            switch (this.patternType) {
+              case patterns.RANDOM: return random(blockColors);
+              case patterns.DIAG: {
+                const diag = x + y
+                if (diag < length) return blockColors[0]
+                else return blockColors[1]
+              }
+              case patterns.CROSS: {
+                const diag1 = x + y
+                const diag2 = x - y
+                if (diag2 <= 0 && diag1 <= length || (diag2 > 0 && diag1 > length)) return blockColors[0]
+                else return blockColors[1]
+              }
+              case patterns.BLOCKS: {
+                const barSize = floor(length / 4)
+                const xBar = floor(x / barSize)
+                const yBar = floor(y / barSize)
+                const barIndex = xBar + yBar
+                return blockColors[barIndex % 2]
+              }
+              case patterns.PALETTE: {
+                const nScale = 0.05
+                const pIndex = floor(map(noise(x * nScale, y * nScale), 0, 1, 0, palette.length))
+                return palette[pIndex]
+              }
+              case patterns.BARS_HOR: {
+                if (x % 2 === 0) return blockColors[1]
+                return blockColors[0]
+              }
+              case patterns.BARS_VERT: {
+                if (y % 2 === 0) return blockColors[1]
+                return blockColors[0]
+              }
+              case patterns.DOTS: {
+                if (y % 2 === 0 && x % 2 === 0) return blockColors[1]
+                return blockColors[0]
+              }
+              case patterns.BLACK: {
+                const threshold = this.size / 20
+                const delta = dist(x, y, length / 2, length / 2)
+
+                if (delta < threshold) return blockColors[1]
+                return blockColors[0]
+              }
+              case patterns.WHITE: {
+                const threshold = this.size / 20
+                const delta = dist(x, y, length / 2, length / 2)
+
+                if (delta < threshold) return blockColors[0]
+                return blockColors[1]
+              }
+              case patterns.BORDER_BLACK: {
+                const threshold = this.size / 40
+                const isBorder = x < threshold || y < threshold || x > length - threshold - 1 || y > length - threshold - 1
+                if (isBorder) return blockColors[0]
+                return blockColors[1]
+              }
+              case patterns.BORDER_WHITE: {
+                const threshold = this.size / 40
+                const isBorder = x < threshold || y < threshold || x > length - threshold - 1 || y > length - threshold - 1
+                if (isBorder) return blockColors[1]
+                return blockColors[0]
+              }
+              case patterns.X_BLACK: {
+                const threshold = this.size / 40
+                const isX = abs(x - y) < threshold || abs(length - 1 - (x + y)) < threshold
+                if (isX) return blockColors[0]
+                return blockColors[1]
+              }
+              case patterns.X_WHITE: {
+                const threshold = this.size / 40
+                const isX = abs(x - y) < threshold || abs(length - 1 - (x + y)) < threshold
+                if (isX) return blockColors[1]
+                return blockColors[0]
+              }
+            }
+          }
+
+          checkPosition(x1, y1, x2, y2) {
+            const occupied = blockBrushes.find(block => {
+              if (this.id === block.id) return false
+
+              const blockX1 = block.position.x
+              const blockY1 = block.position.y
+              const blockX2 = blockX1 + block.size
+              const blockY2 = blockY1 + block.size
+
+              const xIntersect = x1 >= blockX1 && x1 <= blockX2 || x2 >= blockX1 && x2 <= blockX2
+              const yIntersect = y1 >= blockY1 && y1 <= blockY2 || y2 >= blockY1 && y2 <= blockY2
+              return xIntersect && yIntersect
+            })
+            return Boolean(occupied)
+          }
+
+
+          move() {
+            this.lifeSpan--;
+            let angle;
+
+            const isGridAligned = this.position.x % this.size === 0 && this.position.y % this.size === 0
+            const inSpaceFull = this.position.x >= 0 && this.position.x <= width - this.size && this.position.y >= 0 && this.position.y <= height - this.size
+            this.inSpace = this.position.x > -this.size && this.position.x < width && this.position.y > -this.size && this.position.y < height
+            if (isGridAligned && inSpaceFull) {
+
+              const useLifeAngle = lifes.length && this.id % 3 !== 0; //only 2/3 of blocks use life angle
+              if (useLifeAngle) {
+                const lifeIndex = this.id % lifes.length
+                const ranLifePos = lifes[lifeIndex].pos
+                angle = floorToBucket(atan2(ranLifePos.y - this.position.y, ranLifePos.x - this.position.x), PI / 2);
+                this.shiftPattern()
+              } else {
+                angle = this.flowField.getAngle(this.position.x, this.position.y)
+              }
+
+              this.prevAngle = angle
+            } else {
+              angle = this.prevAngle
+            }
+
+            if (angle === null) {
+              this.shiftPattern()
+              return
+            }
+
+            let newX = this.position.x + cos(angle) * this.moveSpeed
+            let newY = this.position.y + sin(angle) * this.moveSpeed
+
+            const dfSize = this.size * 0.99
+
+            const centerX = this.position.x + this.size / 2
+            const centerY = this.position.y + this.size / 2
+
+            const dfXCenter = centerX + cos(angle) * (this.size + dfSize) * 0.5
+            const dfYCenter = centerY + sin(angle) * (this.size + dfSize) * 0.5
+
+            const dfX1 = dfXCenter - dfSize / 2
+            const dfY1 = dfYCenter - dfSize / 2
+            const dfX2 = dfXCenter + dfSize / 2
+            const dfY2 = dfYCenter + dfSize / 2
+
+            if (isGridAligned) {
+              const posOccupied = this.checkPosition(dfX1, dfY1, dfX2, dfY2)
+              if (posOccupied) {
+                this.shiftPattern();
+                return
+              }
+            }
+
+            if (newX < -this.size) newX = width;
+            if (newX > width) newX = -this.size;
+            if (newY < -this.size) newY = height;
+            if (newY > height) newY = -this.size;
+
+            newX = round(newX)
+            newY = round(newY)
+
+            this.position = createVector(newX, newY)
+            this.lifeSpan = maxBlockLifeSpan
+          }
+
+          shiftPattern() {
+            if (random() < 0.5) return
+            const handleShift = (xInd, yInd) => {
+              const ratio = this.shiftRatio
+              const xInput = xInd * ratio + (this.id * 10)
+              const yInput = yInd * ratio + (this.id * 10)
+              const yN = noise(xInput, yInput, frameCount * ratio)
+              const xN = noise(xInput + 100, yInput + 100, frameCount * ratio + 100)
+
+              let newYInd = yInd + round(map(yN, 0, 1, -1, 1))
+              let newXInd = xInd + round(map(xN, 0, 1, -1, 1))
+
+              if (newYInd < 0) newYInd = this.pattern.length - 1
+              if (newYInd >= this.pattern.length) newYInd = 0
+
+              if (newXInd < 0) newXInd = this.pattern[0].length - 1
+              if (newXInd >= this.pattern[0].length) newXInd = 0
+
+              const prev = this.pattern[yInd][xInd]
+              this.pattern[yInd][xInd] = this.pattern[newYInd][newXInd]
+              this.pattern[newYInd][newXInd] = prev
+            }
+
+            if (frameCount % 200 < 100) {
+              for (let yInd = 0; yInd < this.pattern.length; yInd++) {
+                for (let xInd = 0; xInd < this.pattern[0].length; xInd++) {
+                  handleShift(xInd, yInd)
+                }
+              }
+            } else {
+              for (let yInd = this.pattern.length - 1; yInd >= 0; yInd--) {
+                for (let xInd = this.pattern[0].length - 1; xInd >= 0; xInd--) {
+                  handleShift(xInd, yInd)
+                }
+              }
+            }
+          }
+
+          reset() {
+            const spaceCount = floor(width / this.size)
+            let posOccupied = true
+            let x, y
+            let tries = 0
+            while (posOccupied && tries < 10) {
+              tries++
+              const rand = this.size * floor(random(spaceCount))
+
+              switch (this.prevAngle) {
+                case 0: {
+                  x = -this.size
+                  y = rand
+                  break;
+                }
+                case PI / 2: {
+                  x = rand
+                  y = -this.size
+                  break;
+                }
+                case PI: {
+                  x = width
+                  y = rand
+                  break
+                }
+                case PI * 1.5: {
+                  x = rand
+                  y = height
+                  break
+                }
+              }
+              const x2 = x + this.size
+              const y2 = y + this.size
+              posOccupied = this.checkPosition(x, y, x2, y2)
+            }
+            this.position = createVector(x, y)
+            this.randomizePattern()
+          }
+
+          randomizePattern() {
+            for (let yInd = 0; yInd < this.pattern.length; yInd++) {
+              for (let xInd = 0; xInd < this.pattern[0].length; xInd++) {
+                this.pattern[yInd][xInd] = this.getRandColor(xInd, yInd)
+              }
+            }
+          }
+
+          draw() {
+            noStroke()
+            for (let yInd = 0; yInd < this.pattern.length; yInd++) {
+              const y = this.position.y + (this.space * yInd)
+              for (let xInd = 0; xInd < this.pattern[0].length; xInd++) {
+                const x = this.position.x + (this.space * xInd)
+                const col = this.pattern[yInd][xInd]
+
+                fill(col)
+                square(x, y, this.space)
+              }
+            }
+
+          }
+        }
+
+
+        function keyPressed() {
+          if (key == "n") {
+            initCanvas()
+
+            initBlocks()
+
+          }
+        }
+
+
+        //TOUCH FUNCTIONS
+        let touchStartPos = null;
+        let touchEndPos = null;
+        const minSwipeDistance = (window.innerHeight / 2) || 500;
+
+        function touchStarted(e) {
+          //handle swipe
+          touchStartPos = createVector(mouseX, mouseY);
+          return false
+        }
+        function mousePressed(e) {
+          touchStarted(e)
+        }
+
+        function touchEnded(e) {
+          if (touchStartPos) { //handle swipe
+            touchEndPos = createVector(mouseX, mouseY);
+
+            const swipeVector = p5.Vector.sub(touchEndPos, touchStartPos);
+            const swipeDistance = swipeVector.mag();
+            if (swipeDistance >= minSwipeDistance) {
+              initCanvas()
+
+              initBlocks()
+
+            } else {
+              initLifes(mouseX, mouseY)
+            }
+          }
+          //reset touch variables
+          touchStartPos = null;
+          touchEndPos = null;
+          return false;
+        }
+        function mouseReleased(e) {
+          touchEnded(e)
+        }
+
+
+
+        function debouncedResize() {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            initCanvas();
+
+            initBlocks()
+          }, 500); // Adjust the delay (in milliseconds) as needed
+        }
+        function windowResized() {
+          debouncedResize()
+        }
+      
+
+    </script>
+  </body>
+
+</html>

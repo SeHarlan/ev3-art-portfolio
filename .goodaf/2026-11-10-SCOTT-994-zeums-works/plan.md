@@ -135,6 +135,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - 2026-11-10 plan check: 6 must-fix fixed, 4 notes adopted, 0 dismissed
 - 2026-11-10 user approved `yarn install --frozen-lockfile` in this worktree
 - 2026-11-10 step 1: vercel link + env pull (`.vercel/`, `.env.local` both ignored); `yarn install --frozen-lockfile` exit 0
+- 2026-11-10 step 5: vendored `public/pieces/progress` (arweave original, p5 src → `./p5.min.js` = cdnjs p5 1.7.0 min) and `public/pieces/remember` (engine from "Nineteen and tripping", `rememberTitle` = empty template string, p5 1.11.9 from Tezos token 0's folder). 21-file engine diff (rememberTitle literal, p5 script tags and the Tezos `<!-- p5 -->` comment stripped, whitespace-free): 20 equal, "Stuck at an Italian winery" differs only by a missing `;` after `initPreview = false`. `grep -noE 'https?://' public/pieces/*/index.html` prints nothing (exit 1); check 4 command part passes
 
 ## Decisions
 
