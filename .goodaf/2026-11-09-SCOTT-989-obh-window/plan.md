@@ -73,7 +73,7 @@ Base: 1905739
 ## Follow-up 4
 
 Base: 5aaa5fb
-- B11: B8's "Loading..." drawn smaller (16px, W95FA's native size) in the engine UI's green `#00ff80`, in each page's `<head>` rule; B8's test updated to pin both
+- B11: B8's "Loading..." drawn smaller (16px, W95FA's native size) in the engine UI's green `#00ff80`, in each page's `<head>` rule; a new B11 test pins both (B8's test unchanged)
 
 ## Progress
 
@@ -98,6 +98,7 @@ Base: 5aaa5fb
 - 2026-11-10 follow-up 3 B10: `public/images/thumbs/obh-{a..e}.jpg` remade from the Blob thumbnail PNGs with `sips -Z 96` (JPEG quality 85, 3–4KB): 54×96, C 96×54; `WorkSelector` centers each thumb at its own size in the 96×96 icon box (`max-w-[96px] max-h-[96px]`, no forced `w-24 h-24`), with the selection dither on the image's box; repro tests `components/windows/obh.test.tsx` "B10: the selector thumbs keep their pieces' aspect…" failed on the deep-equal (`w: 96` for `w: 54`) and `components/WorkSelector.test.tsx` "B10 (SCOTT-989): a thumb shows at its own shape…" failed on `the img isn't forced to 96×96` before, both pass after; browser: OBH selector imgs 54×96 (C 96×54) in 96×96 boxes, C selected dithers 96×54; 3xGP and R3MIX thumbs still 96×96; `yarn test` 13/13, `npx tsc --noEmit` exit 0
 - 2026-11-10 follow-up 3 review: general reviewer on 1905739..15503a5, 0 findings; all checks rerun on 15503a5: 1, 2, 3 pass in the browser, `yarn test` 13/13, `npx tsc --noEmit` exit 0, `yarn build` exit 0
 - 2026-11-10 follow-up 4 B11: B8's Loading rule in each page's `<head>` now `color: #00ff80` (the engine UI's green, menu.css) and `font-size: 16px` (W95FA's native size, crisp); word diff shows only those two values per page; repro test `components/windows/obhPages.test.tsx` "B11: each OBH page's Loading... is 16px…" failed on `a: Loading... in the engine UI's green` before, passes after; browser (B, with a `#fallback` put back): the `::after` computes `"Loading..."`, rgb(0, 255, 128), 16px, W95FA loaded, drawn small and green at the center; checks 2 (grep) pass, `yarn test` 14/14, `npx tsc --noEmit` exit 0
+- 2026-11-10 follow-up 4 review: general reviewer on 5aaa5fb..3034a08, 0 findings; checks rerun on 3034a08: 1 (Sk3tch key part not rerun), 2, 3 pass in the browser, `yarn test` 14/14, `npx tsc --noEmit` exit 0, `yarn build` exit 0
 
 ## Decisions
 
@@ -122,6 +123,7 @@ Base: 5aaa5fb
 - Normal: follow-up 3 B8's font is a copy of `styles/fonts/w95fa-ui.woff2` (7KB) at `public/obh/w95fa.woff2`: Next serves the original under a hashed path the iframe page can't name. Size 32px, white, a hard 1s on/off blink. Reverse: move the font to `public/` and point `globals.css` at it, or change the `::after` rule.
 - Normal: follow-up 3 B9 draws the System button disabled rather than hiding it (hiding would shift Tools to the bar's edge), and adds nothing for `Q`, which already does nothing here; the help listing in the Tools drawer still names System (engine bytes). Reverse: delete the `#tt-btn-system` rule in each page.
 - Normal: follow-up 3 B10 thumbs fit the long side to 96px at 1x, like the existing ones, and the selection dither covers only the image, as Win95's does, not the empty bands of the 96×96 box; the box stays 96×96 so the grid doesn't shift. `max-w-[96px]` because Tailwind 3.3 has no `max-w-24`. Reverse: restore the 96×96 crops and the `w-24 h-24` img in `WorkSelector`.
+- Normal: follow-up 4 B11 reads "smaller" as 16px, W95FA's native pixel size (crisp; anything between 16 and 32 blurs the pixel font), and "OBH engine UI green" as `#00ff80`, the engine's solid UI green (the action bar labels use it at 60% alpha). Reverse: change `color`/`font-size` in each page's Loading rule and the B11 test.
 
 ## Parked asks
 

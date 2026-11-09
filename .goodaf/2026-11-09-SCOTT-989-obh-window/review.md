@@ -1,10 +1,10 @@
 # Review: SCOTT-989 on being human window: live pieces with selector
 
 Tier: Standard (visual)
-Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final 15503a5 (follow-up 3)
-Panel: general; no Codex pass: visual or device diff (follow-ups 1, 2 and 3: same)
+Reviewed: 2026-11-09 · main at 27fdb51 · reviewed 8756021 · final 3034a08 (follow-up 4)
+Panel: general; no Codex pass: visual or device diff (follow-ups 1–4: same)
 Oracle check: no oracles
-Rounds: 0 (no admitted findings); follow-up 2: 1 (F3 fixed; the re-review found it fixed and nothing new); follow-up 3: 0 (no findings)
+Rounds: 0 (no admitted findings); follow-up 2: 1 (F3 fixed; the re-review found it fixed and nothing new); follow-up 3: 0 (no findings); follow-up 4: 0 (no findings)
 Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 
 ## Acceptance checks
@@ -16,6 +16,7 @@ Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 - Follow-up 1 rerun (2aa1e37): 1 pass — opened from the Start menu, selector of five, piece C runs in the window (canvas 1920x1080, fallback removed); 2 pass — the grep lists one `jsonUri` id per file, and each page's Resource Timing (A–E) lists exactly `<letter>-imagein` and `<letter>-thumb.png`, once each, both `initiatorType: link`, from the Blob host, no gateway.irys.xyz request, no preload console warning; 3 not rerun (menu code unchanged since 8756021); full check pass — `yarn test` → 2 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 - Follow-up 2 rerun (ecd3809): 1 pass — opened from the desktop icon (the new person icon), selector of five titled "A: there must be something" … "E: something was found"; switching pieces through Choose piece 12 times (C four times) and C three times with the window maximized, every piece removed its still and ran, no console error; 2 pass — the grep lists one `jsonUri` id per file; each page's Resource Timing lists `<letter>-thumb.png` (link) and `<letter>-imagein` (fetch, twice: the `<head>` fetch and the engine's, which reuses it), all from the Blob host, no gateway.irys.xyz request; 3 pass, as changed by B5 — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` from the selector, before any piece was opened (captured with a stub); the URL returns 200 to `curl -sL`; Choose piece returned to the selector with D selected; About showed the new copy, inset, with 16px padding, and Go back returned to the piece (or the selector with none open); full check pass — `yarn test` → 9 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 - Follow-up 3 rerun (15503a5): 1 pass — opened from the desktop icon; the selector shows the five thumbs at their own shape (A, B, D, E 54×96, C 96×54) in 96×96 boxes; opening A, B, C, D, E, then C again through Choose piece, each iframe removed its still and ran (A, B, D, E canvas 1080x1920, C 1920x1080), none marked failed; C's canvas pixels changed over 1.5s; with Sk3tch open, `s` and `f` pressed in Sk3tch reached only the page (iframe log empty), and pressed in the piece reached only the iframe (page log unchanged); 2 pass — the grep lists one `jsonUri` id per file; each page's Resource Timing lists `<letter>-thumb.png` (link) and `<letter>-imagein` (fetch) from the Blob host, no gateway.irys.xyz request; 3 pass — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` (captured with a stub), which returns 200 to `curl -sL`; Choose piece returned to the selector with C selected; About showed the copy and Go back returned to the piece; full check pass — `yarn test` → 13 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
+- Follow-up 4 rerun (3034a08): 1 pass — opened from the Start menu, selector of five; piece C ran (canvas 1920x1080, pixels changed over 1.5s, still removed, not marked failed); the Sk3tch key part not rerun (B11 changed only the pages' Loading CSS); 2 pass — the grep lists one `jsonUri` id per file; C's iframe requested only `c-thumb.png` and `c-imagein` from the Blob host, no gateway.irys.xyz request; 3 pass — Purchase called `window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")` (captured with a stub); About showed the copy and Go back returned to the piece; Choose piece returned to the selector with C selected; full check pass — `yarn test` → 14 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0
 
 ## Asks
 
@@ -32,12 +33,11 @@ Counts: 1 fixed, 1 ask, 2 tracked, 0 dropped
 ## Worth checking by hand
 
 Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window · dev server: http://localhost:3089
-- Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → a black piece with "Loading..." blinking in the center in the pixel font, no chunked still, until the piece starts moving
-- On a running piece, look at the action bar → the ☰ System button on the left is dimmed and does nothing when clicked; `Q` does nothing either
-- Open the selectors of 3xGP and R3MIX as well as OBH → OBH's thumbs are tall (C wide), centered in their icon space; 3xGP's and R3MIX's square thumbs look as before
+- Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "Loading..." blinks in the center at half its old size, in the action bar's green, until the piece starts moving
 
 ## Findings
 
+- Follow-up 4: no findings (general reviewer, 5aaa5fb..3034a08).
 - Follow-up 3: no findings (general reviewer, 1905739..15503a5).
 - Follow-up 1: no findings (general reviewer, e599830..2aa1e37).
 - F2. [tracked T2] components/windows/obh.test.tsx:28-33 The B5 test checks only the exported constant, so deleting or rewiring the menu's Purchase item would still pass. Found by: general (follow-up 2). Verifier: track — accurate, but nothing is wrong today, the test failed before B5, and the menu wiring is covered by check 3's browser run; closing it needs the window rendered in the test build.
@@ -80,9 +80,11 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   Done: 2026-11-10, 15503a5, repro "B10: the selector thumbs keep their pieces' aspect, 54×96 portrait and C 96×54 landscape" (failed on the deep-equal, `w: 96` for `w: 54`) and "B10 (SCOTT-989): a thumb shows at its own shape, centered in the 96×96 icon box, not stretched square" (failed on `the img isn't forced to 96×96`). The selection dither covers only the image.
 - B11. 2026-11-10 "make the loading text smaller and in the OBH engine UI green color"
   Reference: B8's "Loading..." is the `#art:has(#fallback)::after` rule in each `public/obh/<letter>.html` `<head>` (white, 32px); W95FA's native pixel size is 16px, so smaller keeps it crisp at 16px. The engine's UI green is `#00ff80` (menu.css; the action bar labels use `#00ff8099`, 60% alpha). Update B8's test in `components/windows/obhPages.test.tsx` to match.
+  Done: 2026-11-10, 3034a08, repro "B11: each OBH page's Loading... is 16px, W95FA's native size, in the engine UI's green #00ff80" (failed on `a: Loading... in the engine UI's green` before the fix). B8's test is unchanged; the new test pins the color and size.
 
 ## Follow-ups
 
 - 2026-11-10 follow-up 1: base e599830, head 2aa1e37; did B1; review: general, no Codex pass: visual or device diff, 0 fixed, 1 new ask (A1), 0 tracked, 0 dropped
 - 2026-11-10 follow-up 2: base fb0c58e, head ecd3809; did B2, B3, B4, B5, B6, B7; review: general, no Codex pass: visual or device diff, 1 fixed (F3), 0 new asks, 1 tracked (T2), 0 dropped
 - 2026-11-10 follow-up 3: base 1905739, head 15503a5; did B8, B9, B10; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 0 tracked, 0 dropped
+- 2026-11-10 follow-up 4: base 5aaa5fb, head 3034a08; did B11; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 0 tracked, 0 dropped
