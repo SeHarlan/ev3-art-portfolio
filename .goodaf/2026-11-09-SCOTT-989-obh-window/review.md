@@ -41,6 +41,20 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 - B1. 2026-11-09 "I want to change the image download priority, so that the thumbnail image only loads if the engine fails and the image buffers used in the engine get priority download. Look at Sk3tch baked nfts for an example of how I want it done"
   Reference: `~/Scottys art/sk3tch/server/src/vendor/bake/index.js:763-800` (`buildSketchBakedHtml`): `<link rel="preload" as="fetch" crossorigin>` for each engine buffer in `<head>`, and the fallback `<img id="fallback" fetchpriority="low">`. Note: Sk3tch still loads its fallback at low priority rather than only on failure; the user's words ask for only-on-failure. Check whether the OBH engine reads `<letter>-thumb.png` itself as a base frame before deferring it.
   Done: 2026-11-10, 2aa1e37, repro "B1: each OBH page's <head> preloads its engine buffers, the imagein as fetch and the thumb as image, both crossorigin" (failed on `a: preload for its imageInUrl in <head>` before the fix). The thumbnail is the engine's base frame, so it can't wait for a failure; see A1.
+- B2. 2026-11-10 "when I first loaded a piece it took loaded the image in chunks and took a while to load the code, but worse is that when I went to choose another piece it loaded the thumbnail but never loaded the code. After refreshing the code loads right away for all of them except for C when I had the window expanded, when its a small window it loads."
+  Reference: reported after follow-up 1 (2aa1e37) added the `<head>` preloads; check whether they're involved before anything else. C is the only landscape piece (1920x1080), so "fails only when the window is expanded" points at canvas or WebGL size or context limits; a second piece opened after the first points at the old iframe's engine or WebGL context not being released when `key={id}` swaps the iframe.
+- B3. 2026-11-10 "I want an simple person/user icon as the icon for OBH."
+- B4. 2026-11-10 "the titles should include the letter like this "A: there must be something""
+- B5. 2026-11-10 "the purchase link should always go to the manifold collection page, not opensea"
+  Reference: contract `0x4759A45c80eB04571902df74200F0D8d6c83F070` (Manifold Creator ERC-721); "always" means the same collection URL whichever piece is open, and replaces the Normal decision on the OpenSea per-token page.
+- B6. 2026-11-10 "make the about page inset"
+- B7. 2026-11-10 "for the about copy. replace the current text with the following:" "A series of personal photographs glitched to enshrine the emotions and moments they hold.
+
+  A: there must be something
+  B: there is nothing else
+  C: was it all a dream
+  D: the abyss gazes back
+  E: something was found"
 
 ## Follow-ups
 
