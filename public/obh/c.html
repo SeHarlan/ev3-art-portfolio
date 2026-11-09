@@ -74,6 +74,28 @@
     object-fit: contain;
   }
 </style>
+<style>
+  /* Portfolio: hide the still (it loads in chunks) behind a flashing Loading... until the
+     engine's first frame removes it; show it again only if the engine fails to start. */
+  @font-face { font-family: 'W95FA'; src: url('/obh/w95fa.woff2') format('woff2'); font-display: block; }
+  #fallback { visibility: hidden; }
+  html.obh-failed #fallback { visibility: visible; }
+  #art:has(#fallback)::after { content: "Loading..."; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: #fff; font-family: 'W95FA'; font-size: 32px; -webkit-font-smoothing: none; animation: obh-loading 1s steps(1, end) infinite; }
+  html.obh-failed #art:has(#fallback)::after { content: none; }
+  @keyframes obh-loading { 50% { opacity: 0; } }
+</style>
+<script>
+  // The engine only logs its failures; mark the page so the still shows instead of Loading...
+  (() => {
+    const error = console.error;
+    console.error = (...args) => {
+      if (typeof args[0] === "string" && (args[0].startsWith("[epoch-one] loadNft failed") || args[0].startsWith("[epoch-one] mount threw"))) {
+        document.documentElement.classList.add("obh-failed");
+      }
+      error.apply(console, args);
+    };
+  })();
+</script>
 </head>
 <body>
 <div id="root" class="ev3-epoch-one-root">
