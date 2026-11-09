@@ -64,7 +64,14 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
    - Each item's `src` is its Blob URL or its `/pieces/...` path. Each remember item's `seed` is its baked `rememberTitle` text, trimmed. Titles use the zeums/mallow titles.
    - About text is 1–3 sentences condensed from the zeums description. CEASEFIRE names Celestial Body; 3xGP-style credit lines stay out.
 
-   Files: `data/zeums.ts`. Checks: —
+   - Check 3 commands, for acceptance check 3 (no pipes inside the table):
+     - `grep -o 'https://k4xw43ajr4eh6re3\.public\.blob\.vercel-storage\.com/[^"]*' data/zeums.ts | sort -u | wc -l`. The store's host is its ID, lowercased, without `store_`. Confirm it against the first upload's returned URL, and fix this command if it differs.
+     - `grep -o 'vercel-storage\.com/[^"]*' data/zeums.ts | sort -u | wc -l`
+     - `grep -c -e arweave -e ipfs -e zeums.art -e p1v6uvkvzbjkuo1l data/zeums.ts`
+     - `vercel api "/v1/storage/stores/store_K4XW43AjR4eh6RE3?teamId=team_Q7InePSJS7UvqsW4MfS3iwMQ"`
+   - Write `check-seeds.mjs` in the scratchpad for acceptance check 9.
+
+   Files: `data/zeums.ts`. Checks: 3, 9
 7. **MediaWindow.**
    - Props: one window's data. Galleries (more than one item) open on `WorkSelector`, and singles open on their work.
    - Views are `"selector" | "work" | "about"`. Menu: Refresh (remount the current work by key), About, and "Choose <title>" on galleries only.
@@ -72,7 +79,6 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
    - Videos: `<video controls playsInline preload="metadata" poster={thumb}>`, with no autoplay. An effect pauses the video when the view leaves `"work"`, the item changes, or the window is minimized (`minimizedState`).
    - HTML: `<iframe>` filling the content box. Call `iframe.focus()` on load and when the window becomes active.
    - While a window drag or resize is in progress (`isDragging` / resizing in `useDragResize`), iframes get `pointer-events: none`, so mousemove isn't swallowed.
-   - A failed `<img>`/`<video>` load shows a one-line message in the content box, as Sk3tch does.
 
    Files: `components/MediaWindow.tsx`, possibly `components/Window.tsx` / `hooks/useDragResize.tsx` for the drag flag. Checks: 2, 5
 8. **Register windows.**
@@ -96,7 +102,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 11. **Remember window.**
     - Selector of 21. Opening an item sets iframe `src` to `/pieces/remember/index.html?hash=${encodeURIComponent(seed)}`. An empty seed omits `?hash=`, and the engine falls back to a random seed.
     - Menu: Refresh, Seed (multiline, `initialSeed` = current seed), About, Choose remember.exe.
-    - Using a seed switches to the work view with that seed. The title bar shows the piece's title when the seed matches a piece's seed exactly, else `remember.exe`.
+    - Using a seed switches to the work view with that seed.
     - Same focus and drag rules as MediaWindow.
 
     Files: `components/windows/Remember.tsx`, `pages/index.tsx`. Checks: 2, 4, 6
@@ -107,11 +113,13 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 |---|---|---|---|---|
 | 1 | 10 desktop icons open their windows | Browser check: dev URL at desktop width, then 375px. Double-click each of the 9 new icons and "some days" | Each opens its window titled with the zeums title, and no icons overflow or overlap | browser check |
 | 2 | Galleries list every item with thumbs; Choose returns; singles open on their work | Browser check: open each of the 5 galleries and count items (remember.exe 21, s34s0ns 4, A Single Path 14, T3RRA 23, Tune Out 6). Open one item of each kind, then Choose <title>. Open CEASEFIRE, Exaltation, Flower and "Progress" | Counts match, every cell has a thumbnail, opened items render, Choose shows the selector, and singles show their work with no selector | browser check |
-| 3 | Full-size media served from the `ev3-portfolio` Blob store; store renamed | `grep -oE 'https://[a-z0-9]+\.public\.blob\.vercel-storage\.com[^"]*' data/zeums.ts \| sort -u \| wc -l` and `grep -cE 'arweave\|ipfs\|zeums' data/zeums.ts`; `vercel api "/v1/storage/stores/store_K4XW43AjR4eh6RE3?teamId=team_Q7InePSJS7UvqsW4MfS3iwMQ"` | 50 Blob URLs (4+14+23+6+3 media; thumbs are local), 0 arweave/ipfs/zeums hits, and the store `name` is `ev3-portfolio`, or the rename is parked for the user | the commands themselves |
-| 4 | HTML pieces load only from the site and respond to their controls | `grep -rnoE 'https?://' public/pieces` and browser check: open "Progress" (click adds color, "n" restarts) and two remember pieces (one Solana, one Tezos). Press c, f, g, r, left/right, up/down while watching DevTools Network | The grep prints nothing; every control changes the render; Network shows no request to zeums, IPFS, arweave or any CDN | the command + browser check |
+| 3 | Full-size media served from the `ev3-portfolio` Blob store; store renamed | The four commands listed in step 6 under "Check 3 commands" | The first prints 50 (4+14+23+6+3 media; thumbs are local). The second prints 50 (no other Blob host). The third prints 0. The store read shows `"name":"ev3-portfolio"`, or the rename is parked for the user | the commands themselves |
+| 4 | HTML pieces load only from the site and respond to their controls | `grep -noE 'https?://' public/pieces/*/index.html` (HTML only: vendored p5 keeps its own URL strings untouched), plus a browser check: open "Progress" (click adds color, "n" restarts) and two remember pieces (one Solana, one Tezos), and press c, f, g, r, s, left/right and up/down while watching DevTools Network | The grep prints nothing. Every control changes the render, and `s` saves a PNG. Network shows no request to zeums, IPFS, arweave or any CDN | the command + browser check |
 | 5 | A video stops when its window is minimized or its view is replaced | Browser check: play a Tune Out video, then minimize; play again, then Choose Tune Out; play again, then About; play CEASEFIRE and open another window over it | After minimize, Choose and About, `document.querySelectorAll('video')` all report `paused === true`. Covering with another window doesn't pause (not required) | browser check |
 | 6 | Seed text area; a piece's seed reproduces it | Browser check: open "Grandma Dale", open Seed and see the multi-line area pre-filled with `Grandma Dale`. Open Walking around the harbor's Seed and see the full memory. Clear the field, type the full memory text by hand, and Use. Then enter `hello world` | The iframe's `$fx.hash` equals processHash(baked text), computed from the downloaded original, for the typed memory. The render matches the piece's selector thumbnail with "c" toggled. `hello world` gives a different render. Shift+Enter adds a line and Enter submits | browser check |
 | 7 | Start menu lists 21 windows and scrolls | Browser check: at 1280×600 open Start | 21 entries including "some days"; the list scrolls and its top entry stays reachable | browser check |
+| 8 | Each new window has a 1–3 sentence About with Go back | Browser check: in each of the 9 new windows, choose About, count its sentences, then click Go back | 1–3 sentences each. Go back returns to the work, or to the selector in a gallery with no work opened yet | browser check |
+| 9 | All 21 remember items open the one engine with their own exact seed | `node <scratchpad>/check-seeds.mjs` (written in step 6). It reads the 21 `seed` strings from `data/zeums.ts` and each downloaded original's baked `rememberTitle`, applies the engine's `processHash` to both, and checks that the item src builder targets `/pieces/remember/index.html` | Prints `21/21 match`, and `ls public/pieces` shows only `progress` and `remember` | the command itself |
 
 ## Hard rules
 
@@ -124,6 +132,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 ## Progress
 
 - 2026-11-10 plan written
+- 2026-11-10 plan check: 6 must-fix fixed, 4 notes adopted, 0 dismissed
 
 ## Decisions
 
@@ -131,6 +140,8 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - Normal: the vendored remember engine has an empty `rememberTitle`, so an empty seed gives the engine's own random fallback. Reverse: bake in a default seed.
 - Normal: HTML pieces stay mounted behind the selector and About, as R3MIX sketches do; videos also stay mounted but are paused. Reverse: render the work only while `view === "work"`.
 - Normal: data in one `data/zeums.ts` module rather than per-window files, since all 9 share a shape. Reverse: inline each window's data in its own component file.
+- Normal: a remember item's `seed` is the evaluated `rememberTitle` string, trimmed. The engine's `processHash` strips all whitespace before hashing, so trimming can't change the hash; check 9 proves this for all 21. Reverse: store the untrimmed string.
+- Normal: the new deep-link keys (`?window=<key>`) are CEASEFIRE, REMEMBER, SEASONS, ISAAC, PROGRESS, SINGLEPATH, TERRA, FLOWER and TUNEOUT. Reverse: rename the `WINDOWS` keys; nothing links to them yet.
 - Normal: Blob paths are `zeums/<slug>/<original filename>`. Reverse: re-upload under another prefix and update `data/zeums.ts`.
 - Normal: new `WINDOWS` entries sit after SK3TCH, newest first, so the existing desktop order doesn't move. Reverse: reorder the object.
 
