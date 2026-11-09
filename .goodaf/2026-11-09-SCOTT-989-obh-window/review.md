@@ -78,6 +78,8 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 - B10. 2026-11-10 "redo the window select thumbnails so they maintain their original aspect ratios"
   Reference: `public/images/thumbs/obh-{a..e}.jpg` are 96×96 center crops (step 1, `sips`) of the thumbnail PNGs, which are 1080×1920 portrait except C, 1920×1080 landscape; redo them uncropped at their own aspect within the selector's 96px box (`WorkSelector`'s `<img>` is a fixed `w-24 h-24`, shared with 3xGP and R3MIX, whose thumbs are square).
   Done: 2026-11-10, 15503a5, repro "B10: the selector thumbs keep their pieces' aspect, 54×96 portrait and C 96×54 landscape" (failed on the deep-equal, `w: 96` for `w: 54`) and "B10 (SCOTT-989): a thumb shows at its own shape, centered in the 96×96 icon box, not stretched square" (failed on `the img isn't forced to 96×96`). The selection dither covers only the image.
+- B11. 2026-11-10 "make the loading text smaller and in the OBH engine UI green color"
+  Reference: B8's "Loading..." is the `#art:has(#fallback)::after` rule in each `public/obh/<letter>.html` `<head>` (white, 32px); W95FA's native pixel size is 16px, so smaller keeps it crisp at 16px. The engine's UI green is `#00ff80` (menu.css; the action bar labels use `#00ff8099`, 60% alpha). Update B8's test in `components/windows/obhPages.test.tsx` to match.
 
 ## Follow-ups
 
