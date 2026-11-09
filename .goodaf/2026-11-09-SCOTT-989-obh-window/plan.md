@@ -63,6 +63,13 @@ Base: fb0c58e
 - B6: the About view drawn inset (`classic-inset`), like the selector
 - B7: the About copy replaced with the user's text
 
+## Follow-up 3
+
+Base: 1905739
+- B8: each vendored page hides its fallback still and shows "Loading..." flashing in W95FA, centered, until the engine's first frame removes the still; the still shows again only if the engine fails to start
+- B9: the piece's action-bar System button (☰) drawn disabled and unclickable, the engine's `tt-disabled` look, by CSS in each page; its `Q` shortcut checked to do nothing
+- B10: selector thumbs redone at their own aspect (54×96 portrait, C 96×54), drawn at that shape centered in `WorkSelector`'s 96×96 box
+
 ## Progress
 
 - 2026-11-09 plan written
