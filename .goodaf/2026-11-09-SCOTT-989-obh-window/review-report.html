@@ -51,17 +51,24 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h1>SCOTT-989 on being human window: live pieces with selector</h1>
 <div class="status">
   <p class="verdict ok">Ready for your check</p>
-  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>8756021</code> · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds</p>
+  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>2aa1e37</code> (after follow-up 1) · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1) reviewed by a general reviewer, no findings</p>
   <p>Running at <a href="http://localhost:3089">http://localhost:3089</a></p>
 </div>
 
 <h2>Asks</h2>
-<p>None.</p>
+<p class="muted">The recommendation happens unless you say otherwise.</p>
+<div class="ask">
+  <p><span class="tag">A1 · parked: spec meaning</span><strong>Your image-priority note (B1) asked for the thumbnail to load only if the engine fails, but the engine uses that thumbnail as its own first frame, so it can't be held back. The follow-up instead starts both engine images at page load. Keep it that way?</strong></p>
+  <p>Left as is, each piece downloads the same two files as before, now side by side instead of one after the other, and the still shows until the first frame at no extra cost.</p>
+  <p class="rec">Recommend: leave — holding the thumbnail back would block the engine, and lowering the fallback's priority would slow the engine's first frame.</p>
+  <details><summary>Where</summary><p><code>public/obh/a.html</code> (all five pages) — the engine calls <code>loadSession(seed, …, thumbnailUrl, …)</code>, which loads the thumbnail with <code>new Image()</code>, before it fetches the imagein; the fallback <code>&lt;img&gt;</code> shares that same download.</p></details>
+</div>
 
 <h2>Worth checking by hand</h2>
 <ul>
   <li>With another window in front, click once on the OBH piece, then again → the first click only brings OBH forward; the second reaches the piece (brush, keys)</li>
+  <li>Open a piece with DevTools' Network panel open and Disable cache ticked → <code>&lt;letter&gt;-imagein</code> and <code>&lt;letter&gt;-thumb.png</code> start together at page load (initiator: link), each requested once</li>
 </ul>
 
 <h2>Outcome</h2>
@@ -71,13 +78,19 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <tr><td>2</td><td>Images from Vercel Blob, none from Irys</td><td class="pass">pass</td><td><code>grep -o "gateway.irys.xyz/[A-Za-z0-9]*" public/obh/*.html | sort -u</code> → one <code>jsonUri</code> id per file; each piece's iframe requested only <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> from the Blob host (200), no gateway.irys.xyz request</td></tr>
   <tr><td>3</td><td>Purchase opens the piece's marketplace page; Choose piece and About work</td><td class="pass">pass</td><td>On D, Purchase called <code>window.open(".../0x4759A45c80eB04571902df74200F0D8d6c83F070/4", "_blank", "noopener")</code>; Choose piece returned with D selected; About and Go back work; <code>curl</code> on the OpenSea URL → 200</td></tr>
   <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → exit 0; <code>yarn test</code> → 1 pass; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 1 rerun (<code>2aa1e37</code>)</td><td class="pass">pass</td><td>1: piece C opened from the selector runs in the window (canvas 1920×1080). 2: grep → one <code>jsonUri</code> id per file; each page (A–E) requests <code>&lt;letter&gt;-imagein</code> and <code>&lt;letter&gt;-thumb.png</code> once each, both started by the preload, from the Blob host; no Irys request; no preload warning. Full check: <code>yarn test</code> → 2 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
 <p>None.</p>
 
 <h2>Elevated decisions</h2>
-<p>None.</p>
+<div class="elevated">
+  <p><strong>B1 asked for the thumbnail to load only if the engine fails, but the engine loads the thumbnail itself as its base frame, and the imagein only after it.</strong></p>
+  <p>Options: load the thumbnail only on failure (blocks the engine); mark the fallback <code>fetchpriority="low"</code> as Sk3tch does (slows the engine's base frame, since it shares the download); preload both engine images in <code>&lt;head&gt;</code>, Sk3tch's other half.</p>
+  <p>Chose: two preload lines in each page's <code>&lt;head&gt;</code> (imagein <code>as="fetch"</code>, thumbnail <code>as="image"</code>, both <code>crossorigin</code>), fallback untouched. The imagein no longer waits for the thumbnail. This relaxes the plan's rule that only the three image URLs change in the vendored pages; scripts and engine bytes are untouched.</p>
+  <p>Reverse: delete the two <code>&lt;link rel="preload"&gt;</code> lines in each page and the B1 test.</p>
+</div>
 
 <h2>Decided for you</h2>
 <details><summary>10 decisions</summary>
@@ -100,10 +113,12 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Purchase was checked by capturing the <code>window.open</code> call, not by opening a real tab; the OpenSea URL itself returned 200 to <code>curl</code>.</li>
   <li>The "still first, then moving" start of each piece wasn't timed; each piece was checked moving about 6s after opening.</li>
   <li>Not checked on a Vercel deploy: Blob URLs were checked from localhost only (each returns 200 with <code>access-control-allow-origin: *</code>).</li>
+  <li>Follow-up 1: the speed-up wasn't timed on a cold cache; the browser pane served both images from its cache, so the check shows one request per image started by the preload, not download times.</li>
+  <li>Follow-up 1: check 3 (Purchase, Choose piece, About) wasn't rerun; the window's code didn't change.</li>
 </ul>
 
 <h2>Review</h2>
-<p>0 fixed · 1 tracked · 0 dropped · 0 asks</p>
+<p>0 fixed · 1 tracked · 0 dropped · 1 ask</p>
 <details><summary>Fixed</summary>
 <p>None.</p>
 </details>
@@ -119,7 +134,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 </ul>
 
 <footer>
-  <p>Answer in the review session, one line: "T1 in", "all as recommended", or a bug you found.</p>
+  <p>Answer in the review session, one line: "A1 leave", "all as recommended", or a bug you found.</p>
   <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window/.goodaf/2026-11-09-SCOTT-989-obh-window/review.md</code></p>
 </footer>
 
