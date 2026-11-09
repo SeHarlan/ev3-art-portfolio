@@ -1,5 +1,6 @@
 import EmailIcon from "@/public/svg/email"
 import GithubIcon from "@/public/svg/github"
+import InstagramIcon from "@/public/svg/instagram"
 import LinkedInIcon from "@/public/svg/linkedin"
 import TwitterIcon from "@/public/svg/twitter"
 import Image from "next/image"
@@ -9,19 +10,14 @@ import { FC } from "react"
 const Links: FC<{className?: string}> = ({className}) => {
   return (
     <div className={className}>
+      <Link href="https://www.instagram.com/ev3_art/" target="_blank" aria-label="Instagram" title="Instagram">
+        <InstagramIcon colorClass="stroke-current fill-none stroke-[1.5]" />
+      </Link>
       <Link href="https://twitter.com/EV3_art" target="_blank">
         <TwitterIcon colorClass="fill-current" />
       </Link>
       <Link href="mailto:ev3reth@gmail.com" target="_blank">
         <EmailIcon colorClass="stroke-current fill-none stroke-[1.5]" />
-      </Link>
-      <Link
-        href="https://epoch1.ev3.art/"
-        target="_blank"
-        title="Epoch One — techtonic & on being human"
-        className="underline whitespace-nowrap"
-      >
-        Epoch One
       </Link>
       {/* <Link href="https://collector.sh/EV3" target="_blank">
         <Image src="/images/collector-logo.png" width={18} height={18} alt="collector" className="flex-shrink-0"/>
