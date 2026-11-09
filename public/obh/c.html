@@ -83,6 +83,9 @@
   #art:has(#fallback)::after { content: "Loading..."; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: #fff; font-family: 'W95FA'; font-size: 32px; -webkit-font-smoothing: none; animation: obh-loading 1s steps(1, end) infinite; }
   html.obh-failed #art:has(#fallback)::after { content: none; }
   @keyframes obh-loading { 50% { opacity: 0; } }
+  /* The System button opens a host app's menu, which the portfolio doesn't have:
+     drawn as the engine's own tt-disabled. */
+  #tt-btn-system { opacity: .35; pointer-events: none; }
 </style>
 <script>
   // The engine only logs its failures; mark the page so the still shows instead of Loading...

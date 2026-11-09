@@ -57,3 +57,13 @@ test("B8: each OBH page hides its still behind a flashing W95FA Loading... until
     );
   }
 });
+
+test("B9: each OBH page draws the action bar's System button disabled, unclickable, as the engine's tt-disabled does", () => {
+  for (const id of pages) {
+    const { head } = read(id);
+    assert.ok(
+      head.includes("#tt-btn-system { opacity: .35; pointer-events: none; }"),
+      `${id}: #tt-btn-system disabled in <head>`,
+    );
+  }
+});
