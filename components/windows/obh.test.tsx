@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -57,5 +57,28 @@ test("B7: the About copy is the series line, then the five lettered titles", () 
     "C: was it all a dream",
     "D: the abyss gazes back",
     "E: something was found",
+  ]);
+});
+
+// Width and height from a JPEG's start-of-frame marker.
+const jpegSize = (path: string) => {
+  const b = readFileSync(path);
+  let i = 2;
+  while (i < b.length) {
+    const marker = b[i + 1];
+    if (marker >= 0xc0 && marker <= 0xc3) return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) };
+    i += 2 + b.readUInt16BE(i + 2);
+  }
+  throw new Error(`no SOF in ${path}`);
+};
+
+test("B10: the selector thumbs keep their pieces' aspect, 54×96 portrait and C 96×54 landscape", () => {
+  const sizes = works.map((w) => ({ id: w.id, ...jpegSize(join(process.cwd(), "public", w.thumb)) }));
+  assert.deepEqual(sizes, [
+    { id: "a", w: 54, h: 96 },
+    { id: "b", w: 54, h: 96 },
+    { id: "c", w: 96, h: 54 },
+    { id: "d", w: 54, h: 96 },
+    { id: "e", w: 54, h: 96 },
   ]);
 });

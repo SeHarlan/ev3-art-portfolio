@@ -84,9 +84,13 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
                 onDoubleClick={() => onOpen(work.id)}
                 className="p95-icon w-[112px] flex flex-col items-center gap-1"
               >
-                <div className="relative w-24 h-24 flex-none">
-                  <img src={work.thumb} alt="" width={96} height={96} draggable={false} className="block w-24 h-24" />
-                  {isSelected && <div className="p95-icon-dither absolute inset-0" />}
+                {/* The thumb at its own shape, centered in the 96×96 icon box; the
+                    selection dither covers only the image, as Win95's does. */}
+                <div className="w-24 h-24 flex-none flex items-center justify-center">
+                  <div className="relative">
+                    <img src={work.thumb} alt="" draggable={false} className="block max-w-[96px] max-h-[96px]" />
+                    {isSelected && <div className="p95-icon-dither absolute inset-0" />}
+                  </div>
                 </div>
                 <span
                   className={clsx(

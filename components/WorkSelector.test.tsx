@@ -18,3 +18,11 @@ test("B2: the Open bar sits under the grid, with a File name field showing the s
   assert.ok(field > label, "a field showing the selected title after the label");
   assert.ok(open > field, "the Open button beside the field");
 });
+
+test("B10 (SCOTT-989): a thumb shows at its own shape, centered in the 96×96 icon box, not stretched square", () => {
+  const html = renderToStaticMarkup(<WorkSelector works={works} onOpen={() => {}} />);
+  const img = html.match(/<img [^>]*>/)![0];
+  assert.ok(!/width="96"|height="96"|[" ]w-24|[" ]h-24/.test(img), "the img isn't forced to 96×96");
+  assert.ok(/max-w-\[96px\]/.test(img) && /max-h-\[96px\]/.test(img), "the img fits within 96×96");
+  assert.ok(/<div class="[^"]*w-24 h-24[^"]*items-center justify-center/.test(html), "a 96×96 box centers it");
+});
