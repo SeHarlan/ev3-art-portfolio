@@ -84,7 +84,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
 
   const grip = (
     <div
-      className={bare ? "absolute right-px bottom-px flex" : "flex flex-none mr-px mb-px"}
+      className={bare ? "absolute right-px bottom-px flex select-none" : "flex flex-none mr-px mb-px select-none"}
       ref={resizeRef}
     >
       <PixelGlyph name="grip" className="cursor-grab active:cursor-grabbing" />
@@ -106,7 +106,6 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
       className={clsx(
         "absolute flex flex-col",
         "bg-windowsGray classic-border",
-        "select-none",
         isMin ? "animate-exit" : "animate-enter"
       )}
     >

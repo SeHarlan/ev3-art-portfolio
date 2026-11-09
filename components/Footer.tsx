@@ -1,4 +1,4 @@
-import { ICONS, WINDOWS, useWindowsContext } from "../context/WindowsProvider";
+import { ICONS, useWindowsContext } from "../context/WindowsProvider";
 import clsx from "clsx";
 import { FC, useEffect, useState } from "react";
 import Button from "./Button";
@@ -9,7 +9,7 @@ import Links from "./Links";
 
 const Footer: FC = () => {
   const [time, setTime] = useState<Date>()
-  const { orderState, minimizedState, openState, handleOpen } = useWindowsContext()
+  const { orderState, minimizedState, openState } = useWindowsContext()
   const [orderList, setOrderList] = orderState
   const [minimizedMap, setMinimizedMap] = minimizedState
   const [openMap, setOpenMap] = openState
@@ -77,14 +77,6 @@ const Footer: FC = () => {
       <div className="relative flex">
         <div className="classic-divider h-full w-[1px] mr-1" />
         <div className="!px-4 classic-inset flex items-center justify-end gap-1">
-          <button
-            className="flex focus-visible:outline-dotted focus-visible:outline-1 focus-visible:outline-windowsText"
-            aria-label="Settings"
-            title="Settings"
-            onClick={() => handleOpen(WINDOWS.SETTINGS)}
-          >
-            <img src={ICONS[WINDOWS.SETTINGS]} alt="" className="w-4 h-4" />
-          </button>
           <Links className="flex gap-2 items-center"/>
           <p className="ml-2">
             {time?.toLocaleString(undefined, { "hour": "numeric", minute: "2-digit" }) || "0:00 PM"}

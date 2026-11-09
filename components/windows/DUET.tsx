@@ -72,7 +72,7 @@ const DuetWindow: FC = () => {
   ]
 
   return (
-    <Window windowKey={WINDOWS.DUET} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
+    <Window windowKey={WINDOWS.DUET} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-windowsPaper">
       {/* {content} */}
       <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>
         <Duet className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />
