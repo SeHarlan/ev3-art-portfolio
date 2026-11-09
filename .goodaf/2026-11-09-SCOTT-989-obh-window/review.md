@@ -86,6 +86,8 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 - B12. 2026-11-10 "thats not the same green as the engine UI, its too bright"
   Reference: B11 used `#00ff80`, which the engine uses only on pressed or active action-bar buttons (`.tt-action-bar-btn:active`, `.tt-active`); the bar's resting text ("TOOLS" and the button labels) is `#00ff8099` (`.tt-action-bar-btn`, `.tt-action-bar-label:before/:after`), 60% alpha, about `#00994d` on black. Match that resting color in each page's Loading rule and update the B11 test.
   Done: 2026-11-10, 7ed3e49, repro "B11, B12: each OBH page's Loading... is 16px, W95FA's native size, in the action bar's resting green #00ff8099" (failed on `a: Loading... in the action bar's resting green` before the fix). Loading and the bar's buttons now both compute to rgba(0, 255, 128, 0.6).
+- B13. 2026-11-10 "it still looks different from the "TOOLS" text, please make sure its the same font, color and opacity"
+  Reference: the "TOOLS" label (`span.tt-action-bar-label` in `button.tt-action-bar-btn.tt-action-bar-tools`) computes in the browser to font-family `"Courier New", monospace`, 10px, weight 400, letter-spacing 2px, text-transform uppercase, color rgba(0, 255, 128, 0.6), opacity 1, no text-shadow. B12 already matched the color; the font and size differ: Loading is W95FA 16px with `-webkit-font-smoothing: none` (B8, B11). Copy the label's font, size, weight, letter-spacing and case into each page's Loading rule (this replaces B8's W95FA and B11's 16px; the `public/obh/w95fa.woff2` copy and its `@font-face` become unused), keep the B8 blink, and update the B8 and B11/B12 tests.
 
 ## Follow-ups
 
