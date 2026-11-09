@@ -51,6 +51,7 @@ URLs are `https://gateway.irys.xyz/<id>`. Each page references three Irys URLs: 
 ## Progress
 
 - 2026-11-09 plan written
+- 2026-11-09 step 1: vendored five pages byte for byte (145–146KB each) into public/obh/, made 96×96 JPEG thumbs (3–5KB) from the thumbnail PNGs; checks —
 
 ## Decisions
 

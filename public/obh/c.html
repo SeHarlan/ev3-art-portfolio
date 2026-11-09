@@ -1,0 +1,1595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>on being human</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+  }
+  /* The MOUNT ROOT (mount's `container`): full viewport. The action bar, the menu
+     drawer and the brush ring anchor here and resolve their cqw/cqh against it — so
+     the bar's own width, min(100cqw, calc((100cqh - bar) * --tt-art-aspect)), is
+     exactly the art's width below, and it stays centered over the piece. */
+  #root {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    container-type: size;
+    /* This piece's shape, overriding menu.css's 4 / 3 default. It MUST be set here, on
+       an ID selector (1,0,0), and never on `:root` (0,1,0): the engine injects menu.css
+       into <head> AFTER this stylesheet, so a `:root` rule here would tie on specificity,
+       lose on document order, and silently bake every piece with a 4:3-wide bar. */
+    --tt-art-aspect: 16 / 9;
+  }
+  /* The ART BOX (mount's `element`): the root MINUS the action bar's strip. This is the
+     reservation — the canvas and the fail-safe img letterbox inside it, so neither can run
+     under the bar at any viewport, in either orientation. Mirrors the app's canvas
+     container (`CanvasPage.tsx`: `inset-x-0 top-0 bottom-[44px]`).
+     The bar's height is read from the engine's own var so the two can never disagree; the
+     44px fallback is not a duplicate of it but the NO-ENGINE-CSS case — menu.css is
+     injected by the controller during mount(), and a no-WebGL2 page throws out of
+     createEngine BEFORE that, leaving this box to hold the fail-safe img with the var
+     never defined. Without the fallback the whole calc would be invalid there. */
+  #art {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--action-bar-height, 44px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    container-type: size;
+  }
+  /* 100cqh is the ART BOX's height — already bar-free — so this is the app's
+     min(100vw, calc((100dvh - 44px) * displayAspect)), and the piece fills the space that
+     is left at its TRUE aspect. max-* keep the old contain behaviour as a floor if the
+     ratio var ever fails to resolve. */
+  canvas.ev3-epoch-one-canvas,
+  #fallback {
+    width: min(100cqw, calc(100cqh * var(--tt-art-aspect)));
+    aspect-ratio: var(--tt-art-aspect);
+    max-width: 100%;
+    max-height: 100%;
+  }
+  #fallback {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+  }
+</style>
+</head>
+<body>
+<div id="root" class="ev3-epoch-one-root">
+  <div id="art" class="ev3-epoch-one-root">
+    <img id="fallback" src="https://gateway.irys.xyz/EGnCKSFxLPkQgdHrUYL6Wyb6nxwafu2VxZUypethqWtE" alt="" crossorigin="anonymous" onerror="if(this.hasAttribute('crossorigin')){this.onerror=null;this.removeAttribute('crossorigin');this.src=this.src;}">
+  </div>
+</div>
+<script>
+  window.__NFT__ = {"seed":"0d1555c5-9aa7-4dc2-a978-63d167f2ebd1","jsonUri":"https://gateway.irys.xyz/B8SHb3SCvCCmvSMQUkb5tfUDjGUormhTZYQTikPsx2DD","thumbnailUrl":"https://gateway.irys.xyz/EGnCKSFxLPkQgdHrUYL6Wyb6nxwafu2VxZUypethqWtE","frameCount":29800,"imageInUrl":"https://gateway.irys.xyz/4LWQZE2hdwZRQnMutDfMopc7JBiza6pAQKTHEAq1Gc5a"};
+  window.__ENGINE_BLOCK__ = {"engineFrame":29800,"manualMode":false,"globalFreeze":false,"overrides":{"paletteColors":[[0.2088235294117647,0.27205882352941174,0.5127450980392156],[0.7843137254901961,0.7411764705882353,0.5137254901960784],[0.7764705882352941,0.8509803921568627,0.8666666666666667]],"useColorCycle":false,"aspect":"16:9","orientation":"landscape"}};
+</script>
+<script type="module">
+var C3=1920,t1=1080,F3=1440,L3=[[1.5,22],[1,256],[0.5,33],[0.25,22]],O3=Math.max(...L3.map(([K])=>K)),J3={Maximum:[0.8,0.8,0.8],Minimum:[0.09,0.07,0.1]};var R3=0.5;function E3(K){let X=K;return function(){let Q=X+=1831565813;return Q=Math.imul(Q^Q>>>15,Q|1),Q^=Q+Math.imul(Q^Q>>>7,Q|61),((Q^Q>>>14)>>>0)/4294967296}}function k2(K){let X=1779033703^K.length;for(let Q=0;Q<K.length;Q++)X=Math.imul(X^K.charCodeAt(Q),3432918353),X=X<<13|X>>>19;return X=Math.imul(X^X>>>16,2246822507),X=Math.imul(X^X>>>13,3266489909),(X^X>>>16)>>>0}function M3(K){return k2(K)}function K3(){return typeof crypto<"u"&&typeof crypto.randomUUID=="function"?crypto.randomUUID():`s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`}function w2(K){let X=M3(K),Q=E3(X^2654435769);return[Q()*333,Q()*333,Q()*333]}function o(K,X=Math.random){if(K.length===0)return;let Q=K.reduce((J,[,P])=>J+Math.max(0,P),0);if(Q===0)return;let N=X()*Q,G=0;for(let[J,P]of K)if(G+=Math.max(0,P),N<=G)return J;return K[K.length-1][0]}function A2(K,X){if(K>=1)return Math.max(1,Math.round(K));let Q=Math.max(1,X),N=1,G=Math.abs(K-1);for(let J=2;J<=Q;J*=2){let P=1/J,W=Math.abs(K-P);W<=G&&(G=W,N=P)}return N}var n0=0.013,U2=[[n0/2,1],[n0,2],[n0*2,3],[n0*4,2]],C2=new Map([[0,"None"],[n0/2,"Slow"],[n0,"Average"],[n0*2,"Fast"],[n0*4,"Extra-Fast"]]);function S3(K,X,Q){return K.map((N)=>X?N/Q:N)}function y3(K,X){return S3([10,0.33],K,X)}function z3(K,X){return S3([0.33,10],K,X)}var g3={name:"Primary",colors:[[1,0,0],[0,1,0],[0,0,1]],useColorCycle:!0},e1=[{name:"Dim",colors:[[0.33,0.11,0],[0,0.33,0.11],[0.11,0,0.33]],useColorCycle:!0},{name:"B&W",colors:[[0.66,0.66,0.66],[0.33,0.33,0.33],[1,1,1]],useColorCycle:!1},{name:"CMY",colors:[[1,0,1],[1,1,0],[0,1,1]],useColorCycle:!1},{name:"Y2K",colors:[[0,0.25,1],[0,0.9,0.9],[0.75,0,1]],useColorCycle:!1},{name:"Win95",colors:[[0,0.5,0.55],[0,0,0.55],[0.85,0.85,0.85]],useColorCycle:!1},{name:"Matrix",colors:[[0,0.2,0.1],[0,1,0.25],[0.6,1,0.65]],useColorCycle:!1},{name:"Bondi Blue",colors:[[0,0.35,0.3],[0.1,0.6,0.7],[0.9,0.95,1]],useColorCycle:!1},{name:"Jazz Cup",colors:[[0,0.9,1],[0.2,0.1,0.5],[0.85,0.35,0.7]],useColorCycle:!1},{name:"Lava Lamp",colors:[[0.5,0,0],[1,0.3,0],[1,0.7,0.1]],useColorCycle:!1},{name:"Platinum UI",colors:[[0.45,0.35,0.25],[0.5,0.5,0.65],[1,0.9,0.75]],useColorCycle:!1}],p3=[g3,...e1];function F2(K=Math.random){return K()<0.5?g3:e1[Math.floor(K()*e1.length)]}function P1(K){let X=M3(K),Q=w2(K),N=E3(X),G=(S0,e0)=>N()*(e0-S0)+S0,J=o([[!0,1],[!1,3]],N),P=o([[8,1],[16,2],[32,30],[64,50],[128,100],[256,75],[512,50]],N),W=o([[1,2],[2,4],[3,6],[4,7],[5,6],[6,5],[7,4],[8,3],[9,2],[10,1]],N);P<128&&(W=Math.max(1,Math.floor(W*0.33)));let Y=o([[0,124],[1,77],[3,33],[4,77],[5,11],[6,11]],N),D=Y===0?0:G(0.5,2.5);P<128&&(W=Math.max(1,Math.floor(W*0.33)),D*=0.5);let Z=G(1,4),A=z3(J,P),L=y3(J,P),w=Math.floor(G(2,8)),k=[w/P,w/P],y=0.55,F=y+(w-2)/7*(0.65-y),M=o([[0,1],[0.025,9]],N),f=o([[0.33,32],[0.033,1]],N),l=[G(222,1111),G(222,1111)],i=[G(50,150),G(0.1,1)],$=o([[0.4,1],[0.5,3],[0.6,4],[0.7,8],[0.9,4]],N),R=y3(J,P).map((S0)=>S0*1.5),H=z3(J,P).map((S0)=>S0*1.5),z=[G(50,100),G(100,1000)],m=[z[1],z[0]],S=o([[!0,3],[!1,4]],N),d=S?0.25:0.2,e=d,a=o(S?[[0.25,66],[0.5,88],[0.75,146],[1,33]]:[[0.25,33],[0.5,66],[0.75,146],[1,55],[2,22],[3,11]],N),V0=A2(a,P),t=[V0,V0],j0=o(U2,N),G0=S?0:j0,E=o([["normal",389],["chunky",22],["glitchy",22]],N),p=o([[!0,E==="normal"?6:1],[!1,2]],N),v=F2(N),I0=0;v.useColorCycle&&(I0=o([[!1,311],[!0,22]],N)?0.5:0.005555555555555556);let u=o([["Maximum",11],["Minimum",322]],N),k0=M===0||P<128||J,b=o([[!0,k0?0:2],[!1,1]],N),m0=E==="normal"?G(75,125):E==="chunky"?G(1000,2000):G(1e4,40000),z0=o([[0,33],[1,33],[2,33],[3,33],[4,33],[5,33],[6,33],[7,22],[8,22],[9,22]],N),s=o(L3,N),l0=m0*s,J0=G(0.0025,0.0075),Q0=u==="Minimum"?N()>0.03303303303303303?1:4:1,H1=o([[0.45,1],[0.5,3],[0.55,1]],N),_0=o([[0,1],[0.25,3]],N),B0=o([[0.2,1],[0.25,3],[0.3,1]],N);return{seed:K,shaderOffset:Q,fxWithBlocking:J,blockingScale:P,baseChunkSize:l0,baseChunkSizeType:E,canvasScale:s,moveSpeed:J0,gradientBlockPattern:z0,shouldMoveThreshold:d,moveShapeScale:A,shouldFallThreshold:e,shouldFallScale:L,defaultWaterfallMode:p,blackNoiseScale:k,blackNoiseThreshold:F,blackNoiseEdgeMult:M,resetEdgeThreshold:f,dirtNoiseScale:l,blankStaticScale:i,blankStaticThreshold:$,edgeFx:b,extraFallShapeScale:R,extraMoveShapeScale:H,extraFallStutterScale:z,extraMoveStutterScale:m,domainWarpAmount:W,patternMode:Y,patternStrength:D,patternFreq:Z,movementShapeScaling:t,movementNoiseTimeMultBase:G0,blockNoiseDisableShapeMovement:S,cycleColorHueBaseSpeed:I0,background:u,palette:v,globalBloomMult:Q0,resetVarianceStart:H1,resetVarianceEnd:_0,movementVarianceStart:B0,movementVarianceEnd:0}}var L2={0:"Linear",1:"Dots",2:"Diagonal",3:"Plaid",4:"Zigzag",5:"Ramps",6:"Wavy",7:"Hyperbolic",8:"Saddle",9:"Zone Plate"},R2=(K,X=K.cycleColorHueBaseSpeed)=>{let Q=K.baseChunkSizeType==="glitchy",N=K.baseChunkSizeType==="chunky",G=X===0.5,J=K.globalBloomMult>1,P=K.background==="Maximum";if(!Q&&!N&&!G&&!J&&!P)return"None";let W=[];Q&&W.push("Broken"),N&&W.push("Chunky"),G&&W.push("Too Fast"),J&&W.push("Blown Out"),P&&W.push("BG Max");let Y=Math.max(...W.map((Z)=>Z.length)),D="";for(let Z=0;Z<=Y;Z++)W.forEach((A)=>{A[Z]&&(D+=A[Z])});return D};function X3(K,X){let Q=X?.hueSpeed??K.cycleColorHueBaseSpeed,N=(X?.palette??K.palette).name,G=X?.moveSpeed??K.moveSpeed,J=X?.baseChunkSize!=null?"Custom":K.baseChunkSizeType==="glitchy"?"Glitchy":"Normal",P={0:"None",1:"Circles",3:"Ridged",4:"Squares",5:"Solid Circle",6:"Solid Square"},W=R2(K,Q),Y=K.resetEdgeThreshold===0.033?"Fuzzy":"Clean",D=K.edgeFx?"Smooth":K.blackNoiseEdgeMult===0?"Sharp":"Rough",Z=(X?.aspect??"4:3")==="4:3"?1440:1920,A=(X?.orientation??"landscape")==="portrait",L=(A?1080:Z)*K.canvasScale,w=(A?Z:1080)*K.canvasScale,k={Seed:K.seed,"Color Palette":N,"Blocking FX":K.fxWithBlocking,"Blocking Scale":K.blockingScale,Resolution:`${L}x${w}`,"Reset Type":Y,"Domain Warp Amount":K.domainWarpAmount,"Pattern Mode":P[K.patternMode]??K.patternMode,"Pattern Strength":K.patternStrength.toFixed(1),Gem:L2[K.gradientBlockPattern]??K.gradientBlockPattern,"Pixel Movement Speed":G.toFixed(3),"Chunk Size":J,"Movement Shape Scaling":K.movementShapeScaling[0],"Movement Drift Speed":C2.get(K.movementNoiseTimeMultBase)??K.movementNoiseTimeMultBase,Edges:D,Glitch:W,"Reset Variance":[K.resetVarianceStart,K.resetVarianceEnd],"Movement Variance":[K.movementVarianceStart,K.movementVarianceEnd]};return console.log(`[seed ${K.seed}] randomized parameters`,k),k}var $1=(K)=>[K&255],n=(K)=>[K>>>8&255,K&255],B=(K)=>[K>>>24&255,K>>>16&255,K>>>8&255,K&255],q1=(K)=>[K.charCodeAt(0),K.charCodeAt(1),K.charCodeAt(2),K.charCodeAt(3)];function v1(K){let X=0;for(let G of K)X+=G.length;let Q=new Uint8Array(X),N=0;for(let G of K)Q.set(G,N),N+=G.length;return Q}function p0(K,...X){let Q=v1(X);return v1([B(8+Q.length),q1(K),Q])}function L0(K,X,Q,...N){return p0(K,[X&255,Q>>>16&255,Q>>>8&255,Q&255],...N)}var _3=[...B(65536),...B(0),...B(0),...B(0),...B(65536),...B(0),...B(0),...B(0),...B(1073741824)];function E2(){return p0("ftyp",q1("isom"),B(512),q1("isom"),q1("iso2"),q1("avc1"),q1("mp41"))}function M2(K,X){return L0("mvhd",0,0,B(0),B(0),B(K),B(X),B(65536),n(256),n(0),B(0),B(0),_3,B(0),B(0),B(0),B(0),B(0),B(0),B(2))}function S2(K,X,Q){return L0("tkhd",0,7,B(0),B(0),B(1),B(0),B(K),B(0),B(0),n(0),n(0),n(0),n(0),_3,B(X*65536),B(Q*65536))}function g2(K,X){return L0("mdhd",0,0,B(0),B(0),B(K),B(X),n(21956),n(0))}function p2(){return L0("hdlr",0,0,B(0),q1("vide"),B(0),B(0),B(0),[...Array.from(new TextEncoder().encode("VideoHandler")),0])}function _2(){return L0("vmhd",0,1,n(0),n(0),n(0),n(0))}function T2(){let K=L0("url ",0,1),X=L0("dref",0,0,B(1),K);return p0("dinf",X)}function x2(K,X,Q){let N=p0("avcC",Q);return p0("avc1",$1(0),$1(0),$1(0),$1(0),$1(0),$1(0),n(1),n(0),n(0),B(0),B(0),B(0),n(K),n(X),B(4718592),B(4718592),B(0),n(1),new Uint8Array(32),n(24),n(65535),N)}function h2(K,X){let Q=K.samples.length,N=L0("stsd",0,0,B(1),x2(K.width,K.height,K.avccDescription)),G=L0("stts",0,0,B(1),B(Q),B(1)),J=L0("stsc",0,0,B(1),B(1),B(Q),B(1)),P=L0("stsz",0,0,B(0),B(Q),K.samples.flatMap((Z)=>B(Z.data.length))),W=L0("stco",0,0,B(1),B(X)),Y=[];K.samples.forEach((Z,A)=>{Z.isKey&&Y.push(...B(A+1))});let D=L0("stss",0,0,B(Y.length/4),Y);return p0("stbl",N,G,J,P,W,D)}function v2(K,X,Q,N){let G=p0("minf",_2(),T2(),h2(K,X)),J=p0("mdia",g2(Q,N),p2(),G),P=p0("trak",S2(N,K.width,K.height),J);return p0("moov",M2(Q,N),P)}function b2(K){let X=K.fps,Q=K.samples.length,N=E2(),G=N.length+8,J=p0("mdat",v1(K.samples.map((W)=>W.data))),P=v2(K,G,X,Q);return v1([N,J,P])}var h1=51,B3=30,d2=6,T3=6,m2=6,u2=12,c2=1,D3=2;function f2(K){return K.measuredBytes<=0?K.qpFloor:Math.max(K.qpFloor,Math.min(h1,Math.round(K.probeQp+T3*Math.log2(K.measuredBytes/K.targetBytes))))}function s2(K){let X=Math.max(K.qpFloor,Math.min(h1,K.initialQp??K.qpFloor)),Q=0,N=0,G=0,J=0,P=[];return{onChunk(W){if(Q+=W,N++,P.push(W),P.length>B3&&P.shift(),G++,G<d2)return;G=0;let Y=Math.max(1,K.totalFrames-N),D=P.reduce((M,f)=>M+f,0)/P.length,Z,A=K.softCapBytes-Q;if(A>0)Z=A/Y;else{let M=K.hardCapBytes-Q;if(M>0)Z=M/Y;else{X=h1;return}}let L=D===0?-D3:T3*Math.log2(D/Z);if(Math.abs(L)<D3)return;let w=Math.round(X+L),k=Q+D*Y>K.hardCapBytes?u2:N<J?0:m2,y=Math.max(X-c2,Math.min(X+k,w)),F=Math.max(K.qpFloor,Math.min(h1,y));F>X&&(J=N+B3),X=F},nextQp:()=>X}}var C1=60,b1=120,U1=18,k3=30,w3=75000000,l2=1e8;function a2(K){return typeof K!="number"||!Number.isFinite(K)||K<1?b1:Math.round(K)}var A3=null;function U3(K,X,Q){let N=new OffscreenCanvas(K,X),G=N.getContext("2d"),J=G.createImageData(K,X),P=J.data;for(let W=0;W<P.length;W+=4)P[W]=Math.random()*256|0,P[W+1]=Math.random()*256|0,P[W+2]=Math.random()*256|0,P[W+3]=255;return G.putImageData(J,0,0),new VideoFrame(N,{timestamp:Q})}function i2(){return A3??=(async()=>{let K=[],X=null,Q=null,N=null;try{return X=new VideoEncoder({output:(G)=>K.push(G.byteLength),error:()=>{}}),X.configure({codec:"avc1.42001f",width:320,height:180,framerate:30,bitrateMode:"quantizer"}),Q=U3(320,180,0),N=U3(320,180,33333),X.encode(Q,{keyFrame:!0,avc:{quantizer:10}}),X.encode(N,{keyFrame:!0,avc:{quantizer:51}}),await X.flush(),K.length===2&&K[0]>K[1]*2}catch{return!1}finally{try{Q?.close()}catch{}try{N?.close()}catch{}try{X?.close()}catch{}}})(),A3}var r2=8,o2=["avc1.640034","avc1.4D4034","avc1.42E034"];function n2(K){return ArrayBuffer.isView(K)?new Uint8Array(K.buffer.slice(K.byteOffset,K.byteOffset+K.byteLength)):new Uint8Array(K)}async function x3(K,X){if(typeof VideoEncoder>"u")return null;for(let Q of o2)try{if((await VideoEncoder.isConfigSupported({codec:Q,width:K,height:X,framerate:C1,bitrateMode:"quantizer"})).supported)return Q}catch{}return null}async function e2(K,X){let[Q,N]=await Promise.all([x3(K,X),i2()]);return Q!==null&&N}function h3(K){return K.replace(/[^a-zA-Z0-9_-]/g,"_")}function d1(K,X,Q){K.viewport(0,0,X.width,X.height);let N=new Uint8Array(X.width*X.height*4);if(K.bindFramebuffer(K.FRAMEBUFFER,null),K.readPixels(0,0,X.width,X.height,K.RGBA,K.UNSIGNED_BYTE,N),!N.some((W)=>W!==0)&&Q){let W=K.createFramebuffer();K.bindFramebuffer(K.FRAMEBUFFER,W),K.framebufferTexture2D(K.FRAMEBUFFER,K.COLOR_ATTACHMENT0,K.TEXTURE_2D,Q,0),K.readPixels(0,0,X.width,X.height,K.RGBA,K.UNSIGNED_BYTE,N),K.bindFramebuffer(K.FRAMEBUFFER,null),K.deleteFramebuffer(W)}let G=document.createElement("canvas");G.width=X.width,G.height=X.height;let J=G.getContext("2d");if(!J)return null;let P=J.createImageData(X.width,X.height);for(let W=0;W<X.height;W++){let Y=W*X.width*4,D=(X.height-1-W)*X.width*4;P.data.set(N.subarray(Y,Y+X.width*4),D)}return J.putImageData(P,0,0),G}function v3(K,X,Q,N){let G=d1(K,X,Q);if(!G){console.error("Failed to get 2D context for screenshot");return}G.toBlob((J)=>{if(!J){console.error("Failed to create screenshot blob");return}let P=URL.createObjectURL(J),W=document.createElement("a");W.href=P,W.download=N?`${h3(N)}.png`:"screenshot.png",W.click(),URL.revokeObjectURL(P)},"image/png")}async function b3(K,X,Q,N={}){let G=d1(K,X,Q);if(!G)throw Error("Failed to get 2D context for screenshot");let{maxEdge:J,mime:P="image/png",quality:W}=N,Y=Math.max(X.width,X.height);if(J&&Y>J){let D=J/Y,Z=document.createElement("canvas");Z.width=Math.max(1,Math.round(X.width*D)),Z.height=Math.max(1,Math.round(X.height*D));let A=Z.getContext("2d");return A.imageSmoothingQuality="high",A.drawImage(G,0,0,Z.width,Z.height),Z.toDataURL(P,W)}return G.toDataURL(P,W)}function d3(K,X,Q,N,G,J){let P="idle",W=null,Y=null,D=[],Z=null,A=0,L=b1,w=null,k=0,y=0,F=null,M=null,f=0,l=!1,i=!1,$=null,R=U1,H=0;function z(E){E!==P&&(P=E,Q?.(E))}function m(E){return{codec:E,width:k,height:y,framerate:C1,bitrateMode:"quantizer",latencyMode:"realtime",avc:{format:"avc"}}}function S(){H++;try{W?.close()}catch{}W=null,Y=null,D=[],Z=null,A=0,f=0,l=!1,i=!1,$=null,R=U1,F=null,M=null}function d(){S(),z("idle")}function e(E){if(X){X(E,"mp4");return}let p=URL.createObjectURL(E),v=document.createElement("a");v.href=p,v.download=w?`${h3(w)}.mp4`:"recording.mp4",v.style.display="none",document.body.appendChild(v),v.click(),setTimeout(()=>{document.body.removeChild(v),URL.revokeObjectURL(p)},1000)}async function a(){if(!W){d();return}z("finishing");let E=H;try{if(await W.flush(),E!==H)return;if(!Z)throw Error("No avcC description from encoder");let p=b2({width:k,height:y,fps:C1,avccDescription:Z,samples:D});e(new Blob([p],{type:"video/mp4"}))}catch(p){console.error("Recording finalize failed",p)}finally{E===H&&(S(),z("idle"))}}async function V0(){if(!W||!Y){d();return}let E=H;try{if(await W.flush(),E!==H)return;W.close(),W=null,R=f2({measuredBytes:f,probeQp:k3,targetBytes:w3,qpFloor:U1}),$=s2({totalFrames:L,softCapBytes:w3,hardCapBytes:l2,qpFloor:U1,initialQp:R}),W=new VideoEncoder({output:(p,v)=>{!Z&&v?.decoderConfig?.description&&(Z=n2(v.decoderConfig.description));let I0=new Uint8Array(p.byteLength);p.copyTo(I0),D.push({data:I0,isKey:p.type==="key"}),$?.onChunk(p.byteLength)},error:(p)=>{console.error("VideoEncoder error (pass B)",p),d()}}),W.configure(m(Y)),l=!1,i=!1}catch(p){console.error("Recording pass transition failed",p),d()}}async function t(){if(P!=="idle")return;let E=J?.()??{width:K.width,height:K.height};if(k=Math.max(Math.round(E.width),K.width),y=Math.max(Math.round(E.height),K.height),Y=await x3(k,y),!Y){console.warn("Recording unsupported: no compatible H.264 encoder");return}if(k!==K.width||y!==K.height){if(F=new OffscreenCanvas(k,y),M=F.getContext("2d",{alpha:!1}),!M){console.warn("Recording unsupported: no 2D context for letterbox compositing"),F=null,Y=null;return}M.fillStyle="#000",M.fillRect(0,0,k,y)}else F=null,M=null;L=a2(N?.()),w=G?.()??null,D=[],Z=null,A=0,f=0,l=!0,i=!1,$=null,R=U1;try{W=new VideoEncoder({output:(p)=>{f+=p.byteLength},error:(p)=>{console.error("VideoEncoder error (pass A)",p),d()}}),W.configure(m(Y))}catch(p){console.error("Recording unavailable: VideoEncoder setup failed at runtime",p);try{W?.close()}catch{}W=null,Y=null,F=null,M=null;return}z("recording")}function j0(){if(P!=="recording"||!W||i||A>=2*L)return;let E=l?A:A-L,p=Math.round(E*1e6/C1),v=Math.round(1e6/C1),I0=K;F&&M&&(M.drawImage(K,Math.round((k-K.width)/2),Math.round((y-K.height)/2)),I0=F);let u=new VideoFrame(I0,{timestamp:p,duration:v});W.encode(u,{keyFrame:E===0,avc:{quantizer:l?k3:$?.nextQp()??R}}),u.close(),A++,l?A>=L&&(i=!0,V0()):A>=2*L&&a()}function G0(){P==="recording"&&d()}return{isRecording:()=>P!=="idle",getStatus:()=>P,isBackpressured:()=>P==="recording"&&!!W&&W.encodeQueueSize>r2,start:()=>{t()},stop:G0,tick:j0,destroy(){P!=="idle"&&G0(),S()}}}function t2(K,X){return K===0?1:K>=3?0:X?K+1:0}function J4(K){return K.totalFreeze?3:K.noiseFreeze?2:K.globalFreeze?1:0}function K4(K){return{globalFreeze:K>=1,noiseFreeze:K>=2,totalFreeze:K>=3}}var m3=`<!-- Action Bar (permanent buttons below canvas) -->
+<div id="tt-engine-action-bar">
+    <button id="tt-btn-system" class="tt-action-bar-btn tt-action-bar-icon" title="System Access">
+        <span class="tt-icon">☰</span>
+    </button>
+    <button id="tt-btn-tools" class="tt-action-bar-btn tt-action-bar-tools">
+        <span class="tt-action-bar-label">Tools</span>
+    </button>
+    <button id="tt-btn-record" class="tt-action-bar-btn tt-action-bar-icon" title="Record Video">
+        <span class="tt-icon">⏺︎</span>
+    </button>
+</div>
+
+<!-- Menu Container (drawer) -->
+<div id="tt-menu-container" class="tt-menu-closed">
+    <!-- Menu Panel -->
+    <div id="tt-menu-panel">
+        <!-- Rotate canvas + UI (portrait only); sits opposite the help button -->
+        <button id="tt-btn-rotate" class="tt-menu-btn tt-rotate-btn" title="Rotate" style="display:none">
+            <span class="tt-icon">⟳</span>
+        </button>
+        <!-- Help (opens controls dialog) -->
+        <button id="tt-help-btn" class="tt-menu-btn tt-help-btn" title="Help">
+            <span class="tt-icon">?</span>
+        </button>
+
+        <!-- Main Row -->
+        <div class="tt-main-row">
+            <!-- Brush Size Column -->
+            <div class="tt-brush-column">
+                <div class="tt-section-label tt-column-label">Size</div>
+                <button class="tt-menu-btn" data-action="increaseBrushSize" title="Increase brush size ([)">
+                    <span class="tt-icon">∧</span>
+                </button>
+                <div class="tt-brush-size-display" title="Drag to adjust brush size">
+                    <div class="tt-drag-chevrons tt-up">
+                        <span>›</span>
+                        <span>›</span>
+                    </div>
+                    <div class="tt-brush-size-display-inner">
+                        <div class="tt-brush-preview"></div>
+                        <span class="tt-brush-size-label">1</span>
+                    </div>
+                    <div class="tt-drag-chevrons tt-down">
+                        <span>›</span>
+                        <span>›</span>
+                    </div>
+                </div>
+                <button class="tt-menu-btn" data-action="decreaseBrushSize" title="Decrease brush size (])">
+                    <span class="tt-icon">∨</span>
+                </button>
+            </div>
+
+            <!-- Movement Section -->
+            <div class="tt-movement-section">
+                <!-- Rewind to genesis (opens confirm dialog) -->
+                <button class="tt-menu-btn tt-rewind-btn" data-action="rewindRequest" title="Rewind to the beginning">
+                    <span class="tt-icon">⏮︎</span>
+                </button>
+                <!-- Manual / Organic Toggle -->
+                <div class="tt-mode-toggle" id="tt-mode-toggle" data-action="toggleManualMode" title="Toggle Manual/Organic Mode (X)">
+                    <span class="tt-mode-toggle-label" data-mode="manual">Manual</span>
+                    <div class="tt-mode-toggle-track">
+                        <div class="tt-mode-toggle-thumb"></div>
+                    </div>
+                    <span class="tt-mode-toggle-label" data-mode="organic">Organic</span>
+                </div>
+                <div class="tt-section-label">Movement</div>
+                <div class="tt-cross-container">
+                    <!-- Row 1 -->
+                    <button class="tt-menu-btn" data-action="trickle" title="Trickle (T)">
+                        <span class="tt-icon" style="display:inline-block;transform:rotate(90deg)">≈</span>
+                    </button>
+                    <button class="tt-menu-btn tt-arrow-btn" data-action="waterfallUp" title="Waterfall Up (↑)">
+                        <span class="tt-icon">⤊</span>
+                    </button>
+                    <button class="tt-menu-btn" data-action="shuffle" title="Shuffle (S)">
+                        <span class="tt-icon">≈</span>
+                    </button>
+                    <!-- Row 2 -->
+                    <button class="tt-menu-btn tt-arrow-btn" data-action="moveLeft" title="Move Left (←)">
+                        <span class="tt-icon">←</span>
+                    </button>
+                    <button class="tt-menu-btn" id="tt-btn-pause" data-action="toggleGlobalFreeze" title="Pause (Space)">
+                        <span class="tt-icon">⏸︎</span>
+                    </button>
+                    <button class="tt-menu-btn tt-arrow-btn" data-action="moveRight" title="Move Right (→)">
+                        <span class="tt-icon">→</span>
+                    </button>
+                    <!-- Row 3 -->
+                    <button class="tt-menu-btn" data-action="eraseMovement" title="Erase Movement (E cycles erase)">
+                        <span class="tt-icon">⌫</span>
+                    </button>
+                    <button class="tt-menu-btn tt-arrow-btn" data-action="waterfallDown" title="Waterfall Down (↓)">
+                        <span class="tt-icon">⤋</span>
+                    </button>
+                    <button class="tt-menu-btn" data-action="freezeBrush" title="Freeze Movement (F)">
+                        <span class="tt-icon">❄︎</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paint Section -->
+            <div class="tt-paint-section">
+                <div class="tt-section-label tt-column-label tt-paint-label">Paint</div>
+                <div class="tt-paint-column">
+                    <button class="tt-menu-btn" data-action="drawSpace" title="Background Space (B)">
+                        <span class="tt-icon">○</span>
+                    </button>
+                    <button class="tt-menu-btn" data-action="drawGem" title="Gem (G)">
+                        <span class="tt-icon">◆</span>
+                    </button>
+                    <button class="tt-menu-btn" data-action="drawStatic" title="Static (C)">
+                        <span class="tt-icon">⁘</span>
+                    </button>
+                    <button class="tt-menu-btn" data-action="resetInitialMovement" title="Erase Paint (E cycles erase)">
+                        <span class="tt-icon">⌫</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rewind confirm dialog (engine-owned; no React/wallet deps) -->
+<div id="tt-rewind-dialog" class="tt-rewind-dialog-overlay" hidden>
+    <div class="tt-rewind-dialog-panel">
+        <div class="tt-rewind-dialog-message">Rewind to the very beginning?</div>
+        <div class="tt-rewind-dialog-actions">
+            <button id="tt-rewind-cancel" class="tt-menu-btn tt-rewind-dialog-btn">No</button>
+            <button id="tt-rewind-confirm" class="tt-menu-btn tt-rewind-dialog-btn tt-rewind-dialog-confirm">Yes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Help dialog (engine-owned; no React/wallet deps) -->
+<div id="tt-help-dialog" class="tt-rewind-dialog-overlay tt-help-dialog-overlay" hidden>
+    <div class="tt-rewind-dialog-panel tt-help-dialog-panel">
+        <button id="tt-help-close" class="tt-menu-btn tt-help-close-x" title="Close" aria-label="Close">
+            <span class="tt-icon">✕</span>
+        </button>
+        <div class="tt-rewind-dialog-message tt-help-dialog-title">Controls</div>
+        <div id="tt-help-body" class="tt-help-dialog-body"></div>
+    </div>
+</div>
+`,u3=":root{--action-bar-height: 44px;--warning-rgb: 255, 90, 40;--tt-art-aspect: 4 / 3}#tt-engine-action-bar{position:absolute;bottom:0;left:50%;transform:translate(-50%);z-index:41;pointer-events:auto;display:flex;height:var(--action-bar-height);width:min(100cqw,calc((100cqh - var(--action-bar-height)) * var(--tt-art-aspect)));background:#000000f2;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:transform .3s ease-out}#tt-engine-action-bar.tt-bar-hidden{transform:translate(-50%) translateY(100%)}.tt-action-bar-icon{flex:none;width:var(--action-bar-height)}#tt-btn-system{font-size:18px;padding-bottom:2px}#tt-btn-tools{flex:1}#tt-btn-record{font-size:14px}#tt-btn-record.tt-recording{color:#ff3c3cf2;text-shadow:0 0 8px rgba(255,0,0,.6);animation:record-pulse 1.5s ease-in-out infinite}#tt-btn-record.tt-finishing{color:#ffbe3cf2;text-shadow:0 0 8px rgba(255,160,0,.6);animation:record-pulse .7s ease-in-out infinite}#tt-btn-record.tt-disabled{opacity:.35}#tt-btn-tools.tt-disabled{opacity:.35;pointer-events:none}#tt-btn-tools.tt-disabled .tt-action-bar-label{text-decoration:line-through}@keyframes record-pulse{0%,to{opacity:1}50%{opacity:.5}}.tt-action-bar-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1px solid transparent;color:#00ff8099;font-family:Courier New,monospace;font-size:11px;text-transform:uppercase;letter-spacing:3px;cursor:pointer;transition:color .15s ease,background .15s ease,text-shadow .15s ease,border-color .15s ease;position:relative}.tt-action-bar-tools{border-top:none;border-bottom:none;border-left-color:#00ff8040;border-right-color:#00ff8040}.tt-action-bar-btn:before{content:\"\";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent,transparent 3px,rgba(0,255,128,.04) 3px,rgba(0,255,128,.04) 4px);background-attachment:fixed;opacity:0;transition:opacity .15s ease;pointer-events:none;z-index:1}@media(hover:hover){.tt-action-bar-btn:hover{color:#00ff80e6;background:#00ff8008;border-color:#00ff8066}.tt-action-bar-btn:hover:before{opacity:1}}.tt-action-bar-btn:active{color:#00ff80;background:#00ff800d}.tt-action-bar-btn.tt-active{color:#00ff80;background:#00140afa;text-shadow:0 0 8px rgba(0,255,128,.5);border-width:1px;border-color:#00ff8080}.tt-action-bar-label{pointer-events:none}.tt-action-bar-label:before,.tt-action-bar-label:after{opacity:0;transition:opacity .15s ease;color:#00ff8099;font-weight:700}.tt-action-bar-label:before{content:\"[ \"}.tt-action-bar-label:after{content:\" ]\"}@media(hover:hover){.tt-action-bar-btn:hover .tt-action-bar-label:before,.tt-action-bar-btn:hover .tt-action-bar-label:after{opacity:1}}.tt-action-bar-btn.tt-active .tt-action-bar-label:before,.tt-action-bar-btn.tt-active .tt-action-bar-label:after{opacity:1}#tt-menu-container{position:absolute;bottom:var(--action-bar-height);left:50%;transform:translate(-50%) translateY(0);z-index:40;pointer-events:auto;background:#00140afa;display:flex;flex-direction:column;align-items:center;transition:transform .3s ease-out;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;width:min(100cqw,calc((100cqh - var(--action-bar-height)) * var(--tt-art-aspect)))}#tt-menu-container.tt-menu-closed{transform:translate(-50%) translateY(100%);pointer-events:none}#tt-menu-container.tt-menu-hidden{transform:translate(-50%) translateY(calc(100% + var(--action-bar-height)));pointer-events:none}#tt-menu-panel{background:#00140afa;border:1px solid rgba(0,255,128,.5);border-bottom:none;padding:2px 10px 10px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;width:100%;box-sizing:border-box}#tt-menu-panel:before{content:\"\";position:absolute;bottom:0;left:0;width:var(--action-bar-height);height:0;border-top:1px solid rgba(0,255,128,.5);pointer-events:none;z-index:1}#tt-menu-container:before{content:\"\";position:absolute;bottom:0;right:0;width:var(--action-bar-height);height:0;border-top:1px solid rgba(0,255,128,.5);pointer-events:none;z-index:1}#tt-menu-panel:after,#tt-engine-action-bar:after{content:\"\";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent,transparent 3px,rgba(0,255,128,.03) 3px,rgba(0,255,128,.03) 4px);background-attachment:fixed;pointer-events:none;z-index:0}.tt-mode-toggle{display:flex;align-items:center;justify-content:center;gap:8px;padding-bottom:4px;margin-bottom:2px;cursor:pointer;-webkit-user-select:none;user-select:none}.tt-mode-toggle-label{font-family:Courier New,monospace;font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#00ff8059;transition:color .2s ease,text-shadow .2s ease;width:36px;text-align:right}.tt-mode-toggle-label.tt-active-label{color:#00ff80f2;text-shadow:0 0 6px rgba(0,255,128,.5)}.tt-mode-toggle-track{width:36px;height:18px;background:#000804e6;border:1px solid rgba(0,255,128,.35);border-radius:9px;position:relative;transition:border-color .2s ease}.tt-mode-toggle:hover .tt-mode-toggle-track{border-color:#00ff8099}.tt-mode-toggle-thumb{width:12px;height:12px;background:#00ff80cc;border-radius:50%;position:absolute;top:2px;left:3px;transition:left .2s ease,box-shadow .2s ease;box-shadow:0 0 4px #00ff8066}.tt-mode-toggle.tt-manual-active .tt-mode-toggle-thumb{left:3px}.tt-mode-toggle.tt-organic-active .tt-mode-toggle-thumb{left:19px}.tt-main-row{display:flex;align-items:flex-end;justify-content:center;padding:8px 0;gap:22px}.tt-menu-btn{width:44px;height:44px;background:#000804e6;border:1px solid rgba(0,255,128,.35);color:#00ff80e6;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s ease}.tt-menu-btn:hover{background:#002814f2;border-color:#00ff80b3}.tt-menu-btn:active{transform:scale(.95);background:#003c1ef2}.tt-menu-btn.tt-active{background:#005028f2;border-color:#00ff80;text-shadow:0 0 6px currentColor;box-shadow:0 0 6px #00ff804d,0 0 14px #00ff801a;position:relative;overflow:hidden;animation:pip-bg 4s steps(1) infinite,pip-glow 4s steps(1) infinite}@keyframes pip-artifact{0%,to{opacity:0;transform:translateY(0)}21%{opacity:.15;transform:translateY(14px)}24%{opacity:0}58%{opacity:.1;transform:translateY(32px)}60%{opacity:0}84%{opacity:.18;transform:translateY(8px)}87%{opacity:0}}@keyframes pip-glow{0%,to{text-shadow:0 0 6px currentColor}7%{text-shadow:0 0 12px currentColor,0 0 2px currentColor}9%{text-shadow:0 0 4px currentColor}31%{text-shadow:0 0 10px currentColor,0 0 3px currentColor}33%{text-shadow:none}35%{text-shadow:0 0 6px currentColor}62%{text-shadow:0 0 14px currentColor,0 0 4px currentColor}64%{text-shadow:0 0 2px currentColor}66%{text-shadow:0 0 6px currentColor}88%{text-shadow:none}90%{text-shadow:0 0 8px currentColor}}@keyframes pip-bg{0%,to{background-color:#005028f2}11%{background-color:#004623eb}13%{background-color:#00552af5}37%{background-color:#004b26ed}39%{background-color:#005028f2}71%{background-color:#005a2df7}73%{background-color:#005028f2}}.tt-brush-column.tt-paused,.tt-paint-section.tt-paused{opacity:.25;pointer-events:none}.tt-movement-section.tt-paused .tt-cross-container .tt-menu-btn:not(#tt-btn-pause){opacity:.25;pointer-events:none}.tt-movement-section.tt-paused .tt-section-label{opacity:.25}.tt-menu-btn.tt-paused-disabled,.tt-mode-toggle.tt-paused{opacity:.25;pointer-events:none}.tt-menu-btn.tt-arrow-btn{border-color:#00ff8080}.tt-menu-btn.tt-arrow-btn:hover{border-color:#00ff80cc}.tt-menu-btn.tt-arrow-btn.tt-active{border-color:#00ff80}.tt-brush-column{display:flex;flex-direction:column;gap:4px;align-items:center;position:relative}.tt-brush-column:before{content:\"\";position:absolute;left:-11px;top:16%;bottom:2%;width:1px;background:linear-gradient(to bottom,transparent,rgba(0,255,128,.25) 15%,rgba(0,255,128,.35) 50%,rgba(0,255,128,.25) 85%,transparent);pointer-events:none}.tt-brush-column:after{content:\"\";position:absolute;left:-20px;top:24%;bottom:10%;width:1px;background:linear-gradient(to bottom,transparent,rgba(0,255,128,.2) 20%,rgba(0,255,128,.3) 50%,rgba(0,255,128,.2) 80%,transparent);pointer-events:none}.tt-brush-size-display{width:44px;height:92px;background:#000804f2;border:1px solid rgba(0,255,128,.5);display:flex;flex-direction:column;align-items:center;justify-content:space-between;cursor:ns-resize;gap:2px;position:relative}.tt-brush-size-display-inner{display:flex;flex-direction:column;align-items:center;gap:2px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}.tt-drag-chevrons{display:flex;flex-direction:column;align-items:center;gap:0;color:#00ff8059;font-size:14px;flex-shrink:0;line-height:.33;-webkit-user-select:none;user-select:none;padding:10px}.tt-drag-chevrons.tt-up span{transform:rotate(-90deg)}.tt-drag-chevrons.tt-down span{transform:rotate(90deg)}.tt-brush-preview{width:18px;height:18px;background:#00ff80cc;border-radius:50%;transition:all .15s ease}.tt-brush-size-label{color:#00ff80cc;font-family:Courier New,monospace;font-size:9px}.tt-movement-section{display:flex;flex-direction:column;align-items:center}.tt-cross-container{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:4px}.tt-paint-section{display:flex;flex-direction:column;gap:4px;position:relative}.tt-paint-column:after{content:\"\";position:absolute;right:-13px;top:5%;bottom:5%;width:1px;background:linear-gradient(to bottom,transparent,rgba(0,255,128,.25) 15%,rgba(0,255,128,.35) 50%,rgba(0,255,128,.25) 85%,transparent);pointer-events:none}.tt-paint-column:before{content:\"\";position:absolute;right:-22px;top:15%;bottom:15%;width:1px;background:linear-gradient(to bottom,transparent,rgba(0,255,128,.2) 20%,rgba(0,255,128,.3) 50%,rgba(0,255,128,.2) 80%,transparent);pointer-events:none}.tt-paint-column{display:flex;flex-direction:column;gap:4px;position:relative}.tt-section-label{font-family:Courier New,monospace;font-size:9px;color:#00ff8080;text-transform:uppercase;letter-spacing:1px;text-align:center;padding-bottom:2px}.tt-icon{line-height:1;display:flex;align-items:center;justify-content:center;font-variant-emoji:text}.tt-menu-btn[data-action=eraseMovement] .tt-icon,.tt-menu-btn[data-action=resetInitialMovement] .tt-icon{font-size:15px}.tt-menu-btn[data-action=eraseMovement].tt-active,.tt-menu-btn[data-action=resetInitialMovement].tt-active{background-color:rgba(var(--warning-rgb),.22);border-color:rgba(var(--warning-rgb),1);color:rgba(var(--warning-rgb),.95);box-shadow:0 0 6px rgba(var(--warning-rgb),.35),0 0 14px rgba(var(--warning-rgb),.12);animation:pip-glow 4s steps(1) infinite}.tt-menu-btn[data-action=eraseMovement]:hover,.tt-menu-btn[data-action=resetInitialMovement]:hover{background:rgba(var(--warning-rgb),.12);border-color:rgba(var(--warning-rgb),.55);color:rgba(var(--warning-rgb),.8)}.tt-rotate-ui .tt-main-row{align-items:center;padding:28px 0 0}.tt-rotate-ui .tt-movement-section{rotate:90deg;margin:0 20px}.tt-rotate-ui .tt-column-label{transform:translate(-0%,-50%) rotate(90deg);position:absolute;top:50%;right:-50%}.tt-rotate-ui .tt-brush-size-display-inner{transform:translate(-50%,-50%) rotate(90deg) scale(.75)}.tt-rotate-ui .tt-paint-label{right:76%}.tt-rotate-ui .tt-brush-column{margin-right:8px}.tt-rotate-ui .tt-paint-column{margin-left:8px}@media(max-width:480px){#tt-menu-panel{padding:8px}.tt-menu-btn{width:40px;height:40px;font-size:16px}.tt-cross-container{grid-template-columns:repeat(3,40px);grid-template-rows:repeat(3,40px)}.tt-brush-size-display{width:40px;height:84px}.tt-brush-preview{width:14px;height:14px}.tt-section-label{font-size:8px}.tt-action-bar-btn{font-size:10px;letter-spacing:2px}}@media(hover:none){.tt-menu-btn:active{transform:scale(.92);background:#006432f2}.tt-brush-size-display:active{border-color:#00ff80cc}.tt-action-bar-btn:active{color:#00ff80;background:#00ff801a}}.tt-rewind-btn{align-self:center;width:auto;height:auto;padding:2px 18px;margin-bottom:8px;font-size:12px;line-height:1;opacity:.9;color:rgba(var(--warning-rgb),.95);border-color:rgba(var(--warning-rgb),.55)}.tt-rewind-btn .tt-icon{font-size:12px}.tt-rewind-btn:hover{opacity:1;background:rgba(var(--warning-rgb),.12);border-color:rgba(var(--warning-rgb),.9)}.tt-rewind-dialog-overlay{position:absolute;inset:0;z-index:50;pointer-events:auto;display:flex;align-items:center;justify-content:center;background:#0009}.tt-rewind-dialog-overlay[hidden]{display:none}.tt-rewind-dialog-panel{background:#00140afa;border:1px solid rgba(0,255,128,.5);box-shadow:0 0 16px #00ff8040;padding:20px 24px;max-width:280px;text-align:center}.tt-rewind-dialog-message{color:#00ff80e6;text-shadow:0 0 8px rgba(0,255,128,.5);margin-bottom:18px;font-size:14px;letter-spacing:.05em}.tt-rewind-dialog-actions{display:flex;gap:12px;justify-content:center}.tt-rewind-dialog-btn{min-width:84px;padding:8px 12px}.tt-rewind-dialog-confirm{color:rgba(var(--warning-rgb),.95);border-color:rgba(var(--warning-rgb),.6);text-shadow:0 0 8px rgba(var(--warning-rgb),.5)}.tt-rewind-dialog-confirm:hover{background:rgba(var(--warning-rgb),.12);border-color:rgba(var(--warning-rgb),.8)}.tt-help-dialog-panel{max-width:1000px;width:calc(100cqw - 48px);max-height:80cqh;display:flex;flex-direction:column;position:relative;text-align:left}.tt-help-close-x{position:absolute;top:6px;right:8px;z-index:5;width:22px;height:22px;min-width:0;padding:0;font-size:14px;line-height:1}.tt-help-dialog-title{margin-bottom:14px;text-align:center}.tt-help-dialog-body{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:4px 20px;font-size:12px;overflow-y:auto;min-height:0;padding-bottom:4px}.tt-help-column{display:flex;flex-direction:column;gap:2px;flex:1 1 0;min-width:150px}.tt-help-column>.tt-help-group-title:first-child{margin-top:0}.tt-help-group-title{color:#00ff80d9;text-transform:uppercase;letter-spacing:.12em;font-size:11px;margin:10px 0 4px}.tt-help-row{display:grid;grid-template-columns:26px 1fr;align-items:baseline;gap:4px;padding:2px 0}.tt-help-row .tt-icon{justify-self:center}.tt-help-dialog-body.tt-show-shortcuts .tt-help-row{grid-template-columns:26px 14px 1fr}.tt-help-dialog-body .tt-icon{color:#00ff80e6;justify-content:flex-start;font-size:13px}.tt-help-row-key{color:#00ff80f2;letter-spacing:.04em}.tt-help-row-name{color:#00ff80d9;font-weight:600}.tt-help-row-desc{color:#00ff808c}.tt-help-btn,.tt-rotate-btn{position:absolute!important;z-index:5;width:26px;height:26px;padding:0;line-height:1;top:5px}.tt-help-btn{right:5px;font-size:14px}.tt-rotate-btn{left:5px;font-size:16px}.tt-rotate-btn .tt-icon{transform:rotate(180deg)}.tt-rotate-ui .tt-help-btn .tt-icon{rotate:90deg}.tt-rotate-ui .tt-rotate-btn .tt-icon{transform:scaleY(-1) rotate(90deg)}@media(orientation:portrait){.tt-rotate-ui .tt-help-dialog-panel{transform:rotate(90deg);flex:0 0 auto;box-sizing:border-box;width:calc(100cqh - 32px);max-width:calc(100cqh - 32px);max-height:calc(100cqw - 32px)}}";function c3(K){let X=K||{},Q=document.getElementById("tt-menu-container");if(!Q)return console.warn("menu.ts: #tt-menu-container not found"),null;let N=Q,G=document.getElementById("tt-engine-action-bar"),J=document.getElementById("tt-btn-system"),P=document.getElementById("tt-btn-tools"),W=document.getElementById("tt-btn-record"),Y=document.getElementById("tt-btn-rotate"),D=!0;e2(1440*O3,1080*O3).then((j)=>{L||(D=j,!j&&W&&(W.classList.add("tt-disabled"),W.title="only available on chrome"))});let Z={currentMode:"waterfall",currentDirection:"down",eraseVariant:"movement",waterfallVariant:!0,globalFreeze:!1,noiseFreeze:!1,totalFreeze:!1,manualMode:!1,brushSize:1,brushSizeIndex:X.initialBrushSizeIndex??4,brushSizeOptions:X.brushSizeOptions??[1,2,4,8,12,16,24,32,48,64]};Z.brushSizeIndex=Math.min(Z.brushSizeIndex,Z.brushSizeOptions.length-1),Z.brushSize=Z.brushSizeOptions[Z.brushSizeIndex];let A=X.isAdmin??!1,L=!1,w=!1,k=!1,y=null,F=!0,M=!0,f=!1,l=0,i=0;function $(j){X.onAction&&X.onAction(j,{...Z})}function R(j){let h=K4(j);Z.globalFreeze=h.globalFreeze,Z.noiseFreeze=h.noiseFreeze,Z.totalFreeze=h.totalFreeze}let H={closeMenu(){E()},increaseBrushSize(){Z.brushSizeOptions.length>0&&(Z.brushSizeIndex=Math.min(Z.brushSizeOptions.length-1,Z.brushSizeIndex+1),Z.brushSize=Z.brushSizeOptions[Z.brushSizeIndex],X0())},decreaseBrushSize(){Z.brushSizeOptions.length>0&&(Z.brushSizeIndex=Math.max(0,Z.brushSizeIndex-1),Z.brushSize=Z.brushSizeOptions[Z.brushSizeIndex],X0())},waterfallUp(){Z.currentMode==="waterfall"&&Z.currentDirection==="up"&&(Z.waterfallVariant=!Z.waterfallVariant),Z.currentMode="waterfall",Z.currentDirection="up"},waterfallDown(){Z.currentMode==="waterfall"&&Z.currentDirection==="down"&&(Z.waterfallVariant=!Z.waterfallVariant),Z.currentMode="waterfall",Z.currentDirection="down"},moveLeft(){Z.currentMode="move",Z.currentDirection="left"},moveRight(){Z.currentMode="move",Z.currentDirection="right"},shuffle(){Z.currentMode="shuffle"},trickle(){Z.currentMode="trickle"},eraseMovement(){Z.currentMode!=="erase"?(Z.currentMode="erase",Z.eraseVariant="movement"):Z.eraseVariant==="both"?Z.eraseVariant="movement":Z.eraseVariant="both"},freezeBrush(){Z.currentMode="freeze"},toggleGlobalFreeze(){R(Z.globalFreeze?0:1)},freezeLevel0(){R(0)},freezeLevel1(){R(1)},freezeLevel2(){R(2)},freezeLevel3(){R(3)},rewindRequest(){H1()},rewind(){Z.currentMode="waterfall",Z.currentDirection="down",Z.eraseVariant="movement",Z.waterfallVariant=!0,Z.globalFreeze=!1,Z.noiseFreeze=!1,Z.totalFreeze=!1,Z.manualMode=!1},drawSpace(){Z.currentMode="empty"},drawGem(){Z.currentMode="gem"},drawStatic(){Z.currentMode="static"},resetInitialMovement(){Z.currentMode!=="erase"?(Z.currentMode="erase",Z.eraseVariant="paint"):Z.eraseVariant==="both"?Z.eraseVariant="paint":Z.eraseVariant="both"},toggleManualMode(){Z.manualMode=!Z.manualMode},globalReset(){},openAppMenu(){X.onAppMenu&&X.onAppMenu()},toggleRotate(){X.onRotate&&X.onRotate()},cycleEraseMode(){let j=["both","movement","paint"];if(Z.currentMode!=="erase")Z.currentMode="erase",Z.eraseVariant="both";else{let h=j.indexOf(Z.eraseVariant);Z.eraseVariant=j[(h+1)%j.length]}},newSeed(){Z.globalFreeze=!1,Z.noiseFreeze=!1,Z.totalFreeze=!1,Z.manualMode=!1},saveScreenshot(){},recordVideo(){}};function z(j){j==="recordVideo"&&!D||H[j]&&(H[j](),x0(),$(j))}let m=0,S=500;function d(j){let h=j.key.toLowerCase();switch(h){case" ":{if(j.preventDefault(),j.repeat)return;let q0=performance.now(),T=q0-m<S;m=q0;let Z0=J4(Z),Y0=t2(Z0,T);z(`freezeLevel${Y0}`),Y0===0&&(m=0);return}case"p":z("saveScreenshot");return;case"r":z("recordVideo");return;case"n":if(!A)return;z("newSeed");return;case"q":z("openAppMenu");return;case"m":w?E():G0();return}if(!Z.globalFreeze){switch(h){case"arrowup":z("waterfallUp");return;case"arrowdown":z("waterfallDown");return;case"arrowleft":z("moveLeft");return;case"arrowright":z("moveRight");return}if(M)switch(h){case"e":z("cycleEraseMode");break;case"f":z("freezeBrush");break;case"s":z("shuffle");break;case"t":z("trickle");break;case"c":z("drawStatic");break;case"g":z("drawGem");break;case"b":z("drawSpace");break;case"[":z("decreaseBrushSize");break;case"]":z("increaseBrushSize");break;case"x":z("toggleManualMode");break}}}window.addEventListener("keydown",d);let e=["toggleGlobalFreeze","openAppMenu","closeMenu","rewindRequest","rewind"];function a(j){if(k)return;let h=j.target,q0=h.closest("[data-action]");if(!q0){h.closest(".tt-brush-size-display, .tt-mode-toggle")||E();return}j.preventDefault(),j.stopPropagation();let T=q0.dataset.action;Z.globalFreeze&&!e.includes(T)||z(T)}N.addEventListener("click",a);function V0(){k=!1,y!==null&&(clearTimeout(y),y=null)}let t=null;function j0(){t&&N.removeEventListener("transitionend",t),t=()=>{N.removeEventListener("transitionend",t),t=null,V0()},N.addEventListener("transitionend",t)}function G0(){F&&(!N||k||(k=!0,j0(),y=setTimeout(V0,300),N.classList.remove("tt-menu-closed"),w=!0,P&&P.classList.add("tt-active"),X0(),x0()))}function E(){!N||!w||k||(k=!0,j0(),y=setTimeout(V0,300),N.classList.add("tt-menu-closed"),w=!1,P&&P.classList.remove("tt-active"))}function p(j){j.stopPropagation(),z("openAppMenu")}J&&J.addEventListener("click",p);function v(j){j.stopPropagation(),F&&(k||(w?E():G0()))}P&&P.addEventListener("pointerdown",v);function I0(j){W&&(W.classList.toggle("tt-recording",j==="recording"),W.classList.toggle("tt-finishing",j==="finishing"))}function u(j){j.stopPropagation(),z("recordVideo")}W&&W.addEventListener("click",u);function k0(j){j.stopPropagation(),z("toggleRotate")}Y&&Y.addEventListener("click",k0);function b(j){Y&&(Y.style.display=j?"":"none")}function m0(j){Y&&Y.classList.toggle("tt-active",j)}function z0(j){F=j,P&&P.classList.toggle("tt-disabled",!j),j||E()}function s(j){M=j}let l0=document.getElementById("tt-rewind-dialog"),J0=document.getElementById("tt-rewind-confirm"),Q0=document.getElementById("tt-rewind-cancel");function H1(){l0&&(l0.hidden=!1)}function _0(){l0&&(l0.hidden=!0)}function B0(j){j.stopPropagation(),_0(),z("rewind")}function S0(j){j.stopPropagation(),_0()}J0&&J0.addEventListener("click",B0),Q0&&Q0.addEventListener("click",S0);let e0=[{title:"System",items:[{icon:"☰",shortcut:"Q",name:"System",desc:"Open the external system menu"},{icon:"",shortcut:"M",name:"Tools",desc:"Open or close the tools menu"},{icon:"⏺︎",shortcut:"R",name:"Record",desc:"Start or stop video recording"},{icon:"",shortcut:"X",name:"Manual / Organic",desc:"Toggle manual vs organic mode"},{icon:"",shortcut:"P",name:"Screenshot",desc:"Save a still image"},{icon:"⏸︎/▶︎",shortcut:"_",name:"Pause / Resume",desc:"Pause or resume evolution"}]},{title:"Movement",items:[{icon:"↓/⤋",shortcut:"▾",name:"Move/Waterfall Down",desc:"Cycle down: move / waterfall"},{icon:"↑/⤊",shortcut:"▴",name:"Move/Waterfall Up",desc:"Cycle up: move / waterfall"},{icon:"←",shortcut:"◂",name:"Move Left",desc:"Move left"},{icon:"→",shortcut:"▸",name:"Move Right",desc:"Move right"},{icon:"≈",rotateIcon:!0,shortcut:"T",name:"Trickle",desc:"Trickle mode"},{icon:"≈",shortcut:"S",name:"Shuffle",desc:"Shuffle mode"},{icon:"❄︎",shortcut:"F",name:"Freeze",desc:"Freeze movement under the brush"},{icon:"⌫",shortcut:"E",name:"Erase",desc:"Cycle erase: both / movement / paint"}]},{title:"Paint",items:[{icon:"○",shortcut:"B",name:"Background Space",desc:"Draw background space"},{icon:"◆",shortcut:"G",name:"Gem",desc:"Draw gem"},{icon:"⁘",shortcut:"C",name:"Static",desc:"Draw static"},{icon:"⌫",shortcut:"E",name:"Erase",desc:"Cycle erase: both / movement / paint"}]},{title:"Brush",items:[{icon:"∧",shortcut:"]",name:"Larger",desc:"Increase brush size"},{icon:"∨",shortcut:"[",name:"Smaller",desc:"Decrease brush size"}]}];function V1(j){let h=window.matchMedia("(pointer: fine)").matches;j.classList.toggle("tt-show-shortcuts",h);let[q0,T,Z0,Y0]=e0,U0=[[q0],[T],[Z0,Y0]];function x(P0,g){let h0=document.createElement("div");h0.className="tt-help-group-title",h0.textContent=P0.title,g.appendChild(h0);for(let u0 of P0.items){let a0=document.createElement("div");a0.className="tt-help-row";let N0=document.createElement("span");if(N0.className="tt-icon",N0.textContent=u0.icon,u0.rotateIcon&&(N0.style.display="inline-block",N0.style.transform="rotate(90deg)"),a0.appendChild(N0),h){let c0=document.createElement("span");c0.className="tt-help-row-key",c0.textContent=u0.shortcut,a0.appendChild(c0)}let H0=document.createElement("span");H0.className="tt-help-row-text";let v0=document.createElement("span");v0.className="tt-help-row-name",v0.textContent=u0.name;let $0=document.createElement("span");$0.className="tt-help-row-desc",$0.textContent=u0.desc,H0.append(v0,document.createTextNode(" — "),$0),a0.appendChild(H0),g.appendChild(a0)}}let E0=document.createDocumentFragment();for(let P0 of U0){let g=document.createElement("div");g.className="tt-help-column";for(let h0 of P0)x(h0,g);E0.appendChild(g)}j.replaceChildren(E0)}let Q1=document.getElementById("tt-help-body");Q1&&V1(Q1);let r=document.getElementById("tt-help-btn"),K0=document.getElementById("tt-help-dialog"),w0=document.getElementById("tt-help-close");function c1(){K0&&(K0.hidden=!1)}function W0(){K0&&(K0.hidden=!0)}function L1(j){j.stopPropagation(),c1()}function j1(j){j.stopPropagation(),W0()}function g0(j){j.target===K0&&W0()}r&&r.addEventListener("click",L1),w0&&w0.addEventListener("click",j1),K0&&K0.addEventListener("click",g0);function T0(j){!w||!N||k||K0&&!K0.hidden&&K0.contains(j.target)||N.contains(j.target)||G?.contains(j.target)||E()}document.addEventListener("pointerdown",T0);let O0=N.querySelector(".tt-brush-size-display");function A0(j){Z.globalFreeze||(j.preventDefault(),j.stopPropagation(),f=!0,l=("touches"in j)?j.touches[0].clientY:j.clientY,i=Z.brushSizeIndex)}function R0(j){if(!f)return;j.preventDefault();let h="touches"in j?j.touches[0].clientY:j.clientY,q0=l-h,T=Math.floor(q0/20),Z0=Math.max(0,Math.min(Z.brushSizeOptions.length-1,i+T));Z0!==Z.brushSizeIndex&&(Z.brushSizeIndex=Z0,Z.brushSize=Z.brushSizeOptions[Z.brushSizeIndex],X0(),$("brushSizeChanged"))}function t0(){f=!1}O0&&(O0.addEventListener("mousedown",A0),O0.addEventListener("touchstart",A0)),document.addEventListener("mousemove",R0),document.addEventListener("touchmove",R0,{passive:!1}),document.addEventListener("mouseup",t0),document.addEventListener("touchend",t0);function x0(){N.querySelectorAll("[data-action]").forEach((Y0)=>{let U0=Y0.dataset.action,x=!1;switch(U0){case"waterfallUp":x=Z.currentMode==="waterfall"&&Z.currentDirection==="up";break;case"waterfallDown":x=Z.currentMode==="waterfall"&&Z.currentDirection==="down";break;case"moveLeft":x=Z.currentMode==="move"&&Z.currentDirection==="left";break;case"moveRight":x=Z.currentMode==="move"&&Z.currentDirection==="right";break;case"eraseMovement":x=Z.currentMode==="erase"&&(Z.eraseVariant==="movement"||Z.eraseVariant==="both");break;case"resetInitialMovement":x=Z.currentMode==="erase"&&(Z.eraseVariant==="paint"||Z.eraseVariant==="both");break;case"freezeBrush":x=Z.currentMode==="freeze";break;case"shuffle":x=Z.currentMode==="shuffle";break;case"trickle":x=Z.currentMode==="trickle";break;case"drawStatic":x=Z.currentMode==="static";break;case"drawGem":x=Z.currentMode==="gem";break;case"drawSpace":x=Z.currentMode==="empty";break;case"toggleGlobalFreeze":x=Z.globalFreeze;break}Y0.classList.toggle("tt-active",x);let E0=Z.globalFreeze&&!e.includes(U0);if(Y0.classList.toggle("tt-paused-disabled",E0),U0==="waterfallUp"||U0==="waterfallDown"){let P0=Y0.querySelector(".tt-icon");P0&&(U0==="waterfallUp"?P0.textContent=Z.waterfallVariant?"⤊":"↑":P0.textContent=Z.waterfallVariant?"⤋":"↓")}});let j=N.querySelector(".tt-brush-column"),h=N.querySelector(".tt-movement-section"),q0=N.querySelector(".tt-paint-section");j&&j.classList.toggle("tt-paused",Z.globalFreeze),h&&h.classList.toggle("tt-paused",Z.globalFreeze),q0&&q0.classList.toggle("tt-paused",Z.globalFreeze);let T=document.getElementById("tt-btn-pause");if(T){let Y0=T.querySelector(".tt-icon");Y0&&(Y0.textContent=Z.globalFreeze?"▶︎":"⏸︎")}let Z0=document.getElementById("tt-mode-toggle");if(Z0){Z0.classList.toggle("tt-paused",Z.globalFreeze),Z0.classList.toggle("tt-manual-active",Z.manualMode),Z0.classList.toggle("tt-organic-active",!Z.manualMode);let Y0=Z0.querySelector('[data-mode="manual"]'),U0=Z0.querySelector('[data-mode="organic"]');Y0&&Y0.classList.toggle("tt-active-label",Z.manualMode),U0&&U0.classList.toggle("tt-active-label",!Z.manualMode)}}function X0(){let j=N.querySelector(".tt-brush-preview"),h=N.querySelector(".tt-brush-size-label");if(j){let q0=8+Z.brushSizeIndex/Math.max(1,Z.brushSizeOptions.length-1)*32;j.style.width=q0+"px",j.style.height=q0+"px"}h&&(h.textContent=Math.round(Z.brushSize*2)+"px")}return x0(),X0(),{getState(){return{...Z}},setState(j){Object.assign(Z,j),x0(),X0()},open:G0,close:E,show(){G&&G.classList.remove("tt-bar-hidden"),N.classList.remove("tt-menu-hidden")},hide(){E(),G&&G.classList.add("tt-bar-hidden"),N.classList.add("tt-menu-hidden")},updateActiveStates:x0,updateBrushDisplay:X0,setRecordingStatus:I0,setRotateAvailable:b,setRotateActive:m0,setToolsEnabled:z0,setDrawingEnabled:s,destroy(){L=!0,V0(),t&&N.removeEventListener("transitionend",t),N.removeEventListener("click",a),window.removeEventListener("keydown",d),document.removeEventListener("pointerdown",T0),document.removeEventListener("mousemove",R0),document.removeEventListener("touchmove",R0),document.removeEventListener("mouseup",t0),document.removeEventListener("touchend",t0),O0&&(O0.removeEventListener("mousedown",A0),O0.removeEventListener("touchstart",A0)),J&&J.removeEventListener("click",p),P&&P.removeEventListener("pointerdown",v),W&&W.removeEventListener("click",u),Y&&Y.removeEventListener("click",k0),J0&&J0.removeEventListener("click",B0),Q0&&Q0.removeEventListener("click",S0),r&&r.removeEventListener("click",L1),w0&&w0.removeEventListener("click",j1),K0&&K0.removeEventListener("click",g0)}}}var X4=`#version 300 es
+in vec2 a_position;
+in vec2 a_texCoord;
+
+out vec2 v_texCoord;
+
+void main() {
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_texCoord = a_texCoord;
+}`,q4=`#version 300 es
+
+precision highp float;
+
+uniform sampler2D u_texture;
+uniform vec2 u_resolution;
+uniform float u_time;
+
+uniform float u_staticLoopPhase;
+
+uniform float u_steppedHuePhase;
+
+uniform float u_staticCyclesBlank;
+uniform float u_staticCyclesBlock;
+uniform float u_staticCyclesEdge;
+uniform float u_pixelDensity;
+
+uniform float u_brushFrameCount, u_brushTime;
+uniform vec3 u_seedOffset;
+uniform float u_targetFps;
+uniform float u_baseChunkSize;
+
+uniform float u_chunkGlitch;
+uniform float u_shouldMoveThreshold;
+uniform float u_moveSpeed;
+uniform vec2 u_moveShapeScale;
+uniform float u_moveShapeSpeed;
+uniform float u_resetThreshold;
+uniform float u_resetEdgeThreshold;
+uniform float u_resetThresholdVariance;
+uniform float u_movementThresholdVariance;
+uniform float u_shouldFallThreshold;
+uniform vec2 u_shouldFallScale;
+uniform float u_fallShapeSpeed;
+uniform bool u_fxWithBlocking;
+uniform float u_blockTimeMult;
+uniform float u_extraMoveShapeThreshold;
+uniform vec2 u_extraMoveStutterScale;
+uniform float u_extraMoveStutterThreshold;
+uniform float u_extraFallShapeThreshold;
+uniform vec2 u_extraFallStutterScale;
+uniform float u_extraFallStutterThreshold;
+uniform float u_fallWaterfallMult;
+uniform vec2 u_extraFallShapeScale;
+uniform float u_blocking;
+uniform float u_blackNoiseEdgeMult;
+uniform float u_blackNoiseThreshold;
+uniform float u_useRibbonThreshold;
+uniform vec2 u_dirtNoiseScale;
+uniform float u_ribbonDirtThreshold;
+uniform vec2 u_blankStaticScale;
+uniform float u_blankStaticThreshold;
+uniform float u_blankStaticTimeMult;
+uniform bool u_edgeFx; 
+uniform vec3 u_blankColorMult;
+uniform bool u_useColorCycle;
+
+uniform int u_gradientBlockPattern;
+uniform vec3 u_staticColor1;
+uniform vec3 u_staticColor2;
+uniform vec3 u_staticColor3;
+uniform vec2 u_extraMoveShapeScale;
+uniform float u_cycleColorHueSpeed;
+uniform float u_globalFreeze;
+uniform float u_forceReset;
+uniform float u_manualMode;
+uniform float u_defaultWaterfallMode;
+uniform sampler2D u_movementTexture;
+uniform sampler2D u_paintTexture;
+uniform sampler2D u_blockNoiseTex;
+uniform sampler2D u_movementShapeTex;
+uniform float u_contourTimeMult;
+uniform sampler2D u_imageInTex;
+uniform float u_imageInBg;
+uniform float u_imageOnlyMode; 
+
+in vec2 v_texCoord;
+out vec4 fragColor;
+
+const float PI = 3.14159265;
+
+const float DRAW_ACTIVE_THRESHOLD = 0.25;
+const float DRAW_SHIFT_THRESHOLD = 0.5;
+const float DRAW_DIRECTION_THRESHOLD = 0.75;
+
+const float G_TRICKLE_MAX = 0.40;
+const float G_STRAIGHT_DOWN_MAX = 0.55;
+const float G_WATERFALL_DOWN_MAX = 0.70;
+const float G_STRAIGHT_UP_MAX = 0.85;
+
+uvec3 pcg3d(uvec3 v) {
+    v = v * 1664525u + 1013904223u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    v ^= v >> 16u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    return v;
+}
+
+float random(vec2 st) {
+    uvec3 h = pcg3d(floatBitsToUint(vec3(st.xyx) + u_seedOffset));
+    return float(h.x) * (1.0 / 4294967296.0);
+}
+
+vec2 quinticFade(vec2 f) { return f * f * f * (f * (f * 6.0 - 15.0) + 10.0); }
+vec3 quinticFade(vec3 f) { return f * f * f * (f * (f * 6.0 - 15.0) + 10.0); }
+
+float noise(vec2 st) {
+    st += u_seedOffset.xy;
+
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+
+    vec2 u = quinticFade(f);
+
+    return mix(mix(a, b, u.x),
+               mix(c, d, u.x), u.y);
+}
+
+vec3 rotateHue(vec3 color, float angle) {
+    float cosA = cos(angle * 6.28318);
+    float sinA = sin(angle * 6.28318);
+    vec3 k = vec3(0.57735); 
+    return color * cosA + cross(k, color) * sinA + k * dot(k, color) * (1.0 - cosA);
+}
+
+vec4 increaseColorHue(vec4 color, float amount) {
+    vec3 rgb = rotateHue(color.rgb, amount);
+    return vec4(rgb, color.a);
+}
+
+vec4 threeWayGradient(vec4 color1, vec4 color2, vec4 color3, float amount){
+  
+  float cycleAmount = fract(amount);
+  float segmentAmount = cycleAmount * 3.0;
+
+  if (segmentAmount < 1.0) {
+    return mix(color1, color2, segmentAmount);
+  }
+
+  if (segmentAmount < 2.0) {
+    return mix(color2, color3, segmentAmount - 1.0);
+  }
+
+  return mix(color3, color1, segmentAmount - 2.0);
+}
+
+vec4 createGradientBlock(vec2 st, bool horizontal) {
+  float wavelength = 32.;
+
+  
+  
+  float across = horizontal ? st.y : st.x;
+  float along = horizontal ? st.x : st.y;
+
+  vec4 base = vec4(1.0, 0., 0.5, 1.);
+  float amount = 0.;
+
+  
+  
+  
+  
+  float seedPhaseA = u_seedOffset.x * (PI * 2.);
+  float seedPhaseB = u_seedOffset.y * (PI * 2.);
+
+  if(u_gradientBlockPattern == 1) {
+    
+    wavelength *= 0.5;
+    wavelength += 0.33;
+
+    amount = (cos(PI/2. + st.y * PI * wavelength + seedPhaseA) + sin(PI/2. + st.x * PI * wavelength + seedPhaseB)) + 1. * 0.25;
+  } else if(u_gradientBlockPattern == 2) {
+    
+    
+    
+    wavelength += .666;
+    wavelength *= 0.75;
+    float directionalSt = horizontal ? st.x + st.y : st.x - st.y;
+    amount = cos(PI/2. + directionalSt * PI * wavelength + seedPhaseA) * 0.5 + 0.5;
+  } else if(u_gradientBlockPattern == 3) {
+    
+    wavelength *= .555;
+    amount = cos(st.x * PI * wavelength + seedPhaseA) * cos(st.y * PI * wavelength + seedPhaseB) * 0.5 + 0.5;
+  } else if(u_gradientBlockPattern == 4) {
+    wavelength += 7.77;
+    wavelength *= 0.75;
+    
+    
+    
+    
+    float zigFreq = 4.;
+    float zig = abs(fract(along * zigFreq) - 0.5) / zigFreq;
+    amount = cos(PI/2. + (across + zig) * PI * wavelength + seedPhaseA) * 0.5 + 0.5;
+  } else if(u_gradientBlockPattern == 5) {
+    
+    wavelength *= 0.66;
+    wavelength += 0.99;
+    amount = fract(across * wavelength + u_seedOffset.x);
+  } else if(u_gradientBlockPattern == 6) {
+    wavelength += 0.66;
+    
+    amount = cos(PI/2. + (across + sin(along * PI * 7.5 + seedPhaseB) * 0.05) * PI * wavelength + seedPhaseA) * 0.5 + 0.5;
+  } else if(u_gradientBlockPattern == 7) {
+    
+    wavelength *= 22.2;
+    amount = cos(st.x * st.y * PI * wavelength + seedPhaseA) * 0.5 + 0.5;
+  } else if(u_gradientBlockPattern == 8) {
+    
+    wavelength *= 11.1;
+    amount = cos((st.x * st.x - st.y * st.y) * PI * wavelength + seedPhaseA) * 0.5 + 0.5;
+  } else if(u_gradientBlockPattern == 9) {
+    
+    wavelength *= 7.77;
+    amount = cos((st.x * st.x + st.y * st.y) * PI * wavelength + seedPhaseA) * 0.5 + 0.5;
+  } else {
+    wavelength += 0.33;
+    
+    amount = cos(PI/2. + across * PI * wavelength + seedPhaseA) * 0.5 + 0.5; 
+  }
+
+  if(u_useColorCycle) {
+    base = increaseColorHue(base, amount);
+  } else {
+    base = threeWayGradient(vec4(u_staticColor1, 1.), vec4(u_staticColor2, 1.), vec4(u_staticColor3, 1.), amount);
+  }
+
+  return base;
+}
+
+void decodeMaskDirections(vec2 uv, float hThresh, float vThresh,
+                          out bool hMoves, out bool vMoves,
+                          out float hDir, out float vDir) {
+  vec4 m = texture(u_movementShapeTex, uv);
+  bool L = m.r < hThresh;
+  bool R = m.g < hThresh;
+  bool U = m.b < vThresh;
+  bool D = m.a < vThresh;
+  hMoves = L || R;
+  vMoves = U || D;
+  hDir = hMoves ? float(L) - float(R) : 1.0;
+  vDir = vMoves ? float(D) - float(U) : 1.0;
+}
+
+vec3 blendBgColors(vec2 st, float freq, vec3 c1, vec3 c2, vec3 c3) {
+    
+    
+    float bgSeedPhase = u_seedOffset.x * (PI * 2.);
+    
+    
+    float bgFreqVar = 0.20; 
+    float seedFreq = freq * (1.0 + (fract(u_seedOffset.y) - 0.5) * 2.0 * bgFreqVar);
+    
+    
+    float w1 = sin(st.y * seedFreq + bgSeedPhase + 0.0000 * freq) * 0.5 + 0.5;
+    float w2 = sin(st.y * seedFreq + bgSeedPhase + 0.6666 * freq) * 0.5 + 0.5;
+    float w3 = sin(st.y * seedFreq + bgSeedPhase + 0.3333 * freq) * 0.5 + 0.5;
+    return w1 * c1 + w2 * c2 + w3 * c3;
+}
+
+vec4 imageInOrBlank(vec2 st, vec4 blank) {
+  if (u_imageInBg > 0.5) {
+    vec4 t = texture(u_imageInTex, st);
+    if (t.a > 0.5) return t;
+  }
+  return blank;
+}
+
+float steppedTexelShift(float v, float frame) {
+    return floor(frame * v) - floor((frame - 1.0) * v);
+}
+
+void main() {
+    vec2 st = v_texCoord;
+
+    
+    
+    
+    
+    if (u_imageOnlyMode > 0.5) {
+        vec4 img = (u_imageInBg > 0.5) ? texture(u_imageInTex, st) : vec4(0.0);
+        fragColor = (img.a > 0.5) ? vec4(img.rgb, 1.0) : vec4(0.0, 0.0, 0.0, 1.0);
+        return;
+    }
+
+    vec4 blankColor = vec4(u_blankColorMult, 1.);
+
+    bool moveMovementNoisePatterns = true; 
+    float moveShapeTimeAdjust = 0.;
+
+    float bgFreq = PI * 2. * 128.;
+
+    blankColor.rgb = blendBgColors(st, bgFreq, u_staticColor1, u_staticColor2, u_staticColor3) * blankColor.rgb;
+
+    bool useManualMode = u_manualMode > 0.5;
+    bool useGlobalFreeze = u_globalFreeze > 0.5;
+    vec2 orgSt = st; 
+  
+    float densityAdjustment = ceil(2. / u_pixelDensity);
+
+    float time = u_time; 
+    float baseChunkSize = u_baseChunkSize;
+
+    bool isChunkGlitch = u_chunkGlitch > 0.5;
+    bool useBlocking = u_blocking > 0.0;
+
+    vec2 blockingSt = useBlocking ? floor(st * u_blocking) : st;
+
+    float shouldMoveThreshold = max(0.0, u_shouldMoveThreshold * u_movementThresholdVariance);
+    float shouldFallThreshold = max(0.0, u_shouldFallThreshold * u_movementThresholdVariance);
+    float extraMoveShapeThreshold = max(0.0, u_extraMoveShapeThreshold * u_movementThresholdVariance);
+    float extraFallShapeThreshold = max(0.0, u_extraFallShapeThreshold * u_movementThresholdVariance);
+
+    
+    bool maskMovesHorizontal = false;
+    float maskHorizontalDirection = 1.;
+    bool maskMovesVertical = false;
+    float maskVerticalDirection = 1.;
+
+    bool maskExtraMovesHorizontal = false;
+    float maskExtraHorizontalDirection = 1.;
+    bool maskExtraMovesVertical = false;
+    float maskExtraVerticalDirection = 1.;
+
+    vec2 blockCellUV = (blockingSt + 0.5) / u_blocking;
+    decodeMaskDirections(
+      blockCellUV, shouldMoveThreshold, shouldFallThreshold,
+      maskMovesHorizontal, maskMovesVertical,
+      maskHorizontalDirection, maskVerticalDirection
+    );
+
+    vec2 extraMovementMaskUV = fract(0.5 + blockCellUV * 2.);
+    decodeMaskDirections(
+      extraMovementMaskUV, extraMoveShapeThreshold, extraFallShapeThreshold,
+      maskExtraMovesHorizontal, maskExtraMovesVertical,
+      maskExtraHorizontalDirection, maskExtraVerticalDirection
+    );
+
+    
+    
+    
+    float blockTime = floor(u_brushTime * u_blockTimeMult);
+
+    float moveTime = u_brushTime * (u_targetFps / 30.);
+
+    
+    
+    float scaledChunkSize = baseChunkSize * u_pixelDensity;
+
+    
+    vec2 blockSize = vec2(
+      scaledChunkSize / u_resolution.x,  
+      scaledChunkSize / u_resolution.y   
+    );
+
+    
+    vec2 maxValidCoord = vec2(1.);
+
+    vec2 moveShapeSt = u_fxWithBlocking ? blockingSt : st;
+
+        
+    float moveSpeed = u_moveSpeed; 
+    float moveAmount = 0.0; 
+
+    float direction = maskHorizontalDirection; 
+    bool shouldMove = maskMovesHorizontal;
+
+    
+    
+    
+    vec2 drawSt = orgSt;
+    
+    vec4 movementColor = texture(u_movementTexture, drawSt);
+
+    
+    bool shuffleMode = false;
+    float moveDirectionOverride = 0.0;
+    bool useMovementBuffer = movementColor.a >= DRAW_ACTIVE_THRESHOLD ;
+
+    if (useMovementBuffer && movementColor.r >= DRAW_ACTIVE_THRESHOLD) {
+      if (movementColor.r < DRAW_SHIFT_THRESHOLD) {
+        shuffleMode = true;
+      } else if (movementColor.r < DRAW_DIRECTION_THRESHOLD) {
+        shouldMove = true;
+        moveDirectionOverride = -1.0;
+      } else {
+        shouldMove = true;
+        moveDirectionOverride = 1.0;
+      }
+    }
+    
+    bool trickleMode = false;
+    bool waterfallMode = false;
+    bool straightFallMode = false;
+    float fallDirectionOverride = 1.0;
+
+    if (useMovementBuffer && movementColor.g >= DRAW_ACTIVE_THRESHOLD) {
+      if (movementColor.g < G_TRICKLE_MAX) {
+        trickleMode = true;
+      } else if (movementColor.g < G_STRAIGHT_DOWN_MAX) {
+        straightFallMode = true;
+        fallDirectionOverride = 1.0;
+      } else if (movementColor.g < G_WATERFALL_DOWN_MAX) {
+        waterfallMode = true;
+        fallDirectionOverride = 1.0;
+      } else if (movementColor.g < G_STRAIGHT_UP_MAX) {
+        straightFallMode = true;
+        fallDirectionOverride = -1.0;
+      } else {
+        waterfallMode = true;
+        fallDirectionOverride = -1.0;
+      }
+    }
+
+    
+    bool freezeMode = false;
+    if (useMovementBuffer && movementColor.b >= DRAW_ACTIVE_THRESHOLD) {
+      freezeMode = true;
+    }
+
+    
+    bool resetMode = false;
+    int resetVariant = 0;
+    vec4 paintColor = texture(u_paintTexture, drawSt);
+    bool usePaintBuffer = paintColor.a >= DRAW_ACTIVE_THRESHOLD;
+
+    if (usePaintBuffer && paintColor.r >= DRAW_ACTIVE_THRESHOLD) {
+      resetMode = true;
+      if (paintColor.r < 0.625) {
+        resetVariant = 1; 
+      } else if (paintColor.r < 0.875) {
+        resetVariant = 2; 
+      } else {
+        resetVariant = 3; 
+      }
+    }
+
+    
+    if (moveDirectionOverride != 0.0) {
+      direction = moveDirectionOverride;
+    }
+
+    
+    vec2 shouldFallSt = u_fxWithBlocking ? blockingSt : st;
+
+    bool shouldFall = maskMovesVertical;
+    float fallDirection = maskVerticalDirection; 
+
+    shouldFall = shouldFall || waterfallMode || straightFallMode;
+
+    
+    
+    if (waterfallMode || straightFallMode) {
+      fallDirection = fallDirectionOverride;
+    }
+
+    
+    
+    
+    bool organicShouldMove = shouldMove;
+    bool organicShouldFall = shouldFall;
+
+    
+    
+    
+    if (useManualMode) {
+      shouldMove = moveDirectionOverride != 0.0;
+      shouldFall = waterfallMode || straightFallMode;
+    }
+
+    
+    float blackNoiseEdge = random(st.y + vec2(10.45)) * u_blackNoiseEdgeMult;
+
+    vec2 blockNoiseUV = (blockingSt + 0.5) / u_blocking;
+    vec4 blockNoiseVal = texture(u_blockNoiseTex, blockNoiseUV);
+
+    
+    bool EDGE_FX = u_edgeFx && !resetMode;                     
+    const float STATIC_FALLOFF_WIDTH = 0.075;    
+    const float STATIC_FALLOFF_STRENGTH = 3.;  
+
+    float blackNoise = blockNoiseVal.g + blackNoiseEdge;
+    
+    
+    
+    
+    
+    float blackReachT = smoothstep(u_blackNoiseThreshold - STATIC_FALLOFF_WIDTH * 3., u_blackNoiseThreshold, blackNoise);
+    float blackReach = pow(blackReachT, 1.0 / STATIC_FALLOFF_STRENGTH);
+    float blackReachDither = random(st * u_blankStaticScale + floor(
+      fract(u_staticLoopPhase * u_staticCyclesBlank) * u_blankStaticTimeMult) + 3.7);
+    bool useBlack = blackNoise < u_blackNoiseThreshold && (!EDGE_FX || blackReachDither >= blackReach);
+
+    float ribbonNoise = blockNoiseVal.b - blackNoiseEdge;
+    bool useRibbon = ribbonNoise < u_useRibbonThreshold;
+    
+    bool horizontalGem = blockNoiseVal.g + blockNoiseVal.b > 1.;
+      
+    float resetNoise = blockNoiseVal.r;
+    bool willReset = resetNoise < u_resetThreshold * u_resetThresholdVariance;
+
+    
+    
+
+    
+    bool inExtraMove = maskExtraMovesHorizontal && !useManualMode;
+
+    inExtraMove = inExtraMove || shuffleMode;
+
+    bool extraMoveStutter = random(floor(st * u_extraMoveStutterScale) + moveTime + 1.49) < u_extraMoveStutterThreshold;
+    bool extraMoves = extraMoveStutter && inExtraMove;
+
+    if(extraMoves && !shouldMove) {
+      
+      direction = maskExtraHorizontalDirection;
+    }
+
+    
+    
+    
+    if (shuffleMode && !shouldMove) {
+      direction = horizontalGem ? 1.0 : -1.0;
+    }
+      
+    if (shouldMove || extraMoves) {
+      
+      
+      float texelRateX = moveSpeed * scaledChunkSize * densityAdjustment;
+
+      
+      
+      
+      moveAmount = direction * steppedTexelShift(texelRateX, u_brushFrameCount)
+                 / (u_resolution.x * densityAdjustment);
+    }
+
+    float fallAmount = 0.0;
+
+    float yFall = moveSpeed * blockSize.y;
+
+    
+    
+    bool inExtraFall = maskExtraMovesVertical && !useManualMode;
+
+    inExtraFall = inExtraFall || trickleMode;
+
+    bool extraFallStutter = random(floor(st * u_extraFallStutterScale) + moveTime + 2.) < u_extraFallStutterThreshold;
+    bool extraFall = extraFallStutter && inExtraFall;
+
+    
+    if(extraFall && !shouldFall) {
+      fallDirection = maskExtraVerticalDirection;
+    }
+
+    
+    
+    if (trickleMode && !shouldFall) {
+      fallDirection = horizontalGem ? 1.0 : -1.0;
+    }
+
+    if(shouldFall || extraFall) {
+
+      fallAmount = yFall;
+      
+      
+      
+      bool useWaterfallVariance = waterfallMode ||
+        (!straightFallMode && !waterfallMode && u_defaultWaterfallMode > 0.5);
+
+      float waterFallSpeedMult = 0.0;
+
+      if (useWaterfallVariance && u_fallWaterfallMult > 0.) {
+        float waterX = u_fxWithBlocking ? blockingSt.x : floor(st.x * (u_resolution.x / 2.));
+
+        vec2 waterFallSt = vec2(waterX, blockTime);
+
+        float waterFallVariance = (0.5 - random(waterFallSt)) * u_fallWaterfallMult;
+
+        fallAmount += yFall * 0.1 + yFall * waterFallVariance;
+      }
+
+      
+      
+      
+      
+      
+      
+      
+      float texelRateY = fallAmount * u_resolution.y * densityAdjustment;
+
+      fallAmount = steppedTexelShift(texelRateY, u_brushFrameCount)
+                 / (u_resolution.y * densityAdjustment);
+
+      fallAmount *= fallDirection;
+    }
+
+    
+    if (freezeMode) {
+      moveAmount = 0.0;
+      fallAmount = 0.0;
+    }
+
+    
+    
+    st.x += moveAmount * densityAdjustment;
+    st.y += fallAmount * densityAdjustment;
+
+    
+    vec2 margin = (1.0 / u_resolution) * 2.;
+    
+    bool isOutOfXBounds = (st.x >= maxValidCoord.x - margin.x || st.x <= margin.x);
+    bool isOutOfYBounds = st.y >= maxValidCoord.y - margin.y || st.y <= margin.y;
+    bool isOutOfBounds = isOutOfXBounds || isOutOfYBounds;
+
+    bool isOutOfXFrame = st.x < 0.0 || st.x > maxValidCoord.x;
+    bool isOutOfYFrame = st.y < 0.0 || st.y > maxValidCoord.y;
+
+    bool useReset = false;
+
+    if(isOutOfXBounds) {
+      if(shouldMove) {
+        if (direction < 0. && st.x < margin.x) {
+            st.x = maxValidCoord.x - st.x;
+        }
+        if (direction > 0. && st.x > maxValidCoord.x - margin.x) {
+            st.x = mod(st.x + margin.x, maxValidCoord.x);
+        }
+      }
+    }
+
+    if (isOutOfYBounds) {
+        if (shouldFall) {
+            
+            if (fallDirection < 0. && st.y < margin.y) {
+                st.y = maxValidCoord.y - st.y;
+            }
+            if (fallDirection > 0. && st.y > maxValidCoord.y - margin.y) {
+                st.y = mod(st.y + margin.y, maxValidCoord.y);
+            }
+        }
+    }
+
+    
+    vec2 blockFloor = floor(st / blockSize);
+    vec2 blockFract = fract(st / blockSize);
+
+    vec4 initColor = vec4(1.);
+
+    
+    
+    if (resetMode) {
+      if (resetVariant == 1) {
+        
+        useBlack = true;
+      } else if (resetVariant == 2) {
+        
+        useBlack = false;
+        useRibbon = false;
+      } else if (resetVariant == 3) {
+        
+        useBlack = false;
+        useRibbon = true;
+      }
+      
+    }
+
+    
+    
+    
+    
+    float gemEdgeT = smoothstep(u_useRibbonThreshold, u_useRibbonThreshold + STATIC_FALLOFF_WIDTH , ribbonNoise);
+    float gemBoost = EDGE_FX ? mix(1.0 / STATIC_FALLOFF_STRENGTH , 1.0, gemEdgeT) : 1.0;
+
+    bool useBlankStatic = random(st * u_blankStaticScale + floor(
+      fract(u_staticLoopPhase * u_staticCyclesBlank) * u_blankStaticTimeMult) + 1.) < u_blankStaticThreshold * gemBoost ;
+    
+
+    bool useBlank = (useBlankStatic && !useRibbon) || useBlack;
+
+    bool usingStatic = useBlankStatic ;
+
+    if (useBlank) {
+      initColor = imageInOrBlank(orgSt, blankColor);
+    } else {
+      float staticBlockTime = floor(u_staticLoopPhase * u_staticCyclesBlock);
+
+      vec2 dirtNoiseSt = floor(orgSt * u_dirtNoiseScale);
+      float rnd = random(dirtNoiseSt + staticBlockTime);
+
+      
+      
+      
+      
+      float ribbonEdgeT = smoothstep(u_useRibbonThreshold - STATIC_FALLOFF_WIDTH, u_useRibbonThreshold, ribbonNoise);
+      float ribbonDirt = EDGE_FX
+        ? mix(u_ribbonDirtThreshold,
+              u_ribbonDirtThreshold / STATIC_FALLOFF_STRENGTH,
+              pow(ribbonEdgeT, STATIC_FALLOFF_STRENGTH))
+        : u_ribbonDirtThreshold;
+
+      bool useBlock = useRibbon && rnd < ribbonDirt;
+
+      vec2 stPlus = ((orgSt - 0.5) / blockSize);
+
+      if(isChunkGlitch) {
+        
+        stPlus *= .5; 
+      }
+
+      if(useBlock) {
+        initColor = createGradientBlock(stPlus, horizontalGem);
+      } else {
+        if (rnd < .25) {
+          initColor = createGradientBlock(stPlus, horizontalGem);
+        } else if(rnd < .5) {
+          initColor = vec4(u_staticColor1, 1.);
+        } else if(rnd < 0.75) {
+          initColor = vec4(u_staticColor2, 1.);
+        } else {
+          initColor = vec4(u_staticColor3, 1.);
+        }
+        usingStatic = true;
+
+      }
+
+      if (u_useColorCycle) {
+        
+        
+        
+        
+  
+        float shimmer = u_steppedHuePhase;
+        initColor.rgb = rotateHue(initColor.rgb, shimmer);
+      }
+    }
+
+    
+    
+    if (resetMode) {
+      willReset = true;
+    }
+
+    float resetEdgeThreshold = u_resetEdgeThreshold;
+    bool resetEdge = random(2. * orgSt + fract(u_staticLoopPhase * u_staticCyclesEdge)) < resetEdgeThreshold;
+
+    
+    
+    bool naturalReset = !organicShouldMove && !organicShouldFall && willReset;
+
+    if((naturalReset || resetMode) && resetEdge) {
+      useReset = true;
+    }
+
+    
+    if (u_forceReset > 0.5) {
+      useReset = true;
+    }
+
+    
+    if (freezeMode && !resetMode) {
+      useReset = false;
+    }
+
+            
+            
+
+    bool useEarlyManualModeReturn = useManualMode && !usePaintBuffer && !useMovementBuffer;
+    if (useGlobalFreeze || useEarlyManualModeReturn) {
+
+      vec4 color = texture(u_texture, orgSt);
+
+      if(usingStatic && useReset) {
+        if(useBlank) {
+          color = imageInOrBlank(orgSt, blankColor);
+        } else {
+          color = initColor;
+        }
+      }
+      
+      
+      fragColor = color;
+      return;
+    }
+
+    
+    
+    vec4 color = texture(u_texture, st);
+    
+    if (color.a < .025 || useReset) {
+        
+        fragColor = initColor;
+        return;
+    }
+
+    
+    
+    fragColor = color;
+}`,N4=`#version 300 es
+in vec2 a_position;
+uniform mediump vec2 u_resolution;
+
+void main() {
+    vec2 clipSpace = (a_position / u_resolution) * 2.0 - 1.0;
+    gl_Position = vec4(clipSpace, 0.0, 1.0);
+}`,Q4=`#version 300 es
+precision mediump float;
+
+uniform vec3 u_color;
+uniform float u_squareMode;
+uniform vec2 u_center;
+uniform vec2 u_radius;
+
+out vec4 outColor;
+
+const float EDGE_FALLOFF_FRAC = 0.5;     
+const float EDGE_FALLOFF_MAX_PX = 30.0;  
+
+float hash(vec2 p) {
+    highp vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+void main() {
+    vec2 diff = gl_FragCoord.xy - u_center;
+    vec2 nd = abs(diff) / u_radius;
+
+    
+    if (u_squareMode > 0.5) {
+        if (max(nd.x, nd.y) > 1.0) discard;
+        outColor = vec4(u_color, 1.0);
+        return;
+    }
+
+    float d = length(nd); 
+    if (d > 1.0) discard;
+
+    
+    
+    float r = max(min(u_radius.x, u_radius.y), 1.0);
+    float bandPx = min(r * EDGE_FALLOFF_FRAC, EDGE_FALLOFF_MAX_PX);
+    float start = 1.0 - bandPx / r;
+
+    float p = 1.0 - smoothstep(start, 1.0, d);
+    if (hash(gl_FragCoord.xy) > p) discard;
+
+    outColor = vec4(u_color, 1.0);
+}`,q3=`#version 300 es
+in vec2 a_position;
+in vec2 a_texCoord;
+out vec2 v_texCoord;
+void main() {
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_texCoord = a_texCoord;
+}`,Z4=`#version 300 es
+
+precision highp float;
+
+uniform sampler2D u_texture;
+
+uniform bool u_useColorCycle;
+uniform bool u_cycleImageInColor;
+
+uniform float u_cycleHue;
+uniform vec3 u_blankColorMult;
+uniform vec3 u_staticColor1;
+uniform vec3 u_staticColor2;
+uniform vec3 u_staticColor3;
+
+uniform bool u_imageInActive;
+uniform sampler2D u_imageInOrigTex;
+
+uniform float u_crtEnabled;   
+
+uniform float u_bloomEnabled;  
+uniform sampler2D u_bloomTex;  
+uniform float u_bloomIntensity;
+uniform float u_bloomEdgeFade;  
+
+in vec2 v_texCoord;
+out vec4 fragColor;
+
+#define PI 3.1415926535
+
+const float CRT_CURVATURE = 5.5;
+
+const float VIGNETTE_START    = 0.85;  
+const float VIGNETTE_END      = 1.45;  
+const float VIGNETTE_DARKNESS = 0.30;  
+const float CORNER_START      = 1.20;  
+const float CORNER_END        = 1.45;  
+const float CORNER_DARKNESS   = 0.5;  
+
+const float CENTER_BRIGHTNESS = 0.15;  
+const float CENTER_RADIUS     = 0.65;  
+
+const float EDGE_BAND = 0.012;
+
+const float CORNER_RADIUS = 0.1;
+
+vec3 rotateHue(vec3 color, float angle) {
+    float cosA = cos(angle * 6.28318);
+    float sinA = sin(angle * 6.28318);
+    vec3 k = vec3(0.57735); 
+    return color * cosA + cross(k, color) * sinA + k * dot(k, color) * (1.0 - cosA);
+}
+
+float chroma(vec3 c) {
+    return max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));
+}
+
+const float CHROMA_LO = 0.25; 
+const float CHROMA_HI = 0.5;  
+
+vec3 blendBgColors(vec2 st, float freq, vec3 c1, vec3 c2, vec3 c3) {
+    float w1 = sin((st.y + 0.0000) * freq) * 0.5 + 0.5;
+    float w2 = sin((st.y + 0.6666) * freq) * 0.5 + 0.5;
+    float w3 = sin((st.y + 0.3333) * freq) * 0.5 + 0.5;
+    return w1 * c1 + w2 * c2 + w3 * c3;
+}
+
+vec2 crtWarp(vec2 uv) {
+    vec2 c = uv * 2.0 - 1.0;            
+    vec2 offset = c.yx / CRT_CURVATURE;
+    c += c * offset * offset;          
+    return c * 0.5 + 0.5;              
+}
+
+float roundedTubeDist(vec2 uv) {
+    vec2 res = vec2(textureSize(u_texture, 0));
+    float minDim = min(res.x, res.y);
+    vec2 pix = (uv - 0.5) * res;                   
+    float radius = CORNER_RADIUS * 0.5 * minDim;   
+    vec2 b = res * 0.5;                            
+    vec2 q = abs(pix) - (b - radius);
+    float d = min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - radius;
+    return d / minDim;                            
+}
+
+void main() {
+    bool crt = u_crtEnabled >= 0.5;
+
+    
+    
+    vec2 uv = crt ? crtWarp(v_texCoord) : v_texCoord;
+
+    vec4 color = texture(u_texture, uv);
+
+    bool isImageIn = false;
+
+    if(u_imageInActive) {
+      const float BG_TOL = 0.06; 
+
+      
+      
+      
+      
+      
+      
+
+      vec3 origImg = texture(u_imageInOrigTex, uv).rgb;
+      if (all(lessThan(abs(color.rgb - origImg), vec3(BG_TOL)))) {
+          isImageIn = true;
+      }
+    }
+
+    bool useImageInColorCycle = isImageIn && u_cycleImageInColor;
+
+    bool useBaseColorCycle = u_useColorCycle && !isImageIn; 
+
+    
+    
+    
+    
+    
+    
+    if (useBaseColorCycle || useImageInColorCycle) {
+      vec3 baseRgb = color.rgb; 
+
+      
+      
+      float cycleAmt = smoothstep(CHROMA_LO, CHROMA_HI, chroma(baseRgb));
+      color.rgb = mix(baseRgb, rotateHue(baseRgb, u_cycleHue), cycleAmt);
+    }
+
+    
+    if (crt) {
+        
+        
+        
+        
+        
+        float tubeDist = roundedTubeDist(uv);
+        float tube = smoothstep(0.0, EDGE_BAND, -tubeDist);
+
+        color.rgb *= tube;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    if (u_bloomEnabled > 0.5) {
+        vec3 bloom = texture(u_bloomTex, uv).rgb;
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        if (useBaseColorCycle || useImageInColorCycle) {
+            float bloomAmt = smoothstep(CHROMA_LO, CHROMA_HI, chroma(bloom));
+            bloom = mix(bloom, rotateHue(bloom, u_cycleHue), bloomAmt);
+        }
+        float fade = smoothstep(0.0, u_bloomEdgeFade, -roundedTubeDist(uv));
+        color.rgb += bloom * u_bloomIntensity * fade;
+    }
+
+    
+    if(crt) {
+        
+        
+        
+        vec2 vc = (uv - 0.5) * 2.0;        
+        float r = length(vc);
+        float vig = 1.0
+            - VIGNETTE_DARKNESS * smoothstep(VIGNETTE_START, VIGNETTE_END, r)
+            - CORNER_DARKNESS   * smoothstep(CORNER_START, CORNER_END, r)
+            + CENTER_BRIGHTNESS * (1.0 - smoothstep(0.0, CENTER_RADIUS, r));  
+        vig = max(vig, 0.0);              
+
+        
+        color.rgb *= vig;
+    }
+
+    fragColor = vec4(color.rgb, 1.0);
+}`,f3=`#version 300 es
+in vec2 a_position;
+in vec2 a_texCoord;
+out vec2 v_texCoord;
+void main() {
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    v_texCoord = a_texCoord;
+}`,Y4=`#version 300 es
+
+precision highp float;
+
+uniform vec3 u_seedOffset;
+uniform float u_blocking;
+uniform vec2 u_blackNoiseScale;
+uniform float u_structuralMoveTime;
+uniform float u_resetNoiseTimeMult;
+uniform float u_domainWarpAmount;
+uniform int u_patternMode;       
+uniform float u_patternStrength; 
+uniform float u_patternFreq;     
+uniform vec2 u_canvasResolution; 
+
+in vec2 v_texCoord;
+out vec4 fragColor;
+
+uvec3 pcg3d(uvec3 v) {
+    v = v * 1664525u + 1013904223u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    v ^= v >> 16u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    return v;
+}
+
+float random3D(vec3 st) {
+    uvec3 h = pcg3d(floatBitsToUint(st + u_seedOffset));
+    return float(h.x) * (1.0 / 4294967296.0);
+}
+
+float noise3D(vec3 st) {
+    st += u_seedOffset;
+    vec3 i = floor(st);
+    vec3 f = fract(st);
+    float a = random3D(i);
+    float b = random3D(i + vec3(1.0, 0.0, 0.0));
+    float c = random3D(i + vec3(0.0, 1.0, 0.0));
+    float d = random3D(i + vec3(1.0, 1.0, 0.0));
+    float e = random3D(i + vec3(0.0, 0.0, 1.0));
+    float f_corner = random3D(i + vec3(1.0, 0.0, 1.0));
+    float g = random3D(i + vec3(0.0, 1.0, 1.0));
+    float h = random3D(i + vec3(1.0, 1.0, 1.0));
+    vec3 u = f * f * (3.0 - 2.0 * f);
+    float ab = mix(a, b, u.x);
+    float cd = mix(c, d, u.x);
+    float ef = mix(e, f_corner, u.x);
+    float gh = mix(g, h, u.x);
+    float abcd = mix(ab, cd, u.y);
+    float efgh = mix(ef, gh, u.y);
+    return mix(abcd, efgh, u.z);
+}
+
+float structuralNoise(vec2 st, float t) {
+    return noise3D(vec3(st, t));
+}
+
+vec2 blockNoiseDomain(vec2 texCoord) {
+    vec2 blockingSt = floor(texCoord * u_blocking);
+    vec2 noiseSt = blockingSt * u_blackNoiseScale;
+
+    vec2 patternOffset = vec2(0.0);
+    if (u_patternMode > 0) {
+        vec2 uv = texCoord - vec2(0.5);
+        float pattern = 0.0;
+        vec2 shapeUv = uv * u_canvasResolution / min(u_canvasResolution.x, u_canvasResolution.y);
+
+        if (u_patternMode == 1) {
+            pattern = sin(length(shapeUv * 0.9) * u_patternFreq * 6.2832) * 0.5 + 0.5;
+        } else if (u_patternMode == 2) {
+          
+            
+        } else if (u_patternMode == 3) {
+            float ridgeNoise = structuralNoise(noiseSt * 0.8 + 333.0, u_structuralMoveTime);
+            pattern = 1.0 - abs(2.0 * ridgeNoise - 1.0);
+        } else if (u_patternMode == 4) {
+            
+            float rect = max(abs(shapeUv.x), abs(shapeUv.y));
+            pattern = sin(rect * u_patternFreq * 6.2832) * 0.5 + 0.5;
+        } else if (u_patternMode == 5 || u_patternMode == 6) {
+            
+            
+            float dist = u_patternMode == 5
+                ? length(shapeUv * 0.9)
+                : max(abs(shapeUv.x), abs(shapeUv.y));
+            pattern = 1.0 - smoothstep(0.32, 0.35, dist * 1.25);
+        }
+
+        patternOffset = vec2(pattern) * u_patternStrength;
+    }
+
+    float warp = structuralNoise(noiseSt * 0.5 + 500.0, u_structuralMoveTime * 0.05);
+    vec2 warpOffset = vec2(warp) * u_domainWarpAmount;
+    return noiseSt + warpOffset + patternOffset;
+}
+
+void main() {
+    vec2 noiseSt = blockNoiseDomain(v_texCoord);
+
+    
+    float resetNoise = structuralNoise(noiseSt, u_structuralMoveTime * u_resetNoiseTimeMult);
+    
+    float blackNoise = structuralNoise(noiseSt + 11.11, u_structuralMoveTime + 11.11);
+
+    float ribbonNoiseTimeMult = 0.75;
+    
+    float ribbonNoise = structuralNoise(noiseSt + 22.22, u_structuralMoveTime * ribbonNoiseTimeMult + 22.22);
+
+    fragColor = vec4(resetNoise, blackNoise, ribbonNoise, 1.0);
+}`,G4=`#version 300 es
+
+precision highp float;
+
+uniform vec3 u_seedOffset;
+uniform float u_blocking;
+uniform vec2 u_blackNoiseScale;
+uniform float u_structuralMoveTime;
+uniform float u_movementNoiseTime;
+uniform vec2 u_movementNoiseXYTime;
+uniform float u_domainWarpAmount;
+uniform int u_patternMode;
+uniform float u_patternStrength;
+uniform float u_patternFreq;
+uniform vec2 u_canvasResolution;
+uniform vec2 u_movementShapeScaling;
+
+in vec2 v_texCoord;
+out vec4 fragColor;
+
+uvec3 pcg3d(uvec3 v) {
+    v = v * 1664525u + 1013904223u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    v ^= v >> 16u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    return v;
+}
+
+float random3D(vec3 st) {
+    uvec3 h = pcg3d(floatBitsToUint(st + u_seedOffset));
+    return float(h.x) * (1.0 / 4294967296.0);
+}
+
+float noise3D(vec3 st) {
+    st += u_seedOffset;
+    vec3 i = floor(st);
+    vec3 f = fract(st);
+    float a = random3D(i);
+    float b = random3D(i + vec3(1.0, 0.0, 0.0));
+    float c = random3D(i + vec3(0.0, 1.0, 0.0));
+    float d = random3D(i + vec3(1.0, 1.0, 0.0));
+    float e = random3D(i + vec3(0.0, 0.0, 1.0));
+    float f_corner = random3D(i + vec3(1.0, 0.0, 1.0));
+    float g = random3D(i + vec3(0.0, 1.0, 1.0));
+    float h = random3D(i + vec3(1.0, 1.0, 1.0));
+    vec3 u = f * f * (3.0 - 2.0 * f);
+    float ab = mix(a, b, u.x);
+    float cd = mix(c, d, u.x);
+    float ef = mix(e, f_corner, u.x);
+    float gh = mix(g, h, u.x);
+    float abcd = mix(ab, cd, u.y);
+    float efgh = mix(ef, gh, u.y);
+    return mix(abcd, efgh, u.z);
+}
+
+float structuralNoise(vec2 st, float t) {
+    return noise3D(vec3(st, t));
+}
+
+vec2 blockNoiseDomain(vec2 texCoord) {
+    vec2 blockingSt = floor(texCoord * u_blocking);
+    vec2 noiseSt = blockingSt * u_blackNoiseScale;
+
+    vec2 patternOffset = vec2(0.0);
+    if (u_patternMode > 0) {
+        vec2 uv = texCoord - vec2(0.5);
+        float pattern = 0.0;
+        vec2 shapeUv = uv * u_canvasResolution / min(u_canvasResolution.x, u_canvasResolution.y);
+
+        if (u_patternMode == 1) {
+            pattern = sin(length(shapeUv * 0.9) * u_patternFreq * 6.2832) * 0.5 + 0.5;
+        } else if (u_patternMode == 2) {
+          
+            
+        } else if (u_patternMode == 3) {
+            float ridgeNoise = structuralNoise(noiseSt * 0.8 + 333.0, u_structuralMoveTime);
+            pattern = 1.0 - abs(2.0 * ridgeNoise - 1.0);
+        } else if (u_patternMode == 4) {
+            
+            float rect = max(abs(shapeUv.x), abs(shapeUv.y));
+            pattern = sin(rect * u_patternFreq * 6.2832) * 0.5 + 0.5;
+        } else if (u_patternMode == 5 || u_patternMode == 6) {
+            
+            
+            float dist = u_patternMode == 5
+                ? length(shapeUv * 0.9)
+                : max(abs(shapeUv.x), abs(shapeUv.y));
+            pattern = 1.0 - smoothstep(0.32, 0.35, dist * 1.25);
+        }
+
+        patternOffset = vec2(pattern) * u_patternStrength;
+    }
+
+    float warp = structuralNoise(noiseSt * 0.5 + 500.0, u_structuralMoveTime * 0.05);
+    vec2 warpOffset = vec2(warp) * u_domainWarpAmount;
+    return noiseSt + warpOffset + patternOffset;
+}
+
+void main() {
+    float t = u_movementNoiseTime;
+
+    vec2 leftDomain = blockNoiseDomain(fract(v_texCoord * u_movementShapeScaling + vec2(u_movementNoiseXYTime.x, 0.0)));
+    vec2 rightDomain = blockNoiseDomain(fract(v_texCoord * u_movementShapeScaling + vec2(-u_movementNoiseXYTime.x, 0.0)));
+    vec2 downDomain = blockNoiseDomain(fract(v_texCoord * u_movementShapeScaling + vec2(0.0, u_movementNoiseXYTime.y)));
+    vec2 upDomain = blockNoiseDomain(fract(v_texCoord * u_movementShapeScaling + vec2(0.0, -u_movementNoiseXYTime.y)));
+
+    float leftNoise = structuralNoise(leftDomain, t);
+    float rightNoise = structuralNoise(rightDomain + vec2(11.31, 11.31), 1.1 + t);
+    float downNoise = structuralNoise(downDomain + vec2(173.29, 173.29), 2.2 + t);
+    float upNoise = structuralNoise(upDomain + vec2(111.11, 111.11), 3.3 + t);
+
+    fragColor = vec4(leftNoise, rightNoise, upNoise, downNoise);
+}`,W4=`#version 300 es
+
+precision highp float;
+
+uniform sampler2D u_texture;
+uniform vec2  u_texelSize;  
+uniform float u_prefilter;  
+uniform float u_threshold;  
+uniform float u_lumaWeight; 
+
+in vec2 v_texCoord;
+out vec4 fragColor;
+
+float luma(vec3 c) { return dot(c, vec3(0.2126, 0.7152, 0.0722)); }
+
+float chroma(vec3 c) { return max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b)); }
+
+vec3 brightPass(vec3 c) {
+    const float KNEE = 0.3;
+    float b = max(luma(c) * u_lumaWeight, chroma(c));
+    float soft = clamp((b - u_threshold + KNEE) / (2.0 * KNEE), 0.0, 1.0);
+    float w = max(soft * soft, step(u_threshold, b));
+    return c * w;
+}
+
+void main() {
+    vec2 t = u_texelSize;
+    vec3 a = texture(u_texture, v_texCoord + t * vec2(-2.0,  2.0)).rgb;
+    vec3 b = texture(u_texture, v_texCoord + t * vec2( 0.0,  2.0)).rgb;
+    vec3 c = texture(u_texture, v_texCoord + t * vec2( 2.0,  2.0)).rgb;
+    vec3 d = texture(u_texture, v_texCoord + t * vec2(-2.0,  0.0)).rgb;
+    vec3 e = texture(u_texture, v_texCoord).rgb;
+    vec3 f = texture(u_texture, v_texCoord + t * vec2( 2.0,  0.0)).rgb;
+    vec3 g = texture(u_texture, v_texCoord + t * vec2(-2.0, -2.0)).rgb;
+    vec3 h = texture(u_texture, v_texCoord + t * vec2( 0.0, -2.0)).rgb;
+    vec3 i = texture(u_texture, v_texCoord + t * vec2( 2.0, -2.0)).rgb;
+    vec3 j = texture(u_texture, v_texCoord + t * vec2(-1.0,  1.0)).rgb;
+    vec3 k = texture(u_texture, v_texCoord + t * vec2( 1.0,  1.0)).rgb;
+    vec3 l = texture(u_texture, v_texCoord + t * vec2(-1.0, -1.0)).rgb;
+    vec3 m = texture(u_texture, v_texCoord + t * vec2( 1.0, -1.0)).rgb;
+
+    vec3 col = e * 0.125;
+    col += (a + c + g + i) * 0.03125;
+    col += (b + d + f + h) * 0.0625;
+    col += (j + k + l + m) * 0.125;
+
+    if (u_prefilter > 0.5) col = brightPass(col);
+    fragColor = vec4(col, 1.0);
+}`,$4=`#version 300 es
+
+precision highp float;
+
+uniform sampler2D u_texture;  
+uniform vec2  u_texelSize;    
+uniform float u_radius;       
+
+in vec2 v_texCoord;
+out vec4 fragColor;
+
+void main() {
+    vec2 t = u_texelSize * u_radius;
+    vec3 col = texture(u_texture, v_texCoord).rgb * 4.0;
+    col += texture(u_texture, v_texCoord + vec2(-t.x,  0.0)).rgb * 2.0;
+    col += texture(u_texture, v_texCoord + vec2( t.x,  0.0)).rgb * 2.0;
+    col += texture(u_texture, v_texCoord + vec2( 0.0, -t.y)).rgb * 2.0;
+    col += texture(u_texture, v_texCoord + vec2( 0.0,  t.y)).rgb * 2.0;
+    col += texture(u_texture, v_texCoord + vec2(-t.x, -t.y)).rgb;
+    col += texture(u_texture, v_texCoord + vec2( t.x, -t.y)).rgb;
+    col += texture(u_texture, v_texCoord + vec2(-t.x,  t.y)).rgb;
+    col += texture(u_texture, v_texCoord + vec2( t.x,  t.y)).rgb;
+    col *= (1.0 / 16.0);
+    fragColor = vec4(col, 1.0);
+}`;function s3(K,X,Q){let N=K.createShader(X);return N?(K.shaderSource(N,Q),K.compileShader(N),K.getShaderParameter(N,K.COMPILE_STATUS)?N:(console.error("Shader compile error:",K.getShaderInfoLog(N)),K.deleteShader(N),null)):null}function N1(K,X,Q){let N=s3(K,K.VERTEX_SHADER,X),G=s3(K,K.FRAGMENT_SHADER,Q);if(!N||!G)return null;let J=K.createProgram();return K.attachShader(J,N),K.attachShader(J,G),K.linkProgram(J),K.getProgramParameter(J,K.LINK_STATUS)?(K.deleteShader(N),K.deleteShader(G),J):(console.error("Program link error:",K.getProgramInfoLog(J)),K.deleteProgram(J),null)}function P4(K){return K==="waterfall"||K==="move"||K==="trickle"||K==="shuffle"||K==="freeze"||K==="erase"}function H4(K){return K==="static"||K==="gem"||K==="empty"}function V4(K,X,Q){if(K==="erase")return[0,0,0];let N=0,G=0,J=0;return K==="shuffle"?N=0.375:K==="move"&&(N=X==="left"?0.875:0.625),K==="trickle"?G=0.325:K==="waterfall"&&(X==="down"?G=Q?0.625:0.475:G=Q?0.925:0.775),K==="freeze"&&(J=0.375),[N,G,J]}function j4(K){switch(K){case"empty":return[0.5,0,0];case"static":return[0.75,0,0];case"gem":return[1,0,0];default:return[0.25,0,0]}}function I4(K){let X=N1(K,N4,Q4);return X?{program:X,attribLocations:{position:K.getAttribLocation(X,"a_position")},uniformLocations:{resolution:K.getUniformLocation(X,"u_resolution"),center:K.getUniformLocation(X,"u_center"),radius:K.getUniformLocation(X,"u_radius"),color:K.getUniformLocation(X,"u_color"),squareMode:K.getUniformLocation(X,"u_squareMode")}}:null}function l3(K,X,Q){let N=K.createTexture();K.bindTexture(K.TEXTURE_2D,N),K.texImage2D(K.TEXTURE_2D,0,K.RGBA,X,Q,0,K.RGBA,K.UNSIGNED_BYTE,null),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_MIN_FILTER,K.NEAREST),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_MAG_FILTER,K.NEAREST),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_WRAP_S,K.CLAMP_TO_EDGE),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_WRAP_T,K.CLAMP_TO_EDGE);let G=K.createFramebuffer();return K.bindFramebuffer(K.FRAMEBUFFER,G),K.framebufferTexture2D(K.FRAMEBUFFER,K.COLOR_ATTACHMENT0,K.TEXTURE_2D,N,0),{texture:N,fbo:G}}function O4(K,X,Q){let N=I4(K);if(!N)throw Error("Failed to create drawing program");let G=N,J=K.createBuffer(),P=new Float32Array(8),W,Y,D,Z,A=X,L=Q,w=[],k=6,y=0,F=1;function M($,R){W&&K.deleteTexture(W),Y&&K.deleteFramebuffer(Y),D&&K.deleteTexture(D),Z&&K.deleteFramebuffer(Z),{texture:W,fbo:Y}=l3(K,$,R),K.clearColor(0,0,0,0),K.clear(K.COLOR_BUFFER_BIT),{texture:D,fbo:Z}=l3(K,$,R),K.clearColor(0,0,0,0),K.clear(K.COLOR_BUFFER_BIT),K.bindFramebuffer(K.FRAMEBUFFER,null),K.bindTexture(K.TEXTURE_2D,null)}function f(){let $=Math.min(A,L);w=[];let R=$/4/10,H=R;w.push(Math.max(1,H/32)),w.push(Math.max(1,H/16)),w.push(Math.max(1,H/8)),w.push(Math.max(1,H/4)),w.push(Math.max(1,H/2));for(let z=1;z<=10;z++)w.push(z*R);w=[...new Set(w)],k=Math.min(6,w.length-1),y=w[k]}M(X,Q),f();function l($,R,H,z,m){let S=m.blocking??!1,d=m.blockingScale??128,e=y,a=y*F;if(S){let u=A/d,k0=L/d,b=Math.min(u,Math.max(1,Math.floor(y))),m0=Math.min(k0,Math.max(1,Math.floor(y*(k0/u))));$=Math.floor($/b)*b+b/2,R=Math.floor(R/m0)*m0+m0/2,a=y*(k0/u)*F}let V0=P4(H),t=H4(H),j0=Math.max(0,$-e),G0=Math.min(A,$+e),E=Math.max(0,R-a),p=Math.min(L,R+a);P[0]=j0,P[1]=E,P[2]=G0,P[3]=E,P[4]=j0,P[5]=p,P[6]=G0,P[7]=p,K.useProgram(G.program),K.viewport(0,0,A,L),K.bindBuffer(K.ARRAY_BUFFER,J),K.bufferData(K.ARRAY_BUFFER,P,K.DYNAMIC_DRAW),K.enableVertexAttribArray(G.attribLocations.position),K.vertexAttribPointer(G.attribLocations.position,2,K.FLOAT,!1,0,0),K.uniform2f(G.uniformLocations.resolution,A,L),K.uniform2f(G.uniformLocations.center,$,R),K.uniform2f(G.uniformLocations.radius,e,a),K.uniform1f(G.uniformLocations.squareMode,S?1:0);let v=m.eraseVariant??"both",I0=m.waterfallVariant??!0;if(H==="erase")K.uniform3f(G.uniformLocations.color,0,0,0),(v==="movement"||v==="both")&&(K.colorMask(!0,!0,!0,!0),K.bindFramebuffer(K.FRAMEBUFFER,Y),K.drawArrays(K.TRIANGLE_STRIP,0,4)),(v==="paint"||v==="both")&&(K.colorMask(!0,!1,!1,!0),K.bindFramebuffer(K.FRAMEBUFFER,Z),K.drawArrays(K.TRIANGLE_STRIP,0,4));else if(V0){let u=V4(H,z,I0);K.uniform3f(G.uniformLocations.color,u[0],u[1],u[2]);let k0=H==="shuffle"||H==="move",b=H==="waterfall"||H==="trickle";K.colorMask(k0,b,!0,!0),K.bindFramebuffer(K.FRAMEBUFFER,Y),K.drawArrays(K.TRIANGLE_STRIP,0,4),K.colorMask(!0,!1,!1,!0),K.uniform3f(G.uniformLocations.color,0,0,0),K.bindFramebuffer(K.FRAMEBUFFER,Z),K.drawArrays(K.TRIANGLE_STRIP,0,4)}else if(t){let u=j4(H);K.uniform3f(G.uniformLocations.color,u[0],u[1],u[2]),K.colorMask(!0,!1,!1,!0),K.bindFramebuffer(K.FRAMEBUFFER,Z),K.drawArrays(K.TRIANGLE_STRIP,0,4)}K.colorMask(!0,!0,!0,!0),K.bindFramebuffer(K.FRAMEBUFFER,null)}function i($,R,H,z,m,S,d){let e=H-$,a=z-R,V0=Math.sqrt(e*e+a*a),t=Math.max(1,Math.floor(V0/(y*0.5)));for(let j0=0;j0<=t;j0++){let G0=j0/t;l($+e*G0,R+a*G0,m,S,d)}}return{drawAt:l,drawLine:i,clearAll(){K.bindFramebuffer(K.FRAMEBUFFER,Y),K.clearColor(0,0,0,0),K.clear(K.COLOR_BUFFER_BIT),K.bindFramebuffer(K.FRAMEBUFFER,Z),K.clearColor(0,0,0,0),K.clear(K.COLOR_BUFFER_BIT),K.bindFramebuffer(K.FRAMEBUFFER,null)},getMovementTexture:()=>W,getPaintTexture:()=>D,setBrushSize($){y=$;let R=0,H=1/0;for(let z=0;z<w.length;z++){let m=Math.abs(w[z]-$);m<H&&(H=m,R=z)}k=R},getBrushSize:()=>y,getBrushSizeIndex:()=>k,setBrushSizeIndex($){k=Math.max(0,Math.min($,w.length-1)),y=w[k]},getBrushSizeOptions:()=>w,generateBrushSizeOptions:f,increaseBrushSize(){k<w.length-1&&(k++,y=w[k])},decreaseBrushSize(){k>0&&(k--,y=w[k])},resize($,R){A=$,L=R,M($,R),f()},setDisplayAspectCompensation($){F=$>0?$:1},destroy(){K.deleteTexture(W),K.deleteFramebuffer(Y),K.deleteTexture(D),K.deleteFramebuffer(Z),K.deleteBuffer(J),K.deleteProgram(G.program)}}}function y4(K){return String(K).padStart(5,"0")}async function z4(K,X,Q){let N=await new Promise((J)=>Q.toBlob(J,"image/png"));if(!N)throw Error(`Failed to encode PNG for frame ${X}`);let G=await(await K.getFileHandle(`frame_${y4(X)}.png`,{create:!0})).createWritable();await G.write(N),await G.close()}async function N3(K,X,Q){let{width:N,height:G}=X,J=new Uint8Array(N*G*4),P=K.createFramebuffer();K.bindFramebuffer(K.FRAMEBUFFER,P),K.framebufferTexture2D(K.FRAMEBUFFER,K.COLOR_ATTACHMENT0,K.TEXTURE_2D,Q,0),K.readPixels(0,0,N,G,K.RGBA,K.UNSIGNED_BYTE,J),K.bindFramebuffer(K.FRAMEBUFFER,null),K.deleteFramebuffer(P);let W=document.createElement("canvas");W.width=N,W.height=G;let Y=W.getContext("2d"),D=Y.createImageData(N,G);for(let Z=0;Z<G;Z++){let A=Z*N*4,L=(G-1-Z)*N*4;D.data.set(J.subarray(A,A+N*4),L)}return Y.putImageData(D,0,0),new Promise((Z,A)=>W.toBlob((L)=>{if(!L){A(Error("toBlob returned null (encoding failed)"));return}Z(L)},"image/png"))}async function B4(K,X,Q,N,G,J,P,W){let Y=await N3(K,X,Q),D=await N3(K,X,N),Z=await N3(K,X,G);return{seed:P,totalFrameCount:J,params:W,imageBuffer:Y,movementBuffer:D,paintBuffer:Z}}async function a3(K,X,Q,N,G){let J=(k)=>k instanceof HTMLImageElement?Promise.resolve(k):new Promise((y,F)=>{let M=new Image;M.crossOrigin="anonymous",M.onload=()=>y(M),M.onerror=F,M.src=k}),[P,W,Y]=await Promise.all([J(N.imageBufferSrc),J(N.movementBufferSrc),J(N.paintBufferSrc)]),D=[{name:"imageBuffer",img:P},{name:"movementBuffer",img:W},{name:"paintBuffer",img:Y}];for(let{name:k,img:y}of D)if(y.naturalWidth!==X||y.naturalHeight!==Q)throw Error(`State load error: ${k} dimensions ${y.naturalWidth}x${y.naturalHeight} do not match expected ${X}x${Q}. Buffer is from a different canvas size and cannot be loaded.`);let Z=(k)=>{let y=document.createElement("canvas");y.width=X,y.height=Q;let F=y.getContext("2d");return F.translate(0,y.height),F.scale(1,-1),F.drawImage(k,0,0,y.width,y.height),y},A=Z(P),L=Z(W),w=Z(Y);for(let k of G.framebufferTextures)K.bindTexture(K.TEXTURE_2D,k),K.texImage2D(K.TEXTURE_2D,0,K.RGBA,K.RGBA,K.UNSIGNED_BYTE,A);K.bindTexture(K.TEXTURE_2D,G.movementTexture),K.texImage2D(K.TEXTURE_2D,0,K.RGBA,K.RGBA,K.UNSIGNED_BYTE,L),K.bindTexture(K.TEXTURE_2D,G.paintTexture),K.texImage2D(K.TEXTURE_2D,0,K.RGBA,K.RGBA,K.UNSIGNED_BYTE,w),K.bindTexture(K.TEXTURE_2D,null)}function D4(K,X,Q){return`${X?`${K}_${X}`:K}_f${Q}`}var k4=1,i3=60,r3=1.1,w4=10.123,A4=1,U4=3,C4=0.0025,F4=3,L4=0.008,R4=2,E4=3,M4=0.75,S4=0.75,o3=33;function g4(K,X){let Q=(K%1+1)%1;return(((X%1+1)%1-Q)%1+1)%1}function n3(K,X,Q){let N=g4(X,Q);if(N<0.000001)throw Error("Variance start and end anchors coincide — period would be infinite.");return K/N}var p4=0.99,_4=3.3,T4=0.2,x4=0.2,h4=0.2,v4=0.025,b4=0.044,d4=1,m4=0.25,u4=0.4,K2=0.0567,c4=K2;function e3(K,X,Q){let N=K.createTexture();K.bindTexture(K.TEXTURE_2D,N),K.texImage2D(K.TEXTURE_2D,0,K.RGBA,X,Q,0,K.RGBA,K.UNSIGNED_BYTE,null),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_MIN_FILTER,K.NEAREST),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_MAG_FILTER,K.NEAREST),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_WRAP_S,K.CLAMP_TO_EDGE),K.texParameteri(K.TEXTURE_2D,K.TEXTURE_WRAP_T,K.CLAMP_TO_EDGE);let G=K.createFramebuffer();return K.bindFramebuffer(K.FRAMEBUFFER,G),K.framebufferTexture2D(K.FRAMEBUFFER,K.COLOR_ATTACHMENT0,K.TEXTURE_2D,N,0),{texture:N,fbo:G}}function X2(K){let{canvas:X,onFpsUpdate:Q,onRecordingStop:N}=K,G=X.getContext("webgl2",{preserveDrawingBuffer:!0,antialias:!1});if(!G)throw Error("WebGL2 not supported");let J=G,P=(q)=>{q.preventDefault(),r0=!1,cancelAnimationFrame(s0),K.onContextLost?.()};X.addEventListener("webglcontextlost",P);let W=K.seed??K3(),Y=P1(W),D=null,Z=null,A=null,L=null,w=null,k=null;X3(Y,{palette:D,baseChunkSize:L,moveSpeed:k,hueSpeed:w});let y=Y.canvasScale,F="landscape",M="4:3",f=()=>M==="4:3"?F3:C3,l=()=>F==="portrait"?t1:f(),i=()=>F==="portrait"?f():t1;X.width=l()*y,X.height=i()*y,J.viewport(0,0,X.width,X.height),X.style.imageRendering="-moz-crisp-edges",X.style.imageRendering="pixelated",X.style.touchAction="none",X.style.display="block";let $=N1(J,X4,q4);if(!$)throw Error("Failed to create main shader program");let R={position:J.getAttribLocation($,"a_position"),texCoord:J.getAttribLocation($,"a_texCoord")},H={targetFps:J.getUniformLocation($,"u_targetFps"),brushFrameCount:J.getUniformLocation($,"u_brushFrameCount"),brushTime:J.getUniformLocation($,"u_brushTime"),texture:J.getUniformLocation($,"u_texture"),resolution:J.getUniformLocation($,"u_resolution"),time:J.getUniformLocation($,"u_time"),staticLoopPhase:J.getUniformLocation($,"u_staticLoopPhase"),steppedHuePhase:J.getUniformLocation($,"u_steppedHuePhase"),staticCyclesBlank:J.getUniformLocation($,"u_staticCyclesBlank"),staticCyclesBlock:J.getUniformLocation($,"u_staticCyclesBlock"),staticCyclesEdge:J.getUniformLocation($,"u_staticCyclesEdge"),pixelRatio:J.getUniformLocation($,"u_pixelDensity"),baseChunkSize:J.getUniformLocation($,"u_baseChunkSize"),chunkGlitch:J.getUniformLocation($,"u_chunkGlitch"),shouldMoveThreshold:J.getUniformLocation($,"u_shouldMoveThreshold"),moveSpeed:J.getUniformLocation($,"u_moveSpeed"),moveShapeScale:J.getUniformLocation($,"u_moveShapeScale"),moveShapeSpeed:J.getUniformLocation($,"u_moveShapeSpeed"),resetThreshold:J.getUniformLocation($,"u_resetThreshold"),resetEdgeThreshold:J.getUniformLocation($,"u_resetEdgeThreshold"),resetThresholdVariance:J.getUniformLocation($,"u_resetThresholdVariance"),movementThresholdVariance:J.getUniformLocation($,"u_movementThresholdVariance"),shouldFallThreshold:J.getUniformLocation($,"u_shouldFallThreshold"),shouldFallScale:J.getUniformLocation($,"u_shouldFallScale"),fallShapeSpeed:J.getUniformLocation($,"u_fallShapeSpeed"),fxWithBlocking:J.getUniformLocation($,"u_fxWithBlocking"),blockTimeMult:J.getUniformLocation($,"u_blockTimeMult"),extraMoveShapeThreshold:J.getUniformLocation($,"u_extraMoveShapeThreshold"),extraMoveStutterScale:J.getUniformLocation($,"u_extraMoveStutterScale"),extraMoveStutterThreshold:J.getUniformLocation($,"u_extraMoveStutterThreshold"),extraFallShapeThreshold:J.getUniformLocation($,"u_extraFallShapeThreshold"),extraFallStutterScale:J.getUniformLocation($,"u_extraFallStutterScale"),extraFallStutterThreshold:J.getUniformLocation($,"u_extraFallStutterThreshold"),fallWaterfallMult:J.getUniformLocation($,"u_fallWaterfallMult"),extraFallShapeScale:J.getUniformLocation($,"u_extraFallShapeScale"),extraMoveShapeScale:J.getUniformLocation($,"u_extraMoveShapeScale"),seedOffset:J.getUniformLocation($,"u_seedOffset"),blocking:J.getUniformLocation($,"u_blocking"),blackNoiseEdgeMult:J.getUniformLocation($,"u_blackNoiseEdgeMult"),blackNoiseThreshold:J.getUniformLocation($,"u_blackNoiseThreshold"),useRibbonThreshold:J.getUniformLocation($,"u_useRibbonThreshold"),ribbonDirtThreshold:J.getUniformLocation($,"u_ribbonDirtThreshold"),dirtNoiseScale:J.getUniformLocation($,"u_dirtNoiseScale"),useColorCycle:J.getUniformLocation($,"u_useColorCycle"),blankStaticScale:J.getUniformLocation($,"u_blankStaticScale"),blankStaticThreshold:J.getUniformLocation($,"u_blankStaticThreshold"),blankStaticTimeMult:J.getUniformLocation($,"u_blankStaticTimeMult"),edgeFx:J.getUniformLocation($,"u_edgeFx"),gradientBlockPattern:J.getUniformLocation($,"u_gradientBlockPattern"),blankColor:J.getUniformLocation($,"u_blankColorMult"),staticColor1:J.getUniformLocation($,"u_staticColor1"),staticColor2:J.getUniformLocation($,"u_staticColor2"),staticColor3:J.getUniformLocation($,"u_staticColor3"),cycleColorHueSpeed:J.getUniformLocation($,"u_cycleColorHueSpeed"),globalFreeze:J.getUniformLocation($,"u_globalFreeze"),forceReset:J.getUniformLocation($,"u_forceReset"),manualMode:J.getUniformLocation($,"u_manualMode"),defaultWaterfallMode:J.getUniformLocation($,"u_defaultWaterfallMode"),movementTexture:J.getUniformLocation($,"u_movementTexture"),paintTexture:J.getUniformLocation($,"u_paintTexture"),blockNoiseTex:J.getUniformLocation($,"u_blockNoiseTex"),movementShapeTex:J.getUniformLocation($,"u_movementShapeTex"),contourTimeMult:J.getUniformLocation($,"u_contourTimeMult"),imageInTex:J.getUniformLocation($,"u_imageInTex"),imageInBg:J.getUniformLocation($,"u_imageInBg"),imageOnlyMode:J.getUniformLocation($,"u_imageOnlyMode")},z=N1(J,q3,Z4);if(!z)throw Error("Failed to create display program");let m={position:J.getAttribLocation(z,"a_position"),texCoord:J.getAttribLocation(z,"a_texCoord")},S={texture:J.getUniformLocation(z,"u_texture"),useColorCycle:J.getUniformLocation(z,"u_useColorCycle"),cycleHue:J.getUniformLocation(z,"u_cycleHue"),blankColor:J.getUniformLocation(z,"u_blankColorMult"),staticColor1:J.getUniformLocation(z,"u_staticColor1"),staticColor2:J.getUniformLocation(z,"u_staticColor2"),staticColor3:J.getUniformLocation(z,"u_staticColor3"),crtEnabled:J.getUniformLocation(z,"u_crtEnabled"),imageInActive:J.getUniformLocation(z,"u_imageInActive"),imageInOrigTex:J.getUniformLocation(z,"u_imageInOrigTex"),cycleImageInColor:J.getUniformLocation(z,"u_cycleImageInColor"),bloomEnabled:J.getUniformLocation(z,"u_bloomEnabled"),bloomTex:J.getUniformLocation(z,"u_bloomTex"),bloomIntensity:J.getUniformLocation(z,"u_bloomIntensity"),bloomEdgeFade:J.getUniformLocation(z,"u_bloomEdgeFade")},d=!!K.disableWarpFx,e=!1,a=!K.disableBloom,V0=0.25,t=0.225,j0=1.25,G0=4,E=0.015,p=!1,v=null,I0=()=>D4(W,v,g),u=5.5;function k0(q,O){if(d)return[q,O];let I=q/X.width*2-1,V=O/X.height*2-1,U=V/u,C=I/u,_=(I+I*U*U)*0.5+0.5,c=(V+V*C*C)*0.5+0.5;return[_*X.width,c*X.height]}let b=N1(J,f3,Y4);if(!b)throw Error("Failed to create block noise program");let m0={position:J.getAttribLocation(b,"a_position"),texCoord:J.getAttribLocation(b,"a_texCoord")},z0={seedOffset:J.getUniformLocation(b,"u_seedOffset"),blocking:J.getUniformLocation(b,"u_blocking"),blackNoiseScale:J.getUniformLocation(b,"u_blackNoiseScale"),structuralMoveTime:J.getUniformLocation(b,"u_structuralMoveTime"),resetNoiseTimeMult:J.getUniformLocation(b,"u_resetNoiseTimeMult"),domainWarpAmount:J.getUniformLocation(b,"u_domainWarpAmount"),patternMode:J.getUniformLocation(b,"u_patternMode"),patternStrength:J.getUniformLocation(b,"u_patternStrength"),patternFreq:J.getUniformLocation(b,"u_patternFreq"),canvasResolution:J.getUniformLocation(b,"u_canvasResolution")},s=N1(J,f3,G4);if(!s)throw Error("Failed to create movement shape program");let l0={position:J.getAttribLocation(s,"a_position"),texCoord:J.getAttribLocation(s,"a_texCoord")},J0={seedOffset:J.getUniformLocation(s,"u_seedOffset"),blocking:J.getUniformLocation(s,"u_blocking"),blackNoiseScale:J.getUniformLocation(s,"u_blackNoiseScale"),structuralMoveTime:J.getUniformLocation(s,"u_structuralMoveTime"),movementNoiseTime:J.getUniformLocation(s,"u_movementNoiseTime"),movementNoiseXYTime:J.getUniformLocation(s,"u_movementNoiseXYTime"),domainWarpAmount:J.getUniformLocation(s,"u_domainWarpAmount"),patternMode:J.getUniformLocation(s,"u_patternMode"),patternStrength:J.getUniformLocation(s,"u_patternStrength"),patternFreq:J.getUniformLocation(s,"u_patternFreq"),canvasResolution:J.getUniformLocation(s,"u_canvasResolution"),movementShapeScaling:J.getUniformLocation(s,"u_movementShapeScaling")},Q0=N1(J,q3,W4);if(!Q0)throw Error("Failed to create bloom downsample program");let H1={position:J.getAttribLocation(Q0,"a_position"),texCoord:J.getAttribLocation(Q0,"a_texCoord")},_0={texture:J.getUniformLocation(Q0,"u_texture"),texelSize:J.getUniformLocation(Q0,"u_texelSize"),prefilter:J.getUniformLocation(Q0,"u_prefilter"),threshold:J.getUniformLocation(Q0,"u_threshold"),lumaWeight:J.getUniformLocation(Q0,"u_lumaWeight")},B0=N1(J,q3,$4);if(!B0)throw Error("Failed to create bloom upsample program");let S0={position:J.getAttribLocation(B0,"a_position"),texCoord:J.getAttribLocation(B0,"a_texCoord")},e0={texture:J.getUniformLocation(B0,"u_texture"),texelSize:J.getUniformLocation(B0,"u_texelSize"),radius:J.getUniformLocation(B0,"u_radius")};J.useProgram($),J.uniform1i(H.texture,0),J.uniform1i(H.movementTexture,1),J.uniform1i(H.blockNoiseTex,2),J.uniform1i(H.paintTexture,4),J.uniform1i(H.imageInTex,6),J.uniform1i(H.movementShapeTex,7),J.useProgram(z),J.uniform1i(S.texture,0),J.uniform1i(S.imageInOrigTex,1),J.uniform1i(S.bloomTex,2),J.useProgram(Q0),J.uniform1i(_0.texture,0),J.useProgram(B0),J.uniform1i(e0.texture,0);let V1=J.createBuffer();J.bindBuffer(J.ARRAY_BUFFER,V1),J.bufferData(J.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),J.STATIC_DRAW);let Q1=J.createBuffer();J.bindBuffer(J.ARRAY_BUFFER,Q1),J.bufferData(J.ARRAY_BUFFER,new Float32Array([0,0,1,0,0,1,1,1]),J.STATIC_DRAW);let r=[null,null],K0=[null,null];for(let q=0;q<2;q++){let{texture:O,fbo:I}=e3(J,X.width,X.height);r[q]=O,K0[q]=I}let w0=0,c1=7,W0=[];function L1(q,O){let I=J.createTexture();J.bindTexture(J.TEXTURE_2D,I),J.texImage2D(J.TEXTURE_2D,0,J.RGBA,q,O,0,J.RGBA,J.UNSIGNED_BYTE,null),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_MIN_FILTER,J.LINEAR),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_MAG_FILTER,J.LINEAR),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_WRAP_S,J.CLAMP_TO_EDGE),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_WRAP_T,J.CLAMP_TO_EDGE);let V=J.createFramebuffer();return J.bindFramebuffer(J.FRAMEBUFFER,V),J.framebufferTexture2D(J.FRAMEBUFFER,J.COLOR_ATTACHMENT0,J.TEXTURE_2D,I,0),{texture:I,fbo:V,w:q,h:O}}function j1(){for(let V of W0)J.deleteTexture(V.texture),J.deleteFramebuffer(V.fbo);W0=[];let q=Math.max(1,X.width>>2),O=Math.max(1,X.height>>2),I=Math.min(c1,G0);for(let V=0;V<I&&(W0.push(L1(q,O)),!(q===1&&O===1));V++)q=Math.max(1,q>>1),O=Math.max(1,O>>1)}j1();let g0=null,T0=null,O0=0,A0=null,R0=null;function t0(q,O,I){let V=J.createTexture();J.bindTexture(J.TEXTURE_2D,V),J.texImage2D(J.TEXTURE_2D,0,J.RGBA8,q,q,0,J.RGBA,J.UNSIGNED_BYTE,null),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_MIN_FILTER,I),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_MAG_FILTER,I),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_WRAP_S,O),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_WRAP_T,O);let U=J.createFramebuffer();return J.bindFramebuffer(J.FRAMEBUFFER,U),J.framebufferTexture2D(J.FRAMEBUFFER,J.COLOR_ATTACHMENT0,J.TEXTURE_2D,V,0),J.bindFramebuffer(J.FRAMEBUFFER,null),J.bindTexture(J.TEXTURE_2D,null),{tex:V,fbo:U}}function x0(q){O0=Math.max(1,Math.ceil(q)),g0&&J.deleteTexture(g0),T0&&J.deleteFramebuffer(T0);let{tex:O,fbo:I}=t0(O0,J.CLAMP_TO_EDGE,J.NEAREST);g0=O,T0=I,A0&&J.deleteTexture(A0),R0&&J.deleteFramebuffer(R0);let V=t0(O0,J.CLAMP_TO_EDGE,J.NEAREST);A0=V.tex,R0=V.fbo,O1=!1}let X0=null,j=!1;function h(q,O,I){let V=document.createElement("canvas");V.width=O,V.height=I;let U=V.getContext("2d");return U.imageSmoothingEnabled=!1,U.translate(0,I),U.scale(1,-1),U.drawImage(q,0,0,O,I),V}function q0(q){return h(q,X.width,X.height)}let T=O4(J,X.width,X.height);function Z0(){y0.isRecording()&&y0.stop(),M0&&(K1=!0),X.width=l()*y,X.height=i()*y,f0=!0,d0++,J.viewport(0,0,X.width,X.height);for(let q=0;q<2;q++){J.deleteTexture(r[q]),J.deleteFramebuffer(K0[q]);let{texture:O,fbo:I}=e3(J,X.width,X.height);r[q]=O,K0[q]=I}j1(),T.resize(X.width,X.height)}function Y0(q){q!==y&&(y=q,Z0())}function U0(q,O="4:3",I="landscape"){let V=F!==I||M!==O||q!==y;F=I,M=O,y=q,V&&Z0()}let x=0,E0=0,P0=0,g=0,h0=0,u0=0,a0=0,N0=!1,H0=!1,v0=!1,$0=!1,c0=!1,R1=!1,Z3=!1,J1=()=>N0||c0||H0,I1=!1,i0=0,f0=!0,b0=!0,O1=!1,Z1=!1,d0=0,r0=!1,s0=0,y1=0,E1=0,C0=i3,Y3=1000/C0,M0=!1,K1=!1,$2=10,P2=16,z1=null,B1="waterfall",D1="down",Y1=Y.defaultWaterfallMode,k1="movement",w1=!1,f1=0,s1=0;function M1(){return w??Y.cycleColorHueBaseSpeed}function l1(){let q=M1()*(60/C0);if(q>0){let O=1/q,I=Math.round(O);if(Math.abs(O-I)<0.001&&I>=30&&I<=1800)return I}return b1}function H2(){let q=l1(),O=(I)=>Math.max(1,Math.round(q*I/C0));return{blank:O(w4),block:O(r3),edge:O(A4)}}let G3=null,X1=()=>G3?.({globalFreeze:N0,manualMode:$0}),W3=null,V2=()=>W3?.(),j2=()=>({width:l()*y,height:i()*y}),$3=null,a1=!1,y0=d3(X,N,(q)=>$3?.(q),l1,I0,j2);x0(Y.blockingScale),T.generateBrushSizeOptions();function P3(q){W=q,Y=P1(W),Y0(Y.canvasScale),f0=!0,b0=!0,d0++,X3(Y,{palette:D,baseChunkSize:L,moveSpeed:k,hueSpeed:w}),x0(Y.blockingScale),T.generateBrushSizeOptions(),R1=!1}function S1(){for(let q=0;q<2;q++)J.bindFramebuffer(J.FRAMEBUFFER,K0[q]),J.clearColor(0,0,0,0),J.clear(J.COLOR_BUFFER_BIT);J.bindFramebuffer(J.FRAMEBUFFER,null)}function H3(){J.bindFramebuffer(J.FRAMEBUFFER,null),J.viewport(0,0,X.width,X.height),J.clearColor(0,0,0,0),J.clear(J.COLOR_BUFFER_BIT)}function g1(){T.clearAll(),Y1=Y.defaultWaterfallMode,x=0,g=0,E0=0,P0=0,h0=0,w1=!1,O1=!1}function i1(q){return q?new Promise((O,I)=>{let V=d0,U=new Image;U.crossOrigin="anonymous",U.onload=()=>{if(Z1||V!==d0){O();return}let C=q0(U);for(let _ of r)J.bindTexture(J.TEXTURE_2D,_),J.texImage2D(J.TEXTURE_2D,0,J.RGBA,J.RGBA,J.UNSIGNED_BYTE,C);J.bindTexture(J.TEXTURE_2D,T.getMovementTexture()),J.texImage2D(J.TEXTURE_2D,0,J.RGBA,X.width,X.height,0,J.RGBA,J.UNSIGNED_BYTE,null),J.bindTexture(J.TEXTURE_2D,T.getPaintTexture()),J.texImage2D(J.TEXTURE_2D,0,J.RGBA,X.width,X.height,0,J.RGBA,J.UNSIGNED_BYTE,null),J.bindTexture(J.TEXTURE_2D,null),O()},U.onerror=()=>I(Error("Failed to load image: "+q)),U.src=q}):Promise.reject(Error("Cannot load image: URL is empty"))}function I2(q){if(!g0||!T0)return;Math.max(1,Math.ceil(Y.blockingScale))!==O0&&x0(Y.blockingScale),J.useProgram(b),J.uniform3f(z0.seedOffset,Y.shaderOffset[0],Y.shaderOffset[1],Y.shaderOffset[2]),J.uniform2f(z0.blackNoiseScale,Y.blackNoiseScale[0],Y.blackNoiseScale[1]),J.uniform1f(z0.structuralMoveTime,q),J.uniform1f(z0.resetNoiseTimeMult,F4),J.uniform1f(z0.domainWarpAmount,Y.domainWarpAmount),J.uniform1i(z0.patternMode,Y.patternMode),J.uniform1f(z0.patternStrength,Y.patternStrength),J.uniform1f(z0.patternFreq,Y.patternFreq),J.uniform2f(z0.canvasResolution,X.width,X.height),G1(m0),J.bindFramebuffer(J.FRAMEBUFFER,T0),J.viewport(0,0,O0,O0),J.uniform1f(z0.blocking,Y.blockingScale),J.drawArrays(J.TRIANGLE_STRIP,0,4),J.viewport(0,0,X.width,X.height)}function O2(q,O,I){!A0||!R0||(J.useProgram(s),J.uniform3f(J0.seedOffset,Y.shaderOffset[0],Y.shaderOffset[1],Y.shaderOffset[2]),J.uniform1f(J0.blocking,Y.blockingScale),J.uniform2f(J0.blackNoiseScale,Y.blackNoiseScale[0],Y.blackNoiseScale[1]),J.uniform1f(J0.structuralMoveTime,q),J.uniform1f(J0.movementNoiseTime,O),J.uniform2f(J0.movementNoiseXYTime,I[0],I[1]),J.uniform1f(J0.domainWarpAmount,Y.domainWarpAmount),J.uniform1i(J0.patternMode,Y.patternMode),J.uniform1f(J0.patternStrength,Y.patternStrength),J.uniform1f(J0.patternFreq,Y.patternFreq),J.uniform2f(J0.canvasResolution,X.width,X.height),J.uniform2f(J0.movementShapeScaling,Y.movementShapeScaling[0],Y.movementShapeScaling[1]),G1(l0),J.bindFramebuffer(J.FRAMEBUFFER,R0),J.viewport(0,0,O0,O0),J.drawArrays(J.TRIANGLE_STRIP,0,4),J.viewport(0,0,X.width,X.height))}function V3(q,O,I,V){let U=((V+q/O)%1+1)%1;return 1-Math.sin(2*Math.PI*U+Math.PI/2)*I}function y2(q){if(Y.blockNoiseDisableShapeMovement)return[0,0];let[O,I]=Y.movementShapeScaling,V=Y.movementNoiseTimeMultBase;return[q*V*O,q*V*(X.width/X.height)*I]}function z2(){let q=D??Y.palette;J.uniform1f(H.targetFps,C0),J.uniform2f(H.resolution,X.width,X.height),J.uniform1f(H.pixelRatio,k4),J.uniform3f(H.seedOffset,Y.shaderOffset[0],Y.shaderOffset[1],Y.shaderOffset[2]),J.uniform1f(H.baseChunkSize,L!=null?L*Y.canvasScale:Y.baseChunkSize),J.uniform1f(H.chunkGlitch,Y.baseChunkSizeType==="glitchy"?1:0),J.uniform1f(H.moveSpeed,k??Y.moveSpeed),J.uniform1f(H.resetEdgeThreshold,Y.resetEdgeThreshold),J.uniform1f(H.blockTimeMult,r3),J.uniform1f(H.ribbonDirtThreshold,p4),J.uniform1i(H.useColorCycle,q.useColorCycle?1:0),J.uniform1f(H.blankStaticThreshold,Y.blankStaticThreshold),J.uniform1i(H.edgeFx,Y.edgeFx?1:0),J.uniform1i(H.gradientBlockPattern,Y.gradientBlockPattern),J.uniform1f(H.blankStaticTimeMult,_4);let O=H2();J.uniform1f(H.staticCyclesBlank,O.blank),J.uniform1f(H.staticCyclesBlock,O.block),J.uniform1f(H.staticCyclesEdge,O.edge);let I=J3[Y.background];J.uniform3f(H.blankColor,I[0],I[1],I[2]),J.uniform3f(H.staticColor1,q.colors[0][0],q.colors[0][1],q.colors[0][2]),J.uniform3f(H.staticColor2,q.colors[1][0],q.colors[1][1],q.colors[1][2]),J.uniform3f(H.staticColor3,q.colors[2][0],q.colors[2][1],q.colors[2][2]),J.uniform1f(H.cycleColorHueSpeed,M1()*(60/C0)),J.uniform2f(H.extraFallStutterScale,Y.extraFallStutterScale[0],Y.extraFallStutterScale[1]),J.uniform2f(H.extraMoveStutterScale,Y.extraMoveStutterScale[0],Y.extraMoveStutterScale[1]),J.uniform1f(H.extraFallStutterThreshold,T4),J.uniform1f(H.extraMoveStutterThreshold,x4),J.uniform1f(H.contourTimeMult,h4),J.uniform1f(H.shouldMoveThreshold,Y.shouldMoveThreshold),J.uniform2f(H.moveShapeScale,Y.moveShapeScale[0],Y.moveShapeScale[1]),J.uniform1f(H.moveShapeSpeed,v4),J.uniform1f(H.resetThreshold,u4),J.uniform1f(H.shouldFallThreshold,Y.shouldFallThreshold),J.uniform2f(H.shouldFallScale,Y.shouldFallScale[0],Y.shouldFallScale[1]),J.uniform1f(H.fallShapeSpeed,b4),J.uniform1f(H.fxWithBlocking,Y.fxWithBlocking?1:0),J.uniform1f(H.extraMoveShapeThreshold,c4),J.uniform1f(H.extraFallShapeThreshold,K2),J.uniform1f(H.fallWaterfallMult,d4),J.uniform2f(H.extraFallShapeScale,Y.extraFallShapeScale[0],Y.extraFallShapeScale[1]),J.uniform2f(H.extraMoveShapeScale,Y.extraMoveShapeScale[0],Y.extraMoveShapeScale[1]),J.uniform1f(H.blocking,Y.blockingScale),J.uniform1f(H.blackNoiseEdgeMult,Y.blackNoiseEdgeMult),J.uniform1f(H.blackNoiseThreshold,Y.blackNoiseThreshold),J.uniform1f(H.useRibbonThreshold,m4),J.uniform2f(H.dirtNoiseScale,Y.dirtNoiseScale[0],Y.dirtNoiseScale[1]),J.uniform2f(H.blankStaticScale,Y.blankStaticScale[0],Y.blankStaticScale[1]),J.uniform1f(H.defaultWaterfallMode,Y.defaultWaterfallMode?1:0)}function j3(){let q=l1(),O=P0%q/q,I=E0%q/q,V=M1()===R3?1:U4,U=Math.max(1,Math.round(q/V)),C=Math.floor(I*U)/U;return{loopFrames:q,rawPhase:O,steppedHuePhase:C}}function G1(q){J.bindBuffer(J.ARRAY_BUFFER,V1),J.enableVertexAttribArray(q.position),J.vertexAttribPointer(q.position,2,J.FLOAT,!1,0,0),J.bindBuffer(J.ARRAY_BUFFER,Q1),J.enableVertexAttribArray(q.texCoord),J.vertexAttribPointer(q.texCoord,2,J.FLOAT,!1,0,0)}function B2(q){let O=Math.min(Math.max(1,G0),W0.length);J.disable(J.BLEND),J.useProgram(Q0),G1(H1);let I=A??(Y.globalBloomMult===1?0.2:0.4);for(let V=0;V<O;V++){let U=W0[V],C=V===0?r[q]:W0[V-1].texture,_=V===0?X.width:W0[V-1].w,c=V===0?X.height:W0[V-1].h;J.bindFramebuffer(J.FRAMEBUFFER,U.fbo),J.viewport(0,0,U.w,U.h),J.activeTexture(J.TEXTURE0),J.bindTexture(J.TEXTURE_2D,C),J.uniform2f(_0.texelSize,1/_,1/c),J.uniform1f(_0.prefilter,V===0?1:0),J.uniform1f(_0.threshold,V0),J.uniform1f(_0.lumaWeight,I),J.drawArrays(J.TRIANGLE_STRIP,0,4)}J.enable(J.BLEND),J.blendFunc(J.ONE,J.ONE),J.useProgram(B0),G1(S0);for(let V=O-1;V>0;V--){let U=W0[V],C=W0[V-1];J.bindFramebuffer(J.FRAMEBUFFER,C.fbo),J.viewport(0,0,C.w,C.h),J.activeTexture(J.TEXTURE0),J.bindTexture(J.TEXTURE_2D,U.texture),J.uniform2f(e0.texelSize,1/U.w,1/U.h),J.uniform1f(e0.radius,j0),J.drawArrays(J.TRIANGLE_STRIP,0,4)}J.disable(J.BLEND),J.viewport(0,0,X.width,X.height)}function I3(q,O,I){if(J.bindFramebuffer(J.FRAMEBUFFER,null),J.useProgram(z),b0){let C=D??Y.palette;J.uniform1f(S.crtEnabled,d?0:1),J.uniform1i(S.cycleImageInColor,p?1:0),J.uniform1f(S.bloomEnabled,a?1:0),J.uniform1f(S.bloomIntensity,Z??t*Y.globalBloomMult),J.uniform1f(S.bloomEdgeFade,E),J.uniform1i(S.useColorCycle,C.useColorCycle||w!=null?1:0);let _=J3[Y.background];J.uniform3f(S.blankColor,_[0],_[1],_[2]),J.uniform3f(S.staticColor1,C.colors[0][0],C.colors[0][1],C.colors[0][2]),J.uniform3f(S.staticColor2,C.colors[1][0],C.colors[1][1],C.colors[1][2]),J.uniform3f(S.staticColor3,C.colors[2][0],C.colors[2][1],C.colors[2][2]),b0=!1}J.activeTexture(J.TEXTURE0),J.bindTexture(J.TEXTURE_2D,r[q]),a&&W0.length>0&&(J.activeTexture(J.TEXTURE2),J.bindTexture(J.TEXTURE_2D,W0[0].texture)),j&&X0?(J.activeTexture(J.TEXTURE1),J.bindTexture(J.TEXTURE_2D,X0),J.uniform1i(S.imageInActive,1)):J.uniform1i(S.imageInActive,0);let V=M1()*(60/C0),U=Math.max(1,Math.round(V*I));J.uniform1f(S.cycleHue,O*U),G1(m),J.drawArrays(J.TRIANGLE_STRIP,0,4)}function r1(q=!1){if(R1){H3();return}let O=(w0+1)%2,I=x*(C0/30),V=Y.blockNoiseDisableShapeMovement?E4:1,U=Y.blockNoiseDisableShapeMovement?R4:1,C=I*C4*V,_=I*L4*U,c=J1()||$0;if(!c||!O1){I2(C);let D2=y2(I);O2(C,_,D2),O1=c}J.bindFramebuffer(J.FRAMEBUFFER,K0[O]),J.useProgram($),f0&&(z2(),f0=!1),J.uniform1f(H.time,x);let{loopFrames:F0,rawPhase:D0,steppedHuePhase:p1}=j3();J.uniform1f(H.staticLoopPhase,D0),J.uniform1f(H.steppedHuePhase,p1);let o0=$0?h0:g;J.uniform1f(H.brushFrameCount,o0),J.uniform1f(H.brushTime,o0/C0);let _1=n3(o3,Y.resetVarianceStart,Y.resetVarianceEnd),T1=n3(o3,Y.movementVarianceStart,Y.movementVarianceEnd),x1=V3(x,_1,M4,Y.resetVarianceStart),n1=V3(x,T1,S4,Y.movementVarianceStart);J.uniform1f(H.resetThresholdVariance,x1),J.uniform1f(H.movementThresholdVariance,n1),J.uniform1f(H.globalFreeze,J1()?1:0),J.uniform1f(H.forceReset,I1?1:0),J.uniform1f(H.manualMode,$0?1:0),J.uniform1f(H.imageOnlyMode,e?1:0),J.activeTexture(J.TEXTURE1),J.bindTexture(J.TEXTURE_2D,T.getMovementTexture()),J.activeTexture(J.TEXTURE4),J.bindTexture(J.TEXTURE_2D,T.getPaintTexture()),g0&&(J.activeTexture(J.TEXTURE2),J.bindTexture(J.TEXTURE_2D,g0)),A0&&(J.activeTexture(J.TEXTURE7),J.bindTexture(J.TEXTURE_2D,A0)),J.uniform1f(H.imageInBg,j?1:0),j&&X0&&(J.activeTexture(J.TEXTURE6),J.bindTexture(J.TEXTURE_2D,X0)),J.activeTexture(J.TEXTURE0),J.bindTexture(J.TEXTURE_2D,r[w0]),G1(R),J.drawArrays(J.TRIANGLE_STRIP,0,4),a&&!q&&B2(O),q||I3(O,p1,F0),w0=O,q||y0.tick()}function W1(){if(M0){s0=requestAnimationFrame(W1);return}let q=performance.now(),O=q-y1;if(O<Y3){s0=requestAnimationFrame(W1);return}if(y0.isBackpressured()){y1=q,s0=requestAnimationFrame(W1);return}if(y1=q-O%Y3,!J1()&&!$0&&(x=g/C0,u0++,g++),H0||E0++,!H0&&!v0&&P0++,J1()||h0++,i0>0&&(i0--,i0<=0&&(I1=!1)),Z3&&!J1()&&!$0&&!y0.isRecording())for(let V=0;V<P2-1;V++)o1(!0);r1();let I=q-E1;I>=1000&&(a0=Math.round(u0*1000/I),u0=0,E1=q,Q?.(a0)),s0=requestAnimationFrame(W1)}function o1(q){x=g/C0,g++,E0++,P0++,h0++,i0>0&&(i0--,i0<=0&&(I1=!1));let O=N0,I=c0,V=$0,U=H0;N0=!1,c0=!1,$0=!1,H0=!1;try{r1(q)}finally{N0=O,c0=I,$0=V,H0=U}}let A1={start(){r0||(r0=!0,y1=performance.now(),E1=performance.now(),s0=requestAnimationFrame(W1))},stop(){r0=!1,cancelAnimationFrame(s0)},destroy(){Z1=!0,A1.stop(),y0.destroy(),T.destroy(),J.deleteProgram($),J.deleteProgram(z),J.deleteProgram(b),J.deleteProgram(s),J.deleteProgram(Q0),J.deleteProgram(B0);for(let q of W0)J.deleteTexture(q.texture),J.deleteFramebuffer(q.fbo);W0=[];for(let q=0;q<2;q++)J.deleteTexture(r[q]),J.deleteFramebuffer(K0[q]);g0&&J.deleteTexture(g0),T0&&J.deleteFramebuffer(T0),A0&&J.deleteTexture(A0),R0&&J.deleteFramebuffer(R0),X0&&J.deleteTexture(X0),X0=null,j=!1,J.deleteBuffer(V1),J.deleteBuffer(Q1),X.removeEventListener("webglcontextlost",P)},setSeed(q){M0&&(K1=!0),P3(q),z1=null,S1(),g1(),V2()},getSeed(){return W},setFreezeLevel(q){N0=q>=1,v0=q>=2,H0=q>=3,X1()},getFreezeLevel(){return H0?3:v0?2:N0?1:0},setGlobalFreeze(q){this.setFreezeLevel(q?1:0)},isGlobalFrozen(){return N0},setTotalFreeze(q){this.setFreezeLevel(q?3:0)},isTotalFrozen(){return H0},setBrowseFreeze(q){c0=q},setManualMode(q){$0=q,X1()},isManualMode(){return $0},forceReset(){if(z1){let{imageUrl:q,totalFrameCount:O}=z1,I=d0;g1(),i1(q).then(()=>{Z1||I!==d0||(g=O,x=g/C0,E0=g,P0=g,O1=!1)}).catch((V)=>console.error("Failed to reload NFT thumbnail for reset:",V));return}I1=!0,i0=3,S1(),g1()},hardReset(){z1=null,A1.forceReset()},rewind(){M0&&(K1=!0),N0=!1,v0=!1,H0=!1,$0=!1,X1(),B1="waterfall",D1="down",k1="movement",S1(),g1(),I1=!1,i0=0,y0.isRecording()&&y0.stop(),j=!1},seekToFrame(q,O,I){let V=Math.floor(q);if(!Number.isFinite(V)||V<0)return console.warn(`seekToFrame refused: invalid target ${q}`),Promise.resolve();if(M0)return console.warn("seekToFrame refused: a seek is already in flight"),Promise.resolve();if(y0.isRecording())return console.warn("seekToFrame refused: recording is active"),Promise.resolve();if(A1.rewind(),I)try{I()}catch(C){console.error("seekToFrame: onAfterRewind hook failed:",C)}let U=V-g;return U<=0?(N0=!0,X1(),Promise.resolve()):(M0=!0,K1=!1,new Promise((C)=>{let _=()=>{M0=!1,K1=!1,N0=!0,X1(),C()},c=()=>{try{let D0=j3();I3(w0,D0.steppedHuePhase,D0.loopFrames)}catch(D0){console.error("seekToFrame: display blit after stop failed:",D0)}},F0=()=>{try{if(!r0){console.warn("seekToFrame terminated: engine stopped mid-seek"),_();return}if(K1){console.warn("seekToFrame aborted (resize, seed change, or user cancel mid-seek)"),c(),_();return}let D0=performance.now()+$2;for(;g<V&&performance.now()<D0;)o1(g+1<V);g<V&&c(),O?.(U-(V-g),U),g<V?requestAnimationFrame(F0):_()}catch(D0){console.error("seekToFrame failed:",D0),c(),_()}};requestAnimationFrame(F0)}))},isSeeking(){return M0},cancelSeek(){M0&&(K1=!0)},setOrientation(q){q!==F&&(F=q,Z0())},setAspect(q){q!==M&&(M=q,Z0())},setWarpFx(q){d=!q,b0=!0},setFastForward(q){Z3=q},setImageOnlyMode(q){e=q},getWarpFx(){return!d},setBloomEnabled(q){a=q,b0=!0},getBloomEnabled(){return a},setCycleImageInColor(q){p=q,b0=!0},setPaletteOverride(q){D=q,f0=!0,b0=!0},setBloomIntensityOverride(q){Z=q,b0=!0},getBloomIntensityOverride(){return Z},setLumaWeightOverride(q){A=q},getLumaWeightOverride(){return A},setBaseChunkSizeOverride(q){L=q,f0=!0},getBaseChunkSizeOverride(){return L},setHueSpeedOverride(q){w=q,f0=!0,b0=!0},getHueSpeedOverride(){return w},setMoveSpeedOverride(q){k=q,f0=!0},getMoveSpeedOverride(){return k},setFilenameLabel(q){v=q},async serializeState(){return B4(J,X,r[w0],T.getMovementTexture(),T.getPaintTexture(),g,W,Y)},async loadState(q,O="4:3",I="landscape"){W=String(q.seed),Y={...P1(W),...q.params},f0=!0,b0=!0,U0(Y.canvasScale,O,I);let V=++d0;g=q.totalFrameCount,x=g/C0,E0=g,P0=g;let U=(F0)=>F0 instanceof Blob?URL.createObjectURL(F0):F0,C=U(q.imageBuffer),_=U(q.movementBuffer),c=U(q.paintBuffer);await a3(J,X.width,X.height,{imageBufferSrc:C,movementBufferSrc:_,paintBufferSrc:c},{framebufferTextures:r,movementTexture:T.getMovementTexture(),paintTexture:T.getPaintTexture()}),typeof C=="string"&&URL.revokeObjectURL(C),typeof _=="string"&&URL.revokeObjectURL(_),typeof c=="string"&&URL.revokeObjectURL(c),!(Z1||V!==d0)&&(R1=!1,x0(Y.blockingScale))},async loadSession(q,O,I,V,U,C,_,c="4:3",F0="landscape"){let D0=P1(q);U0(D0.canvasScale,c,F0);let p1=++d0;try{if(_){let o0=(n1)=>URL.createObjectURL(n1),_1=o0(_.imageBuffer),T1=o0(_.movementBuffer),x1=o0(_.paintBuffer);await a3(J,X.width,X.height,{imageBufferSrc:_1,movementBufferSrc:T1,paintBufferSrc:x1},{framebufferTextures:r,movementTexture:T.getMovementTexture(),paintTexture:T.getPaintTexture()}),URL.revokeObjectURL(_1),URL.revokeObjectURL(T1),URL.revokeObjectURL(x1)}else await i1(I)}catch(o0){throw Y0(Y.canvasScale),o0}Z1||p1!==d0||(P3(q),z1={imageUrl:I,totalFrameCount:O},_?g=_.totalFrameCount:g=O,x=g/C0,E0=g,P0=g,Y1=V??Y.defaultWaterfallMode,$0=U??!1,N0=C??!1,v0=!1,H0=!1,X1(),w1=!1)},loadImage(q){return i1(q)},loadBuffer(q,O,I){let V=I?h(O,I.w,I.h):q0(O),U=I?X.height-I.y-I.h:0,C=(_)=>{J.bindTexture(J.TEXTURE_2D,_),I?J.texSubImage2D(J.TEXTURE_2D,0,I.x,U,J.RGBA,J.UNSIGNED_BYTE,V):J.texImage2D(J.TEXTURE_2D,0,J.RGBA,J.RGBA,J.UNSIGNED_BYTE,V)};if(q==="image")for(let _ of r)C(_);else C(q==="movement"?T.getMovementTexture():T.getPaintTexture());J.bindTexture(J.TEXTURE_2D,null)},setBackgroundImage(q,O){if(!q){j=!1;return}if(O){let V=document.createElement("canvas");V.width=X.width,V.height=X.height,V.getContext("2d").drawImage(q,O.x,O.y),q=V}X0||(X0=J.createTexture(),J.bindTexture(J.TEXTURE_2D,X0),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_WRAP_S,J.CLAMP_TO_EDGE),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_WRAP_T,J.CLAMP_TO_EDGE),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_MIN_FILTER,J.NEAREST),J.texParameteri(J.TEXTURE_2D,J.TEXTURE_MAG_FILTER,J.NEAREST));let I=q0(q);J.bindTexture(J.TEXTURE_2D,X0),J.texImage2D(J.TEXTURE_2D,0,J.RGBA,J.RGBA,J.UNSIGNED_BYTE,I),J.bindTexture(J.TEXTURE_2D,null),j=!0},blank(){R1=!0,j=!1,S1(),H3()},getDrawingManager(){return T},handlePointerDown(q,O){if(J1())return;let[I,V]=k0(q,O);w1=!0,f1=I,s1=V,T.drawAt(I,V,B1,D1,{waterfallVariant:Y1,eraseVariant:k1,blocking:Y.fxWithBlocking,blockingScale:Y.blockingScale})},handlePointerMove(q,O){if(!w1||J1())return;let[I,V]=k0(q,O);T.drawLine(f1,s1,I,V,B1,D1,{waterfallVariant:Y1,eraseVariant:k1,blocking:Y.fxWithBlocking,blockingScale:Y.blockingScale}),f1=I,s1=V},handlePointerUp(){w1=!1},setDrawMode(q){B1=q},getDrawMode(){return B1},setDirection(q){D1=q},getDirection(){return D1},setWaterfallVariant(q){Y1=q},getWaterfallVariant(){return Y1},setEraseVariant(q){k1=q},getEraseVariant(){return k1},getParams(){return Y},getTime(){return x},getTotalFrameCount(){return g},isRunning(){return r0},renderNow(){M0||y0.isRecording()||r1()},captureScreenshot(){v3(J,X,r[w0],I0())},async captureScreenshotBase64(q){return b3(J,X,r[w0],q)},async captureFrameSequence(q,O,I){let V=O?.durationFrames??60*i3,U=O?.signal,C=I?.onStateChange,_=I?.onProgress;if(M0){C?.("error",Error("cannot capture during a seek"));return}if(y0.isRecording()){C?.("error",Error("cannot capture during recording"));return}if(a1){C?.("error",Error("capture already in progress"));return}a1=!0,cancelAnimationFrame(s0),r0=!1,C?.("capturing");try{for(let c=1;c<=V;c++){if(U?.aborted){C?.("cancelled");return}if(Z1){C?.("error",Error("engine destroyed mid-capture"));return}o1(!1);let F0=d1(J,X,r[w0]);if(!F0)throw Error("frame readback failed (no 2D context)");await z4(q,c,F0),_?.(c,V),await new Promise((D0)=>setTimeout(D0,0))}C?.("done")}catch(c){C?.("error",c)}finally{a1=!1,N0=!1,v0=!1,H0=!1,X1(),r0=!0,y1=performance.now(),E1=performance.now(),s0=requestAnimationFrame(W1)}},startRecording(){if(M0){console.warn("startRecording refused: a frame seek is in flight");return}y0.start()},stopRecording(){y0.stop()},isRecording(){return y0.isRecording()},getRecordingStatus(){return y0.getStatus()},onRecordingStateChange(q){$3=q},onModeStateChange(q){G3=q},onSeedChange(q){W3=q},getCanvasDisplayRect(){let q=X.getBoundingClientRect();return{left:q.left,top:q.top,width:q.width,height:q.height}},getCanvas(){return X}};return K.initialState&&A1.loadState(K.initialState).catch((q)=>{console.error("Failed to load initial engine state:",q)}),A1}var F1=(K)=>typeof K=="number"&&Number.isFinite(K)?K:void 0,f4=(K)=>Array.isArray(K)&&K.length===3&&K.every((X)=>Array.isArray(X)&&X.length===3&&X.every((Q)=>typeof Q=="number"&&Number.isFinite(Q)));function s4(K){if(!K||typeof K!="object")return;let X=K,Q={};typeof X.palette=="string"&&(Q.palette=X.palette),f4(X.paletteColors)&&(Q.paletteColors=X.paletteColors,typeof X.useColorCycle=="boolean"&&(Q.useColorCycle=X.useColorCycle));let N=F1(X.bloomIntensity);N!==void 0&&(Q.bloomIntensity=N);let G=F1(X.lumaWeight);G!==void 0&&(Q.lumaWeight=G);let J=F1(X.baseChunkSize);J!==void 0&&(Q.baseChunkSize=J);let P=F1(X.hueSpeed);P!==void 0&&(Q.hueSpeed=P);let W=F1(X.moveSpeed);return W!==void 0&&(Q.moveSpeed=W),(X.aspect==="16:9"||X.aspect==="4:3")&&(Q.aspect=X.aspect),(X.orientation==="landscape"||X.orientation==="portrait")&&(Q.orientation=X.orientation),Object.keys(Q).length>0?Q:void 0}function l4(K,X){let Q=X??{},N=null;Q.paletteColors?N={name:"Image-Derived",colors:Q.paletteColors,useColorCycle:Q.useColorCycle??!1}:Q.palette&&(N=p3.find((G)=>G.name===Q.palette)??null),K.setPaletteOverride(N),K.setBloomIntensityOverride(Q.bloomIntensity??null),K.setLumaWeightOverride(Q.lumaWeight??null),K.setBaseChunkSizeOverride(Q.baseChunkSize??null),K.setHueSpeedOverride(Q.hueSpeed??null),K.setMoveSpeedOverride(Q.moveSpeed??null)}async function a4(K,X,Q=fetch){if(X){let N=await m1(X,Q);K.setBackgroundImage(await r4(N))}else K.setBackgroundImage(null)}async function i4(K,X){try{let Q=await X(K.jsonUri);if(Q.ok){let N=(await Q.json()).engine;if(N&&typeof N=="object")return{engineFrame:Number(N.engineFrame??K.frameCount),manualMode:!!(N.manualMode??!1),globalFreeze:!!(N.globalFreeze??!1),overrides:s4(N.overrides)}}else console.warn(`[epoch-one] engine-state metadata fetch non-ok (${Q.status}); using descriptor fallbacks`,K.jsonUri)}catch(Q){console.warn("[epoch-one] engine-state hydrate failed; using descriptor fallbacks",Q)}return{engineFrame:K.frameCount,manualMode:!1,globalFreeze:!1,overrides:void 0}}async function m1(K,X){let Q=await X(K);if(!Q.ok)throw Error(`[epoch-one] buffer fetch failed (${Q.status}): ${K}`);return Q.blob()}function r4(K){return new Promise((X,Q)=>{let N=URL.createObjectURL(K),G=new Image;G.onload=()=>{URL.revokeObjectURL(N),X(G)},G.onerror=(J)=>{URL.revokeObjectURL(N),Q(J)},G.crossOrigin="anonymous",G.src=N})}async function q2(K,X,Q={}){let N=Q.fetch??fetch,{engineFrame:G,manualMode:J,globalFreeze:P,overrides:W}=Q.engineBlock??await i4(X,N),Y=P1(X.seed).defaultWaterfallMode,D=null;if(X.movementBufferUrl&&X.paintBufferUrl){let[Z,A,L]=await Promise.all([m1(X.thumbnailUrl,N),m1(X.movementBufferUrl,N),m1(X.paintBufferUrl,N)]);D={imageBuffer:Z,movementBuffer:A,paintBuffer:L,totalFrameCount:G}}await K.loadSession(X.seed,G,X.thumbnailUrl,Y,J,P,D,W?.aspect??"4:3",W?.orientation??"landscape"),l4(K,W),await a4(K,X.imageInUrl,N)}function o4(K,X,Q){let N=K.getDrawingManager();switch(X){case"increaseBrushSize":N.increaseBrushSize();break;case"decreaseBrushSize":N.decreaseBrushSize();break;case"brushSizeChanged":N.setBrushSize(Q.brushSize);break;case"waterfallUp":K.setDrawMode("waterfall"),K.setDirection("up"),K.setWaterfallVariant(Q.waterfallVariant??!0);break;case"waterfallDown":K.setDrawMode("waterfall"),K.setDirection("down"),K.setWaterfallVariant(Q.waterfallVariant??!0);break;case"moveLeft":K.setDrawMode("move"),K.setDirection("left");break;case"moveRight":K.setDrawMode("move"),K.setDirection("right");break;case"shuffle":K.setDrawMode("shuffle");break;case"trickle":K.setDrawMode("trickle");break;case"eraseMovement":K.setDrawMode("erase"),K.setEraseVariant(Q.eraseVariant??"movement");break;case"freezeBrush":K.setDrawMode("freeze");break;case"toggleGlobalFreeze":K.setFreezeLevel(K.getFreezeLevel()===0?1:0);break;case"freezeLevel0":K.setFreezeLevel(0);break;case"freezeLevel1":K.setFreezeLevel(1);break;case"freezeLevel2":K.setFreezeLevel(2);break;case"freezeLevel3":K.setFreezeLevel(3);break;case"drawSpace":K.setDrawMode("empty");break;case"drawGem":K.setDrawMode("gem");break;case"drawStatic":K.setDrawMode("static");break;case"resetInitialMovement":K.setDrawMode("erase"),K.setEraseVariant(Q.eraseVariant??"paint");break;case"toggleManualMode":K.setManualMode(!K.isManualMode());break;case"globalReset":K.forceReset();break;case"rewind":K.rewind();break;case"newSeed":K.setManualMode(!1),K.setFreezeLevel(0),K.setSeed(K3());break;case"cycleEraseMode":K.setDrawMode("erase"),K.setEraseVariant(Q.eraseVariant??"both");break;case"saveScreenshot":K.captureScreenshot();break;case"recordVideo":K.isRecording()?K.stopRecording():K.startRecording();break}}function t3(K,X,Q,N=!1){let G=Q.getBoundingClientRect();return N?{x:Q.width*((X-G.top)/G.height),y:Q.height*((K-G.left)/G.width)}:{x:(K-G.left)*(Q.width/G.width),y:Q.height-(X-G.top)*(Q.height/G.height)}}function n4(K,X,Q=document.body){let N=document.createElement("div");N.className="ev3-brush-ring",Q.appendChild(N);let G=!1,J=null,P;function W(y,F,M){J={x:y,y:F};let f=M??K.getBoundingClientRect(),l=Q.getBoundingClientRect();N.style.left=y-l.left+"px",N.style.top=F-l.top+"px";let i=X.getDrawingManager().getBrushSize(),$=X.getParams(),R=f.width/K.width,H=f.height/K.height,z=i*2*R,m=i*2*H,S=!1;if($.fxWithBlocking){let d=K.width/$.blockingScale,e=K.height/$.blockingScale;m=i*2*(e/d)*H,S=!0}N.style.width=z+"px",N.style.height=m+"px",N.style.borderRadius=S?"0":"50%",N.style.opacity="1",G=!0}function Y(){N.style.opacity="0",G=!1}function D(){if(G&&J)W(J.x,J.y);else{let y=K.getBoundingClientRect();W(y.left+y.width/2,y.top+y.height/2,y),clearTimeout(P),P=setTimeout(Y,800)}}function Z(y){W(y.clientX,y.clientY)}function A(y){W(y.clientX,y.clientY)}function L(y){let F=y.touches[0];F&&W(F.clientX,F.clientY)}function w(y){let F=y.touches[0];F&&W(F.clientX,F.clientY)}function k(y){y.pointerType!=="touch"&&W(y.clientX,y.clientY)}return K.addEventListener("mousemove",Z),K.addEventListener("mouseenter",A),K.addEventListener("mouseleave",Y),K.addEventListener("touchmove",L,{passive:!0}),K.addEventListener("touchstart",w,{passive:!0}),K.addEventListener("touchend",Y),K.addEventListener("touchcancel",Y),K.addEventListener("pointermove",k),K.addEventListener("pointerleave",Y),{refresh:D,destroy(){clearTimeout(P),K.removeEventListener("mousemove",Z),K.removeEventListener("mouseenter",A),K.removeEventListener("mouseleave",Y),K.removeEventListener("touchmove",L),K.removeEventListener("touchstart",w),K.removeEventListener("touchend",Y),K.removeEventListener("touchcancel",Y),K.removeEventListener("pointermove",k),K.removeEventListener("pointerleave",Y),N.remove()}}}var e4=".ev3-brush-ring{position:absolute;pointer-events:none;border:2px solid rgba(0,255,128,.7);border-radius:50%;background:transparent;transform:translate(-50%,-50%);z-index:9999;opacity:0;transition:opacity .15s ease,border-radius 0s}.ev3-epoch-one-root{display:flex;align-items:center;justify-content:center;overflow:hidden;container-type:size}.ev3-epoch-one-canvas{max-width:100%;max-height:100%;object-fit:contain;touch-action:none}",J2="ev3-epoch-one-styles";function t4(K){if(document.getElementById(J2))return;let X=document.createElement("style");X.id=J2,X.textContent=K+`
+`+e4,document.head.appendChild(X)}class Q3{engine;canvas;menu;brush;menuContainer;constructor(K){if(this.canvas=K.canvas,this.engine=K.engine,t4(K.menuCss),this.menuContainer=document.createElement("div"),this.menuContainer.innerHTML=K.menuHtml,(K.root??document.body).appendChild(this.menuContainer),this.menu=c3({onAction:(X,Q)=>{o4(this.engine,X,Q)},onAppMenu:K.onAppMenu,brushSizeOptions:K.brushSizeOptions,isAdmin:K.isAdmin}),this.menu){let X=this.menu;this.engine.onRecordingStateChange((N)=>X.setRecordingStatus(N));let Q=this.engine.getDrawingManager();X.setState({brushSizeOptions:Q.getBrushSizeOptions(),brushSizeIndex:Q.getBrushSizeIndex(),brushSize:Q.getBrushSize(),waterfallVariant:this.engine.getWaterfallVariant(),manualMode:this.engine.isManualMode(),globalFreeze:this.engine.isGlobalFrozen()}),X.show()}this.brush=n4(this.canvas,this.engine,K.root??document.body),this.canvas.addEventListener("pointerdown",this.onPointerDown),this.canvas.addEventListener("pointermove",this.onPointerMove),this.canvas.addEventListener("pointerup",this.onPointerUp),this.canvas.addEventListener("pointercancel",this.onPointerUp),document.addEventListener("wheel",this.onWheel,{passive:!1,capture:!0})}syncBrushFromEngine(){if(!this.menu)return;let K=this.engine.getDrawingManager();this.menu.setState({brushSize:K.getBrushSize(),brushSizeIndex:K.getBrushSizeIndex()})}onPointerDown=(K)=>{K.target.setPointerCapture(K.pointerId);let{x:X,y:Q}=t3(K.clientX,K.clientY,this.canvas);this.engine.handlePointerDown(X,Q)};onPointerMove=(K)=>{let{x:X,y:Q}=t3(K.clientX,K.clientY,this.canvas);this.engine.handlePointerMove(X,Q)};onPointerUp=()=>{this.engine.handlePointerUp()};onWheel=(K)=>{if(K.deltaY===0)return;let X=K.target;if(X&&this.menuContainer.contains(X))return;let Q=this.canvas.getBoundingClientRect();if(!(K.clientX>=Q.left&&K.clientX<=Q.right&&K.clientY>=Q.top&&K.clientY<=Q.bottom))return;K.preventDefault();let N=this.engine.getDrawingManager();K.deltaY<0?N.increaseBrushSize():N.decreaseBrushSize(),this.syncBrushFromEngine(),this.brush.refresh()};destroy(){this.canvas.removeEventListener("pointerdown",this.onPointerDown),this.canvas.removeEventListener("pointermove",this.onPointerMove),this.canvas.removeEventListener("pointerup",this.onPointerUp),this.canvas.removeEventListener("pointercancel",this.onPointerUp),document.removeEventListener("wheel",this.onWheel,{capture:!0}),this.engine.onRecordingStateChange(()=>{}),this.brush.destroy(),this.menu?.destroy(),this.menuContainer.remove()}}var u1=0;function N2(){u1>0&&console.warn("[epoch-one] Multiple engine instances detected on one page. This release supports a single instance per page; the tools menu and keyboard shortcuts will misbehave with more than one."),u1++;let K=!1;return()=>{K||(K=!0,u1=Math.max(0,u1-1))}}function Q2(K,X){let Q=N2(),N=(D)=>{D.classList.add("ev3-epoch-one-root"),getComputedStyle(D).position==="static"&&(D.style.position="relative")},G=X.container??K;N(K),G!==K&&N(G);let J=document.createElement("canvas");J.className="ev3-epoch-one-canvas",K.appendChild(J);let P=X2({canvas:J,seed:X.nft.seed}),W=new Q3({canvas:J,engine:P,menuHtml:m3,menuCss:u3,isAdmin:X.isAdmin,root:G}),Y=!1;return q2(P,X.nft,{fetch:X.fetch,engineBlock:X.engineBlock}).then(()=>{Y||(P.start(),X.onReady?.(P),X.onFirstFrame&&requestAnimationFrame(()=>{Y||X.onFirstFrame(P)}))}).catch((D)=>{console.error("[epoch-one] loadNft failed; engine not started",D)}),{engine:P,destroy(){Y=!0,W.destroy(),P.destroy(),J.remove(),Q()}}}var Z2=globalThis,Y2=Z2.__NFT__;if(!Y2)throw Error("[epoch-one] window.__NFT__ missing");var G2=document.getElementById("root");if(!G2)throw Error("[epoch-one] #root missing");var W2=document.getElementById("art");if(!W2)throw Error("[epoch-one] #art missing — the page must reserve the action bar strip");var J8=document.getElementById("fallback");try{Q2(W2,{nft:Y2,container:G2,engineBlock:Z2.__ENGINE_BLOCK__,isAdmin:!1,onFirstFrame:()=>J8?.remove()})}catch(K){console.error("[epoch-one] mount threw",K)}
+
+</script>
+</body>
+</html>
