@@ -118,7 +118,7 @@ const STEV3_Window: FC = () => {
       initSize={initSize}
       initPosition={initPos}
       menu={menu}
-      wrapperClassName="bg-amber-50"
+      wrapperClassName="bg-windowsPaper"
     >
       <div
         className={clsx(

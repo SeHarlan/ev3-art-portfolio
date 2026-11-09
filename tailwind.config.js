@@ -18,7 +18,9 @@ module.exports = {
         windowsSelectText: "var(--p95-select-fg)",
         windowsTitleText: "var(--p95-title-fg)",
         windowsText: "var(--p95-text)",
-        windowsTextDisabled: "var(--p95-text-disabled)"
+        windowsTextDisabled: "var(--p95-text-disabled)",
+        // Page behind window content (about text, Home): tan in Classic.
+        windowsPaper: "var(--p95-paper)"
       },
       height: { screen: 'calc(var(--vh) * 100)' },
       maxHeight: { screen: 'calc(var(--vh) * 100)' },

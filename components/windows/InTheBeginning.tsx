@@ -79,7 +79,7 @@ const ITBWindow: FC = () => {
       initSize={initSize}
       initPosition={initPos}
       menu={menu}
-      wrapperClassName="bg-amber-50"
+      wrapperClassName="bg-windowsPaper"
     >
       {/* {content} */}
       <div

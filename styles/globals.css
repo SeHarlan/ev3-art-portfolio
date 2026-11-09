@@ -45,6 +45,7 @@
   --p95-workspace: #808080;
   --p95-desktop: #008080;
   --p95-full-bg: #000000;
+  --p95-paper: #fffbeb;
   --p95-dither-ink: var(--p95-hilight);
   --p95-icon-ink: #000000;
   --p95-icon-shadow: #808080;
@@ -109,6 +110,7 @@
   --p95-icon-olive: #707070;
   --p95-icon-red: #404040;
   --p95-icon-maroon: #303030;
+  --p95-paper: #f7f7f7;
 }
 
 /* Black and white. The dither is gray, so the white icons stay visible on an
@@ -128,6 +130,7 @@
   --p95-workspace: #000000;
   --p95-desktop: #808080;
   --p95-dither-ink: #606060;
+  --p95-paper: #ffffff;
   --p95-icon-ink: #ffffff;
   --p95-icon-shadow: #808080;
   --p95-icon-silver: #808080;

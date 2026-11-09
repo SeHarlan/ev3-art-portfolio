@@ -231,7 +231,7 @@ const HomeWindow: FC = () => {
   
   return (
     <Window windowKey={WINDOWS.HOME} initSize={initSize} initPosition={initPos} menu={menu}>
-      <div className="bg-amber-50 h-full overflow-x-hidden p-3" ref={myDivRef}>
+      <div className="bg-windowsPaper h-full overflow-x-hidden p-3" ref={myDivRef}>
         {display}      
       </div>
     </Window>

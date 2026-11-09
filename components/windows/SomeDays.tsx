@@ -53,7 +53,7 @@ const SomeDaysWindow: FC = () => {
   ]
 
   return (
-    <Window windowKey={WINDOWS.SOMEDAYS} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
+    <Window windowKey={WINDOWS.SOMEDAYS} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-windowsPaper">
       {/* {content} */}
       <div className={clsx("w-full h-full duration-200", activeContent === 0 ? "opacity-100" : "opacity-0")}>
         <SomeDays className={sketchCounter} menuOpen={seedOpenRef} seed={seed} isActive={isActiveRef} />

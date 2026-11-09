@@ -121,7 +121,7 @@ const R3MIX_Window: FC = () => {
 
 
   return (
-    <Window windowKey={WINDOWS.R3MIX} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-amber-50">
+    <Window windowKey={WINDOWS.R3MIX} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-windowsPaper">
       <div className={clsx("w-full h-full duration-200", view === "sketch" ? "opacity-100" : "opacity-0")}>
         {content}
       </div>
