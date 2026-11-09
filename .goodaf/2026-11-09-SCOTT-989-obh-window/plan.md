@@ -70,6 +70,11 @@ Base: 1905739
 - B9: the piece's action-bar System button (☰) drawn disabled and unclickable, the engine's `tt-disabled` look, by CSS in each page; its `Q` shortcut checked to do nothing
 - B10: selector thumbs redone at their own aspect (54×96 portrait, C 96×54), drawn at that shape centered in `WorkSelector`'s 96×96 box
 
+## Follow-up 4
+
+Base: 5aaa5fb
+- B11: B8's "Loading..." drawn smaller (16px, W95FA's native size) in the engine UI's green `#00ff80`, in each page's `<head>` rule; B8's test updated to pin both
+
 ## Progress
 
 - 2026-11-09 plan written
