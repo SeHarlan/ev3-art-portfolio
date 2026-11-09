@@ -67,6 +67,10 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   D: the abyss gazes back
   E: something was found"
   Done: 2026-11-10, 1d5fb1b, repro "B7: the About copy is the series line, then the five lettered titles". The bold "on being human" heading stays above it.
+- B8. 2026-11-10 "I don't like the thumbnail loading in chunks, lets hide it and replace it with "Loading..." flashing in the W95FA font in the center of the page till the code is ready to play"
+  Reference: the chunked image is the page's fallback `<img id="fallback">` (the thumbnail PNG), which the engine removes on its first frame (`onFirstFrame: () => J8?.remove()`); the engine still needs the thumbnail as its base frame (A1), so hide the `<img>`, don't stop the download. Check the font's name and how the portfolio loads W95FA, and whether the iframe page can use it.
+- B9. 2026-11-10 "disable the system menu button."
+  Reference: read as the piece's own action-bar "System" button (☰, shortcut `Q`, "Open the external system menu" in the engine's menu), which does nothing here because the vendored pages pass no `onAppMenu`; disable both the button and its `Q` shortcut without editing engine bytes if possible.
 
 ## Follow-ups
 
