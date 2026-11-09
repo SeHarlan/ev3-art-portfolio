@@ -58,6 +58,16 @@ test("B8: each OBH page hides its still behind a flashing W95FA Loading... until
   }
 });
 
+test("B11: each OBH page's Loading... is 16px, W95FA's native size, in the engine UI's green #00ff80", () => {
+  for (const id of pages) {
+    const { head } = read(id);
+    const rule = head.match(/#art:has\(#fallback\)::after \{ content: "Loading\.\.\."; [^}]*\}/);
+    assert.ok(rule, `${id}: the Loading... rule in <head>`);
+    assert.ok(rule![0].includes("color: #00ff80;"), `${id}: Loading... in the engine UI's green`);
+    assert.ok(rule![0].includes("font-size: 16px;"), `${id}: Loading... at 16px`);
+  }
+});
+
 test("B9: each OBH page draws the action bar's System button disabled, unclickable, as the engine's tt-disabled does", () => {
   for (const id of pages) {
     const { head } = read(id);
