@@ -3,7 +3,7 @@ import Window, { WindowMenuItem } from "../Window"
 import { FC, useState } from "react"
 import clsx from "clsx"
 import WorkSelector from "../WorkSelector"
-import { About, purchaseUrl, works } from "./obh"
+import { About, PURCHASE_URL, works } from "./obh"
 
 type View = "selector" | "piece" | "about"
 
@@ -36,14 +36,10 @@ const OnBeingHumanWindow: FC = () => {
       label: "About",
       function: () => setView("about")
     },
-    ...(active
-      ? [{
-          label: "Purchase",
-          function: () => {
-            window.open(purchaseUrl(active.token), "_blank", "noopener")
-          }
-        }]
-      : []),
+    {
+      label: "Purchase",
+      function: () => window.open(PURCHASE_URL, "_blank", "noopener")
+    },
   ]
 
   return (

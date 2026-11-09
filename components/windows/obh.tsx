@@ -2,19 +2,17 @@ import clsx from "clsx"
 import { FC } from "react"
 import { Work } from "../WorkSelector"
 
-const CONTRACT = "0x4759A45c80eB04571902df74200F0D8d6c83F070"
-
 // Each piece is the baked page its ETH token's animation_url points to, vendored in public/obh/.
-export const works: (Work & { token: number })[] = [
-  { id: "a", title: "A: there must be something", thumb: "/images/thumbs/obh-a.jpg", token: 1 },
-  { id: "b", title: "B: there is nothing else", thumb: "/images/thumbs/obh-b.jpg", token: 2 },
-  { id: "c", title: "C: was it all a dream", thumb: "/images/thumbs/obh-c.jpg", token: 3 },
-  { id: "d", title: "D: the abyss gazes back", thumb: "/images/thumbs/obh-d.jpg", token: 4 },
-  { id: "e", title: "E: something was found", thumb: "/images/thumbs/obh-e.jpg", token: 5 },
+export const works: Work[] = [
+  { id: "a", title: "A: there must be something", thumb: "/images/thumbs/obh-a.jpg" },
+  { id: "b", title: "B: there is nothing else", thumb: "/images/thumbs/obh-b.jpg" },
+  { id: "c", title: "C: was it all a dream", thumb: "/images/thumbs/obh-c.jpg" },
+  { id: "d", title: "D: the abyss gazes back", thumb: "/images/thumbs/obh-d.jpg" },
+  { id: "e", title: "E: something was found", thumb: "/images/thumbs/obh-e.jpg" },
 ]
 
-export const purchaseUrl = (token: number) =>
-  `https://opensea.io/assets/ethereum/${CONTRACT}/${token}`
+// The Manifold page of the collection (contract 0x4759A45c80eB04571902df74200F0D8d6c83F070).
+export const PURCHASE_URL = "https://manifold.xyz/@ev3/contract/124346608"
 
 interface AboutProps {
   visible: boolean;
