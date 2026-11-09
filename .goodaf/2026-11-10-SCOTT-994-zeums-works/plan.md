@@ -134,6 +134,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - 2026-11-10 plan written
 - 2026-11-10 plan check: 6 must-fix fixed, 4 notes adopted, 0 dismissed
 - 2026-11-10 user approved `yarn install --frozen-lockfile` in this worktree
+- 2026-11-10 step 1: vercel link + env pull (`.vercel/`, `.env.local` both ignored); `yarn install --frozen-lockfile` exit 0
 
 ## Decisions
 
@@ -147,4 +148,3 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - Normal: new `WINDOWS` entries sit after SK3TCH, newest first, so the existing desktop order doesn't move. Reverse: reorder the object.
 
 ## Parked asks
-- 2026-11-10 step 1: vercel link + env pull (.vercel/, .env.local gitignored); yarn install --frozen-lockfile exit 0
