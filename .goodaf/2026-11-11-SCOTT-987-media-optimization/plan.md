@@ -46,6 +46,7 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 
 - 2026-11-11 plan written
 - 2026-11-11 step 1: Blob host in next.config images; image works render through next/image (fill, q90); test render gets the app image config via ImageConfigContext; checks 1 (tests) pass
+- 2026-11-11 step 2: Full Res menu item (after Refresh, image/video only, label flips to Optimized), mode in the mount key, reset on opening another item; `display` field on ZeumsItem; tests for Full Res image/video src and menu placement; checks 1, 2 (tests) pass
 
 ## Decisions
 
@@ -54,6 +55,8 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 - Normal: `display` is optional and video-only; images need no second URL because `next/image` derives the optimized copy from `src`. Reverse: add `display` for images if write-time copies replace runtime optimization.
 - Elevated: the spec's "banner" has no live call site: the only `big-banner.png` `<img>` is commented out (`pages/index.tsx:101-103`), and `big-banner-bg.png` is used only as an absolute OG/meta URL (`pages/index.tsx:40,43`), which stays raw. Options: convert the commented code, or leave it. Chose to leave both, since neither is rendered as an `<img>`. Reverse: convert the block if it's un-commented.
 - Elevated: Vercel's docs give 8192px max source dimensions and 10MB max output, but no source file-size limit; whether the optimizer handles a 40MB PNG shows only on a preview deploy (the user's check). Options: runtime `next/image` (chosen with the user), or write-time display copies. If the preview shows `/_next/image` failing for the large PNGs, the fallback is write-time copies (`vercel blob put-image`, credentials again). Reverse: set `unoptimized` on the failing items.
+- Normal: image and video rendering moved into an exported `WorkMedia` component in `MediaWindow.tsx`, so the static test render can drive Full Res without a DOM. Reverse: inline it back into `renderItem` and drop the WorkMedia tests.
+- Normal: choosing Full Res/Optimized from Select Piece or About also switches the window back to the work, so the swap is visible. Reverse: drop `setView("work")` from the menu item.
 
 ## Parked asks
 

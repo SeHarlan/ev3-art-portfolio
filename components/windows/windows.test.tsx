@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { imageConfigDefault } from "next/dist/shared/lib/image-config";
 import { ImageConfigContext } from "next/dist/shared/lib/image-config-context.shared-runtime";
 import { ZEUMS, ZeumsItem } from "../../data/zeums";
-import MediaWindow from "../MediaWindow";
+import MediaWindow, { WorkMedia } from "../MediaWindow";
 import DUETWindow from "./DUET";
 import InTheBeginningWindow from "./InTheBeginning";
 import MaurerWindow from "./Maurer";
@@ -133,4 +133,33 @@ test("F9: a work's video that isn't ready yet takes no keyboard focus, so Tab an
   const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
   assert.ok(video, "CEASEFIRE renders its video");
   assert.match(video!, /\btabindex="-1"/, `video: ${video}`);
+});
+
+const media = (item: ZeumsItem, fullRes: boolean) =>
+  html(<WorkMedia item={item} fullRes={fullRes} ready={false} onReady={() => {}} onPlaying={() => {}} videoRef={null} />);
+const srcOf = (tag: string) => tag.match(/\bsrc="([^"]*)"/)?.[1].replace(/&amp;/g, "&");
+
+test("SCOTT-987: Full Res shows an image work's original Blob file instead of the optimized copy", () => {
+  const work = ZEUMS.SEASONS.items[0];
+  assert.equal(srcOf(media(work, true).match(/<img [^>]*>/)![0]), work.src);
+  assert.ok(srcOf(media(work, false).match(/<img [^>]*>/)![0])!.startsWith("/_next/image?url="));
+});
+
+test("SCOTT-987: a video work plays its display copy, and Full Res plays the original", () => {
+  const work: ZeumsItem = { ...ZEUMS.CEASEFIRE.items[0], display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/ceasefire/display/x.mp4" };
+  assert.equal(srcOf(media(work, false).match(/<video [^>]*>/)![0]), work.display);
+  assert.equal(srcOf(media(work, true).match(/<video [^>]*>/)![0]), work.src);
+  const original: ZeumsItem = { ...work, display: undefined };
+  assert.equal(srcOf(media(original, false).match(/<video [^>]*>/)![0]), original.src);
+});
+
+test("SCOTT-987: image and video works have Full Res after Refresh and before About; HTML pieces don't", () => {
+  for (const name of ["CEASEFIRE (single)", "some days"]) {
+    const labels = menuLabels(windows[name]());
+    assert.deepEqual(labels.slice(labels.indexOf("Refresh"), labels.indexOf("About") + 1), ["Refresh", "Full Res", "About"], `${name}: ${labels.join(", ")}`);
+  }
+  const image = menuLabels(html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [ZEUMS.SEASONS.items[0]] }} />));
+  assert.ok(image.includes("Full Res"), image.join(", "));
+  const piece = menuLabels(html(<MediaWindow windowKey="Progress" data={ZEUMS.PROGRESS} />));
+  assert.ok(!piece.includes("Full Res"), piece.join(", "));
 });

@@ -9,6 +9,8 @@ export interface ZeumsItem {
   kind: ZeumsKind;
   /** Blob URL for images and videos; a /pieces/... path for HTML. */
   src: string;
+  /** Videos only: Blob URL of a smaller re-encoded copy, played by default (Full Res plays src). */
+  display?: string;
   thumb: string;
   /** remember.exe only: the piece's baked memory text, its exact seed. */
   seed?: string;

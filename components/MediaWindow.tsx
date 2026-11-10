@@ -1,7 +1,7 @@
 import { ZeumsItem, ZeumsWindow } from "@/data/zeums"
 import clsx from "clsx"
 import Image from "next/image"
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, Ref, useEffect, useRef, useState } from "react"
 import usePieceFocus from "@/hooks/usePieceFocus"
 import Loading from "./Loading"
 import PlayButton from "./PlayButton"
@@ -9,6 +9,77 @@ import Window, { WindowMenuItem } from "./Window"
 import WorkSelector from "./WorkSelector"
 
 type View = "selector" | "work" | "about"
+
+interface WorkMediaProps {
+  /** An image or video item. */
+  item: ZeumsItem;
+  /** Show the original Blob file instead of the optimized copy. */
+  fullRes: boolean;
+  ready: boolean;
+  onReady: () => void;
+  onPlaying: () => void;
+  videoRef: Ref<HTMLVideoElement>;
+}
+
+/**
+ * An open image or video work. By default an image goes through the image optimizer and a video
+ * plays its display copy; Full Res shows the original file. Transparent and unclickable until ready.
+ */
+export const WorkMedia: FC<WorkMediaProps> = ({ item, fullRes, ready, onReady, onPlaying, videoRef }) => {
+  const hidden = !ready && "opacity-0 pointer-events-none"
+  // A cached image can finish before React attaches onLoad.
+  const readyIfLoaded = (el: HTMLImageElement | null) => { if (el?.complete && el.naturalWidth) onReady() }
+
+  if (item.kind === "image") {
+    return fullRes ? (
+      <img
+        ref={readyIfLoaded}
+        src={item.src}
+        alt={item.title}
+        onLoad={onReady}
+        onError={onReady}
+        className={clsx("w-full h-full object-contain", hidden)}
+      />
+    ) : (
+      <Image
+        ref={readyIfLoaded}
+        src={item.src}
+        alt={item.title}
+        fill
+        sizes="100vw"
+        quality={90}
+        onLoad={onReady}
+        onError={onReady}
+        className={clsx("object-contain", hidden)}
+      />
+    )
+  }
+
+  return (
+    <video
+      ref={videoRef}
+      src={fullRes ? item.src : item.display ?? item.src}
+      poster={item.thumb}
+      controls
+      playsInline
+      preload="auto"
+      // Ready once the browser expects to play to the end without stopping to buffer.
+      onCanPlayThrough={onReady}
+      // A browser that stays idle short of playable data (one that won't preload) is as ready as
+      // it gets. Chrome also suspends briefly when reusing cached data, hence the wait.
+      onSuspend={e => {
+        const video = e.currentTarget
+        setTimeout(() => {
+          if (video.readyState < video.HAVE_FUTURE_DATA && video.networkState === video.NETWORK_IDLE) onReady()
+        }, 1000)
+      }}
+      onError={onReady}
+      onPlaying={onPlaying}
+      tabIndex={ready ? undefined : -1}
+      className={clsx("w-full h-full object-contain", hidden)}
+    />
+  )
+}
 
 interface MediaWindowProps {
   /** The window's key in WINDOWS, which is also its title. */
@@ -24,6 +95,8 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   const [view, setView] = useState<View>(isGallery ? "selector" : "work")
   const [activeId, setActiveId] = useState<string | undefined>(isGallery ? undefined : items[0]?.id)
   const [mountCount, setMountCount] = useState(0)
+  // Whether the open image or video shows its original file; each newly opened item starts optimized.
+  const [fullRes, setFullRes] = useState(false)
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const { iframeRef, focusPiece, isMin } = usePieceFocus(windowKey, view === "work")
@@ -35,8 +108,11 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   }, [view, isMin, activeId])
 
   const openWork = (id: string) => {
-    // Opening another item mounts it fresh; reopening the open one keeps its mount.
-    if (id !== activeId) setMountCount(n => n + 1)
+    // Opening another item mounts it fresh, optimized; reopening the open one keeps its mount.
+    if (id !== activeId) {
+      setMountCount(n => n + 1)
+      setFullRes(false)
+    }
     setActiveId(id)
     setView("work")
   }
@@ -44,12 +120,15 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   const menu: WindowMenuItem[] = [
     ...(isGallery ? [{ label: "Select Piece", function: () => setView("selector") }] : []),
     { label: "Refresh", function: () => setMountCount(n => n + 1) },
+    ...(item && item.kind !== "html"
+      ? [{ label: fullRes ? "Optimized" : "Full Res", function: () => { setFullRes(f => !f); setView("work") } }]
+      : []),
     { label: "About", function: () => setView("about") },
   ]
 
-  // The open item's mount key, new on each open of another item and on Refresh, which restarts a
-  // video and reloads an iframe.
-  const itemKey = item && `${item.id}-${mountCount}`
+  // The open item's mount key, new on each open of another item, on Refresh, which restarts a
+  // video and reloads an iframe, and on switching Full Res.
+  const itemKey = item && `${item.id}-${mountCount}${fullRes ? "-full" : ""}`
   // The mount key whose image or video is ready; until it matches the open one, the work is
   // transparent and Loading shows.
   const [readyKey, setReadyKey] = useState<string>()
@@ -58,63 +137,27 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   // The mount key whose video has started playing; Play shows over a ready video until then.
   const [startedKey, setStartedKey] = useState<string>()
 
-  const renderItem = (item: ZeumsItem, key: string) => {
-    switch (item.kind) {
-      case "image":
-        return (
-          <Image
-            key={key}
-            // A cached image can finish before React attaches onLoad.
-            ref={el => { if (el?.complete && el.naturalWidth) markReady() }}
-            src={item.src}
-            alt={item.title}
-            fill
-            sizes="100vw"
-            quality={90}
-            onLoad={markReady}
-            onError={markReady}
-            className={clsx("object-contain", !ready && "opacity-0 pointer-events-none")}
-          />
-        )
-      case "video":
-        return (
-          <video
-            key={key}
-            ref={videoRef}
-            src={item.src}
-            poster={item.thumb}
-            controls
-            playsInline
-            preload="auto"
-            // Ready once the browser expects to play to the end without stopping to buffer.
-            onCanPlayThrough={markReady}
-            // A browser that stays idle short of playable data (one that won't preload) is as ready as
-            // it gets. Chrome also suspends briefly when reusing cached data, hence the wait.
-            onSuspend={e => {
-              const video = e.currentTarget
-              setTimeout(() => {
-                if (video.readyState < video.HAVE_FUTURE_DATA && video.networkState === video.NETWORK_IDLE) markReady()
-              }, 1000)
-            }}
-            onError={markReady}
-            onPlaying={() => setStartedKey(itemKey)}
-            tabIndex={ready ? undefined : -1}
-            className={clsx("w-full h-full object-contain", !ready && "opacity-0 pointer-events-none")}
-          />
-        )
-      case "html":
-        return (
-          <iframe
-            key={key}
-            ref={iframeRef}
-            src={item.src}
-            title={item.title}
-            onLoad={focusPiece}
-            className="w-full h-full border-0 block"
-          />
-        )
-    }
-  }
+  const renderItem = (item: ZeumsItem, key: string) =>
+    item.kind === "html" ? (
+      <iframe
+        key={key}
+        ref={iframeRef}
+        src={item.src}
+        title={item.title}
+        onLoad={focusPiece}
+        className="w-full h-full border-0 block"
+      />
+    ) : (
+      <WorkMedia
+        key={key}
+        item={item}
+        fullRes={fullRes}
+        ready={ready}
+        onReady={markReady}
+        onPlaying={() => setStartedKey(itemKey)}
+        videoRef={videoRef}
+      />
+    )
 
   return (
     <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} wrapperClassName="bg-windowsPaper">
