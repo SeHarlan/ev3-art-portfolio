@@ -29,7 +29,7 @@ const OnBeingHumanWindow: FC = () => {
 
   const menu: WindowMenuItem[] = [
     {
-      label: "Choose piece",
+      label: "Select Piece",
       function: () => setView("selector")
     },
     {

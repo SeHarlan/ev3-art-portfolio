@@ -92,7 +92,7 @@ const R3MIX_Window: FC = () => {
       function: () => setView("about")
     },
     {
-      label: "Choose R3MIX",
+      label: "Select Piece",
       function: () => setView("selector")
     },
 

@@ -39,7 +39,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   const menu: WindowMenuItem[] = [
     { label: "Refresh", function: () => setRefreshCount(n => n + 1) },
     { label: "About", function: () => setView("about") },
-    ...(isGallery ? [{ label: `Choose ${data.title}`, function: () => setView("selector") }] : []),
+    ...(isGallery ? [{ label: "Select Piece", function: () => setView("selector") }] : []),
   ]
 
   const renderItem = (item: ZeumsItem) => {

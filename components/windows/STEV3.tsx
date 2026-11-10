@@ -64,7 +64,7 @@ const STEV3_Window: FC = () => {
       },
     },
     {
-      label: "Choose Prelude",
+      label: "Select Piece",
       function: () => setView("selector")
     },
     {

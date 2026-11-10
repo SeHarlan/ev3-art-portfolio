@@ -46,7 +46,7 @@ const RememberWindow: FC = () => {
       component: <SeedDropdown multiline initialSeed={seed ?? ""} onUseSeed={useSeed} seedOpen={seedOpen} setSeedOpen={setSeedOpen} />,
     },
     { label: "About", function: () => setView("about") },
-    { label: `Choose ${data.title}`, function: () => setView("selector") },
+    { label: "Select Piece", function: () => setView("selector") },
   ]
 
   return (
