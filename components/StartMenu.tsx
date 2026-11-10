@@ -17,7 +17,7 @@ const StartMenu: FC = () => {
               active: open,
             })}
           >
-            <img src="/images/small-logo.png" alt="" className="w-5" />
+            <img src="/images/static-icon.png" alt="" className="w-5" />
             <p className="-mb-0.5">Start</p>
           </Menu.Button>
 
