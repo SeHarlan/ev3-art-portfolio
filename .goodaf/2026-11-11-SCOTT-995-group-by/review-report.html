@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-995</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-995 add a "group by" option in settings</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-995-group-by</code>, not merged · reviewed commit <code>e217a6b</code>, final <code>7ffe9ff</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 2 fix rounds</p>
+  <p>Running at <a href="http://localhost:3995">http://localhost:3995</a></p>
+</div>
+
+<h2>Asks</h2>
+<p>None.</p>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>Open Find and click Randomize 5+ times in a row without touching anything else → a new work opens each time. Find now opens at the screen's left edge with Randomize first in its row ([Randomize] Named: [field]), moved there in review so opened works don't cover the button.</li>
+  <li>On a phone, tap a desktop folder → its folder window opens (the tap path wasn't re-run in review).</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Group by control; rearranges right away; survives reload</td><td class="pass">pass</td><td>Browser: Media and Experience each changed desktop and Start with no reload; open "2023" folder closed on switching to Media; after reload Media still pressed and shown.</td></tr>
+  <tr><td>2</td><td>Year folders 2026→2022 plus top-level icons</td><td class="pass">pass</td><td><code>node …/components/groups.test.js</code> → exit 0, 5/5; browser on a cleared first load: Introduction, 2026–2022, Find, Settings.</td></tr>
+  <tr><td>3</td><td>Media folders, overlap</td><td class="pass">pass</td><td>Same test → exit 0; browser: code, video, image, audio.</td></tr>
+  <tr><td>4</td><td>Experience folders</td><td class="pass">pass</td><td>Same test → exit 0; browser: Interactive, Generative, Fixed.</td></tr>
+  <tr><td>5</td><td>Folder window lists group, opens work</td><td class="pass">pass</td><td>Browser: "2023" lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA; DUET opened on top, folder stayed open.</td></tr>
+  <tr><td>6</td><td>Start cascades</td><td class="pass">pass</td><td>Browser at 800×600, 1280×600 and 375×812: submenus beside their entry and on screen; remember.exe opened and the menu closed.</td></tr>
+  <tr><td>7</td><td>Find: opens, filters, Randomize</td><td class="pass">pass</td><td>Same test → exit 0; browser: 19 works, <code>audio</code>, <code>maur</code>, <code>2026</code>, <code>xyz</code> (empty, Open disabled) as expected. Real-mouse Randomize failed before review fixes F3 and F4; after them 144 real clicks each opened a work.</td></tr>
+  <tr><td>8</td><td>Folder, Find, Control Panel icons look like Win95's</td><td class="pass">pass</td><td>By eye in the browser at 56px and 16px; your E2E has the final say.</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>yarn test</code> → 0 (32 pass); <code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0.</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<ul>
+  <li>Randomize never repeats the previous pick, so from the second click on it draws from the other 18 works. The spec says "from all 19, whatever is typed"; the build reads that as "not limited by the search field" (tracked as T1).</li>
+</ul>
+
+<h2>Elevated decisions</h2>
+<div class="elevated">
+  <p><strong>The plan kept <code>WINDOWS</code> and <code>ICONS</code> in <code>WindowsProvider</code>, but the provider now imports <code>data/groups.ts</code>, which reads <code>WINDOWS</code> at load: an import cycle that throws.</strong></p>
+  <p>Options: move them to their own module, or compute folder names lazily in the provider.</p>
+  <p>Chose: moved verbatim to <code>data/windows.ts</code>, re-exported from <code>WindowsProvider</code>, so every existing import still works.</p>
+  <p>Reverse: move them back and make <code>groups.ts</code> read <code>WINDOWS</code> lazily.</p>
+</div>
+<div class="elevated">
+  <p><strong>The spec asks for icons as close to Win95's as possible; tracing Microsoft's bitmaps pixel for pixel would copy their art.</strong></p>
+  <p>Options: trace the Win9x bitmaps, or draw original pixel art with the same read.</p>
+  <p>Chose: original 16×16 art in the Win95 style: a flat yellow closed folder; the same folder with a hammer and screwdriver for Control Panel; a dog-eared page under a magnifier for Find.</p>
+  <p>Reverse: redraw in <code>public/svg/</code>, or trace if you accept that.</p>
+</div>
+<div class="elevated">
+  <p><strong>Review fix F4: at the planned spot (160, 80), with Randomize at the right of its row, the work Randomize opened covered the button, so the next real click opened nothing. All 19 works open at x ≥ 60, so no spot keeps a right-side button clear.</strong></p>
+  <p>Options: move Find to x 0 and put Randomize first in its row; or leave it, and you bring Find forward before each click.</p>
+  <p>Chose: Find opens at (0, 80), its row reads [Randomize] Named: [field]. Trade-offs: after an ITB pick only the button's left part takes clicks (T2); when open, Find covers the desktop icon column below y≈80.</p>
+  <p>Reverse: set <code>initPos</code> back to <code>{ x: 160, y: 80 }</code>, move the button back after the field, drop the F4 test.</p>
+</div>
+
+<h2>Decided for you</h2>
+<details><summary>22 decisions</summary>
+<ul>
+  <li>Saved format: localStorage key <code>ev3-p95-group-by</code>, values <code>year</code>, <code>media</code>, <code>experience</code></li>
+  <li>Grouping state lives in <code>WindowsProvider</code>, since switching closes folder windows there</li>
+  <li>Folder window keys: the bare group name</li>
+  <li>Work selector ids: the <code>WINDOWS</code> enum key (e.g. <code>TERRA</code>), since names have spaces and quotes</li>
+  <li>Desktop and Start order: Introduction, the folders, then Find and Settings</li>
+  <li>No wrong-grouping flash on reload: desktop icons stay invisible until the saved grouping is read</li>
+  <li>Switching grouping closes the old grouping's open folder windows</li>
+  <li>Find matches case-insensitive substrings of the name and all three tag kinds</li>
+  <li>Randomize never repeats the previous pick</li>
+  <li>Folder windows stay open after opening a work</li>
+  <li>Icons on a 16×16 grid</li>
+  <li>Sizes: folder window 520×360 at (120, 60); Find 560×420 (now at (0, 80), see F4)</li>
+  <li><code>WINDOWS.FIND</code> and its icon landed in slice 1</li>
+  <li><code>ART_KEYS</code> and group keys hold window names; <code>windowId(name)</code> gives the selector id</li>
+  <li><code>matchesSearch</code> trims the query</li>
+  <li>The Find icon was drawn with the other two in step 5</li>
+  <li>Cascade arrow is a new <code>cascade</code> glyph in <code>PixelGlyph</code></li>
+  <li>Hovering Introduction, Find or Settings closes an open cascade</li>
+  <li>A flyout that would pass the right edge shifts left over the menu</li>
+  <li>Group entries take no keyboard focus; arrow keys move over top-level items and an open cascade's works</li>
+  <li>The selector mapping (<code>selectorWorks</code>, <code>windowFromId</code>) is shared by Folder and Find in <code>data/groups.ts</code></li>
+  <li>Grouping data built once at module load; <code>ART_KEYS</code> derived from the tag table</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>Folder tap at 375×812 (check 5) wasn't re-run: the browser pane's phone emulation sends mouse clicks, not touch events. Execute's run passed it.</li>
+  <li>Randomize after fixes F3 and F4 was checked with real mouse clicks by the fixer's Playwright run (144 clicks at 1024×768 and 1440×900), not re-run here after 7ffe9ff. Review's own first rerun of check 7 used scripted clicks, which can't catch F3; real clicks then found F4.</li>
+  <li>Check 8 (icons look like Win95's) is by eye; your E2E has the final say.</li>
+  <li>Lint: none in this repo (<code>next lint</code> prompts to set up ESLint).</li>
+</ul>
+
+<h2>Review</h2>
+<p>3 fixed · 3 tracked · 0 dropped · 0 asks</p>
+<details><summary>Fixed</summary>
+<ul>
+  <li>F2 The "every art window has tags" test re-checked <code>ART_KEYS</code>'s own definition, so it couldn't fail — <code>f2f6a6a</code></li>
+  <li>F3 After Randomize opened a work, Find went inactive and every other real Randomize click only brought Find forward — <code>271e799</code></li>
+  <li>F4 At Find's planned spot, the work Randomize opened covered the button, so the next click opened nothing — <code>7ffe9ff</code></li>
+</ul>
+</details>
+<details><summary>Dropped</summary>
+<ul>
+  <li>None.</li>
+</ul>
+</details>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<h3>Find Randomize semantics</h3>
+<ul>
+  <li>T1 Randomize excludes the previous pick, so after the first click it draws from 18 works, not all 19.</li>
+</ul>
+<h3>Find Randomize layout</h3>
+<ul>
+  <li>T2 After an In the Beginning pick, its window covers the right ~27px of Randomize; the code comment says no work can cover it.</li>
+  <li>T3 The F4 test checks Find's left edge, not the button's right edge, so it wouldn't catch the button sliding under a work.</li>
+</ul>
+
+<footer>
+  <p>Answer in the review session, one line: "T2 in", or a bug you found.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-995-group-by/.goodaf/2026-11-11-SCOTT-995-group-by/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>

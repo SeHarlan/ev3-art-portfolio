@@ -99,6 +99,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - Normal: a flyout that would pass the right edge shifts left over the menu, since the menu sits at the left edge and can't flip. Reverse: the `x` term in `Cascade`'s fit.
 - Normal: group entries take no keyboard focus; Headless UI's arrow keys move over Introduction, Find, Settings and an open cascade's works. Reverse: make entries focusable and open on ArrowRight.
 - Normal: the WorkSelector mapping (`selectorWorks`, `windowFromId`) moved from Folder into data/groups.ts so Folder and Find share it. Reverse: inline it in each window.
+- Elevated: plan departure, layout (review F4, 7ffe9ff). Situation: at Find's planned spot (160, 80) with Randomize at the right of its top row, the first work Randomize opens covers the button, so the next real click hits that work and opens nothing. All 19 works open at x ≥ 60, and some run full height or to the right edge, so no spot keeps a right-side button clear. Options: move Find to x=0 and put Randomize first in its row; or leave it and have the user bring Find forward before each click. Choice: Find opens at (0, 80) with the row reading [Randomize] Named: [field]. Trade-offs: the button's center is 5px left of ITB's left edge, so after an ITB pick only its left part takes clicks; Find now covers the desktop icon column below y≈80 when open. Reverse: set `initPos` back to `{ x: 160, y: 80 }`, move the `<Button>` back after the input, and drop the F4 test in `components/windows/windows.test.tsx`.
 
 ## Parked asks
 
