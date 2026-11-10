@@ -71,3 +71,24 @@ test("B6: some days shows its zeums video from the Blob store, not the interacti
   assert.ok(video, "some days renders a video");
   assert.ok(/src="https:\/\/k4xw43ajr4eh6re3\.public\.blob\.vercel-storage\.com\/somedays\/[^"]+\.mp4"/.test(video!), `video: ${video}`);
 });
+
+test("B7: an open work's video stays transparent until it's ready, so no buffering frames show", () => {
+  const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
+  assert.ok(video, "CEASEFIRE renders its video");
+  assert.match(video!, /class="[^"]*\bopacity-0\b/, `video: ${video}`);
+});
+
+test("B8: a Win95 Play button with a play icon, shown only once the video is ready", () => {
+  let PlayButton: ((props: { onClick: () => void }) => ReactElement) | undefined;
+  try {
+    PlayButton = require("../PlayButton").default;
+  } catch {
+    PlayButton = undefined;
+  }
+  assert.ok(PlayButton, "components/PlayButton exists");
+  const Button = PlayButton;
+  const button = html(<Button onClick={() => {}} />);
+  assert.match(button, /<button [^>]*class="[^"]*\bclassic-button\b/, button);
+  assert.match(button, /<svg[^>]*>.*<\/svg>.*Play/, button);
+  assert.ok(!/>Play</.test(windows["CEASEFIRE (single)"]()), "no Play button before the video is ready");
+});

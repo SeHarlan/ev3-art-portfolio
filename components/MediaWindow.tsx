@@ -45,9 +45,11 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
 
   // The open item's mount key: Refresh remounts it, which restarts a video and reloads an iframe.
   const itemKey = item && `${item.id}-${refreshCount}`
-  // The mount key whose image or video is ready; Loading shows until it matches the open one.
+  // The mount key whose image or video is ready; until it matches the open one, the work is
+  // transparent and Loading shows.
   const [readyKey, setReadyKey] = useState<string>()
   const markReady = () => setReadyKey(itemKey)
+  const ready = readyKey === itemKey
 
   const renderItem = (item: ZeumsItem, key: string) => {
     switch (item.kind) {
@@ -61,7 +63,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
             alt={item.title}
             onLoad={markReady}
             onError={markReady}
-            className="w-full h-full object-contain"
+            className={clsx("w-full h-full object-contain", !ready && "opacity-0")}
           />
         )
       case "video":
@@ -74,10 +76,12 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
             controls
             playsInline
             preload="auto"
-            onCanPlay={markReady}
-            onPlaying={markReady}
+            // Ready once the browser expects to play to the end without stopping to buffer.
+            onCanPlayThrough={markReady}
+            // A browser that stops fetching before that (one that won't preload) is as ready as it gets.
+            onSuspend={e => { if (e.currentTarget.readyState < e.currentTarget.HAVE_FUTURE_DATA) markReady() }}
             onError={markReady}
-            className="w-full h-full object-contain"
+            className={clsx("w-full h-full object-contain", !ready && "opacity-0")}
           />
         )
       case "html":
@@ -98,7 +102,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
     <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} wrapperClassName="bg-windowsPaper">
       <div className={clsx("absolute inset-0 bg-black flex items-center justify-center", view !== "work" && "invisible")}>
         {item && itemKey && renderItem(item, itemKey)}
-        {item && item.kind !== "html" && readyKey !== itemKey && <Loading />}
+        {item && item.kind !== "html" && !ready && <Loading />}
       </div>
 
       {view === "selector" && <WorkSelector works={items} selectedId={activeId} onOpen={openWork} />}
