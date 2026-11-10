@@ -146,6 +146,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - 2026-11-10 step 7 fix: browser check at 1280×600 found the body scrolled 164px after opening windows (body scrolls programmatically despite `overflow: hidden`); iframe focus now passes `preventScroll`. Rechecked in Playwright: `document.body.scrollTop` stays 0 after opening T3RRA, Tune Out, CEASEFIRE and "Progress", the "Progress" iframe takes focus on open, and dragging its title bar sets the content to `pointer-events: none` until mouseup
 - 2026-11-10 step 9: icon column container `w-fit content-start` with fixed `w-24` cells; Start item list `max-h-[calc(100svh-3.5rem)] overflow-y-auto`. Check 1: 21 icons in 3 columns, no overlap or overflow at 1280×800 and 375×812. Check 7: Start lists 21 incl. "some days"; at 1280×600 the 458px list fits with no scroll needed, at 1280×400 it caps at 344px, scrolls to the last entry and its top entry sits at y=20. Full check: `npx tsc --noEmit` exit 0, `yarn test` exit 0 (1 pass), `yarn build` exit 0. checks 1, 2, 5, 7, 8 pass
 - 2026-11-10 slice 2 done
+- 2026-11-10 Blob move (user's request): copied the 50 `zeums/<slug>/…` blobs to `<slug>/…` with `vercel blob copy` (50/50 returned URLs equal the old ones minus `zeums/`), pointed `data/zeums.ts` at them (range request 50/50 → 206; Content-Length equal old vs new for all 50), then deleted the 50 `zeums/` paths. `vercel blob list`: 10 `obh/` + ceasefire 1, flower 1, isaac 1, seasons 4, singlepath 14, terra 23, tuneout 6; no `zeums/`. Check 3: 50 / 50 / 0 and `"name": "ev3-portfolio"`, now passing in full. Full check: `npx tsc --noEmit` exit 0, `yarn test` exit 0, `yarn build` exit 0
 
 ## Decisions
 
@@ -155,7 +156,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - Normal: data in one `data/zeums.ts` module rather than per-window files, since all 9 share a shape. Reverse: inline each window's data in its own component file.
 - Normal: a remember item's `seed` is the evaluated `rememberTitle` string, trimmed. The engine's `processHash` strips all whitespace before hashing, so trimming can't change the hash; check 9 proves this for all 21. Reverse: store the untrimmed string.
 - Normal: the new deep-link keys (`?window=<key>`) are CEASEFIRE, REMEMBER, SEASONS, ISAAC, PROGRESS, SINGLEPATH, TERRA, FLOWER and TUNEOUT. Reverse: rename the `WINDOWS` keys; nothing links to them yet.
-- Normal: Blob paths are `zeums/<slug>/<original filename>`. Reverse: re-upload under another prefix and update `data/zeums.ts`.
+- Normal (user's call, 2026-11-10): Blob paths are `<slug>/<original filename>`, each collection a top-level folder beside `obh/`; the first upload's `zeums/` parent was dropped. Reverse: `vercel blob copy` under another prefix, update `data/zeums.ts`, then delete the old paths.
 - Normal: new `WINDOWS` entries sit after SK3TCH, newest first, so the existing desktop order doesn't move. Reverse: reorder the object.
 - Elevated (taste): icons. Singles (Isaac, "Progress", Flower) use their own preview image cropped square; CEASEFIRE uses its video frame at 0.5 s cropped on the figure, since its preview image is nearly black at 56px; galleries (remember.exe, s34s0ns, A Single Path, T3RRA, Tune Out) use a 2×2 collage of their first four items. Reverse: regenerate `public/images/<slug>-icon.png` from another source (scratchpad `scripts/icons.py`).
 - Normal: the s34s0ns image folder is `uploaded-image/`, confirmed by a range request returning `206 image/png` rather than in the browser pane. Reverse: none needed.
@@ -172,4 +173,4 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 
 ## Parked asks
 
-- Rename the Blob store `ev3-obh-pieces` → `ev3-portfolio` in the Vercel dashboard (Storage → the store → Settings). Vercel's API has no rename endpoint (`PATCH /v1/storage/stores/store_K4XW43AjR4eh6RE3` → 404; `vercel api list` lists only GET for stores). Blob URLs don't change, since the host is the store ID. Acceptance check 3's last command shows `"name":"ev3-portfolio"` once that's done.
+- None open. The Blob store rename was done by the user in the dashboard (2026-11-10); the store reads `"name": "ev3-portfolio"`.
