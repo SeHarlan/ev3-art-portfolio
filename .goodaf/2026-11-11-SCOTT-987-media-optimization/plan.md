@@ -24,7 +24,7 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 2. Full Res: a menu item after Refresh, before About, only when the open item is an image or video. Label "Full Res" while showing the optimized copy, "Optimized" while showing the original. Include the mode in the mount key (`itemKey`) so the swap remounts and Loading shows until ready. Opening another item resets to optimized. Full Res image is a plain `<img src={item.src}>`; Full Res video uses `src={item.src}`. Files: `components/MediaWindow.tsx`, `components/windows/windows.test.tsx`. Checks: 1, 2
 3. Icons and dead files: `next/image` at `Footer.tsx:68` (20px), `Window.tsx:120` (16px, keep the invert filter), `StartMenu.tsx:20` (20px); `git rm public/e1.png public/e2.png public/e4.png`. Files: those three components, `public/`. Checks: 3
 4. Re-encode videos with `/opt/homebrew/bin/ffmpeg` from each Blob original into `$(git rev-parse --git-dir)/goodaf-video/` (never committed): `-c:v libx264 -preset slow -crf 18 -profile:v high -pix_fmt yuv420p -movflags +faststart -c:a copy`, scaling only when the longest side exceeds 2160 (longest side to 2160, even dimensions, aspect kept). Keep a copy only when it's smaller than its original; a video with no smaller copy gets no `display` and plays its original (log each as Elevated). Checks: 2
-5. Upload (Blocking: the user's credentials): put each kept copy at `<original's folder>/display/<original's filename>` in the same Blob store, by the method the user chose at handoff (they upload, or `vercel blob put --access public` under their login). Then set `display` on each video item. Never delete or overwrite an original. Files: `data/zeums.ts`, `components/windows/SomeDays.tsx`. Checks: 2
+5. Upload (Blocking: the user's credentials): put each kept copy at `<original's folder>/display/<original's filename>` in the same Blob store, with `vercel blob put --access public` under the user's existing Vercel CLI login, as the user chose (2026-11-11): first show them the list of files and target pathnames in chat and wait for their yes, then upload. Then set `display` on each video item. Never delete or overwrite an original. Files: `data/zeums.ts`, `components/windows/SomeDays.tsx`. Checks: 2
 
 ## Acceptance checks
 
@@ -37,7 +37,7 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 ## Hard rules
 
 - Full check: `yarn test` and `yarn build`; lint: none in this repo: `next lint` stops to ask for ESLint setup.
-- Dependencies: `yarn.lock`, identical to main's. `yarn install --frozen-lockfile` falls outside the global install exception (pnpm/bun only), so it runs only on the user's yes, given at handoff.
+- Dependencies: `yarn.lock`, identical to main's. The user approved `yarn install --frozen-lockfile` in this worktree (2026-11-11), while `yarn.lock` matches main's; any other install still needs their yes.
 - Leave video loading behavior from SCOTT-994 as is: `preload="auto"`, `onCanPlayThrough`, `onSuspend`, `onPlaying`, Play button and readiness classes. The only change there is the mount key gaining the Full Res mode.
 - Originals in Blob are never deleted, moved or overwritten.
 - Thumbnails (`/images/thumbs/…`, `WorkSelector.tsx:91`, video `poster`) stay as they are.
