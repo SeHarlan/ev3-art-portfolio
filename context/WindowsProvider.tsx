@@ -50,6 +50,7 @@ export const WINDOWS = {
   TERRA: "T3RRA",
   FLOWER: "A Flower Blooms in Autumn",
   TUNEOUT: "Tune Out",
+  FIND: "Find",
   SETTINGS: "Settings",
 }
 
@@ -74,6 +75,7 @@ type WINDOWS = {
   TERRA: string;
   FLOWER: string;
   TUNEOUT: string;
+  FIND: string;
   SETTINGS: string;
 }
 
@@ -98,6 +100,7 @@ export const ICONS = {
   [WINDOWS.TERRA]: "/images/terra-icon.png",
   [WINDOWS.FLOWER]: "/images/flower-icon.png",
   [WINDOWS.TUNEOUT]: "/images/tuneout-icon.png",
+  [WINDOWS.FIND]: "/svg/find-icon.svg",
   [WINDOWS.SETTINGS]: "/svg/settings-icon.svg",
 };
 

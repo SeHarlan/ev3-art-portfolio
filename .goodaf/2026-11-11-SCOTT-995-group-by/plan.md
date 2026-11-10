@@ -62,6 +62,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 plan written
 - 2026-11-11 user approved `yarn install --frozen-lockfile` in this worktree
 - 2026-11-11 plan check: 1 must-fix fixed, 1 notes adopted, 0 dismissed
+- 2026-11-11 step 1: data/groups.ts tag table, groupsFor, matchesSearch, ART_KEYS; WINDOWS.FIND entry; components/groups.test.tsx added to the test script; checks 2, 3, 4, 7 (test parts) pass
 
 ## Decisions
 
@@ -77,6 +78,9 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - Normal: folder windows stay open after opening a work, as Explorer's do. Reverse: close in `onOpen`.
 - Normal: icons on a 16×16 grid, like the repo's other pixel SVGs. Reverse: redraw on 32×32.
 - Normal: sizes: folder window 520×360 at (120, 60), Find 560×420 at (160, 80). Reverse: the `initSize`/`initPosition` constants.
+- Normal: `WINDOWS.FIND` and `ICONS[FIND]` (`/svg/find-icon.svg`) land in slice 1, since the slice 1 desktop already shows Find (check 2) and `ART_KEYS` excludes it; the Find icon is drawn in step 5 with the other two, and the Find window still comes in step 7. Reverse: move the entry and drawing back to steps 7–8.
+- Normal: `ART_KEYS` and `groupsFor(...).keys` hold window names (`WINDOWS` values, the codebase's `windowKey`); `windowId(name)` gives the enum key for `WorkSelector` ids. Reverse: hold enum keys and map at render.
+- Normal: `matchesSearch` trims the query, so a stray space doesn't empty the list. Reverse: drop the `trim()`.
 
 ## Parked asks
 
