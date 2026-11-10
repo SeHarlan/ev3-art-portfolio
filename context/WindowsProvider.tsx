@@ -1,5 +1,9 @@
 import { useRouter } from "next/router";
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
+import { WINDOWS } from "../data/windows";
+import { DEFAULT_GROUP_BY, GroupBy, groupsFor, isGroupBy } from "../data/groups";
+
+export { WINDOWS, ICONS } from "../data/windows";
 
 interface InitContext {
   orderState: [
@@ -16,43 +20,27 @@ interface InitContext {
   ];
   handleOpen: (windowKey: string) => void;
   activeWindow?: string;
+  groupBy: GroupBy;
+  setGroupBy: (groupBy: GroupBy) => void;
+  /** False until the saved grouping is read, so nothing renders in the wrong grouping. */
+  ready: boolean;
 }
 
 const initContext: InitContext = {
   orderState: [[], ()=> null],
   minimizedState: [{}, () => null],
   openState: [{}, () => null],
-  handleOpen: () => null
+  handleOpen: () => null,
+  groupBy: DEFAULT_GROUP_BY,
+  setGroupBy: () => null,
+  ready: false
 }
+
+export const GROUP_BY_STORAGE_KEY = "ev3-p95-group-by"
 
 export const WindowsContext = createContext(initContext)
 
 export const useWindowsContext = () => useContext(WindowsContext)
-
-export const WINDOWS = {
-  HOME: "Introduction",
-  GP: "3xGP",
-  DUET: "DUET",
-  NOISE: "it's just noise",
-  ITB: "ITB",
-  R3MIX: "R3MIX",
-  MAURER: "Maurer Expanse",
-  SOMEDAYS: "some days",
-  TECHTONIC: "techtonic",
-  OBH: "on being human",
-  SK3TCH: "Sk3tch",
-  CEASEFIRE: "CEASEFIRE",
-  REMEMBER: "remember.exe",
-  SEASONS: "s34s0ns",
-  ISAAC: "Exaltation of Isaac",
-  PROGRESS: '"Progress"',
-  SINGLEPATH: "A Single Path",
-  TERRA: "T3RRA",
-  FLOWER: "A Flower Blooms in Autumn",
-  TUNEOUT: "Tune Out",
-  FIND: "Find",
-  SETTINGS: "Settings",
-}
 
 type WINDOWS = {
   HOME: string;
@@ -79,30 +67,6 @@ type WINDOWS = {
   SETTINGS: string;
 }
 
-export const ICONS = {
-  [WINDOWS.HOME]: "/images/small-logo.png",
-  [WINDOWS.GP]: "/images/3xgp-icon.png",
-  [WINDOWS.DUET]: "/images/DUET-icon.png",
-  [WINDOWS.MAURER]: "/images/small-alt-logo.png",
-  [WINDOWS.NOISE]: "/images/its_just_noise-icon.png",
-  [WINDOWS.SOMEDAYS]: "/images/drifting-icon.png",
-  [WINDOWS.R3MIX]: "/images/r3mix-icon.png",
-  [WINDOWS.ITB]: "/images/ITB-icon.png",
-  [WINDOWS.TECHTONIC]: "/images/small-logo.png",
-  [WINDOWS.OBH]: "/images/obh-icon.png",
-  [WINDOWS.SK3TCH]: "/svg/sk3tch-icon.svg",
-  [WINDOWS.CEASEFIRE]: "/images/ceasefire-icon.png",
-  [WINDOWS.REMEMBER]: "/images/remember-icon.png",
-  [WINDOWS.SEASONS]: "/images/seasons-icon.png",
-  [WINDOWS.ISAAC]: "/images/isaac-icon.png",
-  [WINDOWS.PROGRESS]: "/images/progress-icon.png",
-  [WINDOWS.SINGLEPATH]: "/images/singlepath-icon.png",
-  [WINDOWS.TERRA]: "/images/terra-icon.png",
-  [WINDOWS.FLOWER]: "/images/flower-icon.png",
-  [WINDOWS.TUNEOUT]: "/images/tuneout-icon.png",
-  [WINDOWS.FIND]: "/svg/find-icon.svg",
-  [WINDOWS.SETTINGS]: "/svg/settings-icon.svg",
-};
 
 const defaultMin = Object.values(WINDOWS).reduce((acc: {[key:string]: boolean}, curr) => {
   acc[curr] = false
@@ -157,6 +121,32 @@ export default function WindowsProvider({ children }: { children: ReactNode }) {
     setOrderList(newOrder)
   }
 
+  const [groupBy, setGroupByState] = useState<GroupBy>(DEFAULT_GROUP_BY)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(GROUP_BY_STORAGE_KEY)
+      if (isGroupBy(saved)) setGroupByState(saved)
+    } catch (e) {}
+    setReady(true)
+  }, [])
+
+  // Saves the choice and closes the old grouping's folder windows that the new one doesn't have.
+  const setGroupBy = (next: GroupBy) => {
+    try {
+      localStorage.setItem(GROUP_BY_STORAGE_KEY, next)
+    } catch (e) {}
+    const nextNames = groupsFor(next).map(group => group.name)
+    const stale = groupsFor(groupBy).map(group => group.name).filter(name => !nextNames.includes(name))
+    setOpenMap(prev => {
+      const map = { ...prev }
+      stale.forEach(name => { map[name] = false })
+      return map
+    })
+    setGroupByState(next)
+  }
+
   return (
     <WindowsContext.Provider
       value={{
@@ -164,7 +154,10 @@ export default function WindowsProvider({ children }: { children: ReactNode }) {
         minimizedState,
         openState,
         handleOpen,
-        activeWindow
+        activeWindow,
+        groupBy,
+        setGroupBy,
+        ready
       }}
     >
       {children}

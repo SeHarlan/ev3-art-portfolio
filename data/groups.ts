@@ -1,5 +1,5 @@
 // Group-by folders for the desktop and Start menu (SCOTT-995). Tags per the ticket's table.
-import { WINDOWS } from "../context/WindowsProvider";
+import { WINDOWS } from "./windows";
 
 export const GROUP_BYS = ["year", "media", "experience"] as const
 export type GroupBy = typeof GROUP_BYS[number]
