@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Menu } from '@headlessui/react'
 import Button from "./Button";
 import clsx from "clsx";
+import Image from "next/image";
 
 const StartMenu: FC = () => {
   const { handleOpen } = useWindowsContext()
@@ -17,7 +18,7 @@ const StartMenu: FC = () => {
               active: open,
             })}
           >
-            <img src="/images/small-logo.png" alt="" className="w-5" />
+            <Image src="/images/small-logo.png" width={20} height={20} alt="" className="w-5 h-5" />
             <p className="-mb-0.5">Start</p>
           </Menu.Button>
 

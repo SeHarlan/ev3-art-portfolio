@@ -47,6 +47,7 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 - 2026-11-11 plan written
 - 2026-11-11 step 1: Blob host in next.config images; image works render through next/image (fill, q90); test render gets the app image config via ImageConfigContext; checks 1 (tests) pass
 - 2026-11-11 step 2: Full Res menu item (after Refresh, image/video only, label flips to Optimized), mode in the mount key, reset on opening another item; `display` field on ZeumsItem; tests for Full Res image/video src and menu placement; checks 1, 2 (tests) pass
+- 2026-11-11 step 3: taskbar (20px), title-bar (16px, invert kept) and start-menu (20px) icons through next/image; public/e1.png, e2.png, e4.png removed; checks 3 pass (grep prints nothing, ls reports all three missing); yarn test and yarn build pass
 
 ## Decisions
 
