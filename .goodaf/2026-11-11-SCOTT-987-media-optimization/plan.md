@@ -45,6 +45,7 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 ## Progress
 
 - 2026-11-11 plan written
+- 2026-11-11 step 1: Blob host in next.config images; image works render through next/image (fill, q90); test render gets the app image config via ImageConfigContext; checks 1 (tests) pass
 
 ## Decisions
 

@@ -1,9 +1,12 @@
 import "../testAlias";
 import assert from "node:assert/strict";
+import { join } from "node:path";
 import { test } from "node:test";
 import { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { ZEUMS } from "../../data/zeums";
+import { imageConfigDefault } from "next/dist/shared/lib/image-config";
+import { ImageConfigContext } from "next/dist/shared/lib/image-config-context.shared-runtime";
+import { ZEUMS, ZeumsItem } from "../../data/zeums";
 import MediaWindow from "../MediaWindow";
 import DUETWindow from "./DUET";
 import InTheBeginningWindow from "./InTheBeginning";
@@ -15,7 +18,17 @@ import RememberWindow from "./Remember";
 import STEV3Window from "./STEV3";
 import SomeDaysWindow from "./SomeDays";
 
-const html = (el: ReactElement) => renderToStaticMarkup(el);
+// next/image reads the app's image config from the build; give the test render the same config,
+// with remotePatterns' URLs normalized the way next.config loading does.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const appImages = require(join(process.cwd(), "next.config.js")).images as { remotePatterns: URL[]; qualities: number[] };
+const imageConfig = {
+  ...imageConfigDefault,
+  ...appImages,
+  remotePatterns: appImages.remotePatterns.map((u) => ({ protocol: u.protocol.replace(/:$/, "") as "https", hostname: u.hostname, pathname: u.pathname })),
+};
+const html = (el: ReactElement) =>
+  renderToStaticMarkup(<ImageConfigContext.Provider value={imageConfig}>{el}</ImageConfigContext.Provider>);
 // A menu item renders its first letter underlined, then the rest of its label (then any dropdown).
 const menuLabels = (markup: string) =>
   Array.from(markup.matchAll(/<button class="ev3-menu-item[^"]*"><span class="underline">(.)<\/span>([^<]*)/g), (m) => m[1] + m[2]);
@@ -33,7 +46,12 @@ const windows: Record<string, () => string> = {
   ITB: () => html(<InTheBeginningWindow />),
   "some days": () => html(<SomeDaysWindow />),
 };
-const selectorWindows = ["Tune Out (gallery)", "remember.exe", "R3MIX", "3xGP", "on being human"];
+// The open work's <img> when a single image work is shown (the Window's own icon is an <img> too).
+const workImage = (work: ZeumsItem) =>
+  html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [work] }} />)
+    .match(/<img [^>]*>/g)
+    ?.find((tag) => tag.includes(`alt="${work.title}"`));
+const selectorWindows =["Tune Out (gallery)", "remember.exe", "R3MIX", "3xGP", "on being human"];
 
 test("B2: the content box's scroll wrapper is positioned, so absolutely placed content sits inside the inset bevel instead of covering it", () => {
   const markup = windows["CEASEFIRE (single)"]();
@@ -97,12 +115,18 @@ test("F7: a work's image or video that isn't ready yet takes no clicks, so click
   const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
   assert.ok(video, "CEASEFIRE renders its video");
   assert.match(video!, /class="[^"]*\bpointer-events-none\b/, `video: ${video}`);
-  const work = ZEUMS.SEASONS.items[0];
-  const image = html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [work] }} />)
-    .match(/<img [^>]*>/g)
-    ?.find((tag) => tag.includes(`src="${work.src}"`));
+  const image = workImage(ZEUMS.SEASONS.items[0]);
   assert.ok(image, "a single image work renders its image");
   assert.match(image!, /class="[^"]*\bpointer-events-none\b/, `image: ${image}`);
+});
+
+test("SCOTT-987: an image work loads its Blob original through /_next/image at quality 90", () => {
+  const work = ZEUMS.SEASONS.items[0];
+  const image = workImage(work);
+  assert.ok(image, "a single image work renders its image");
+  const src = image!.match(/\bsrc="([^"]*)"/)![1].replace(/&amp;/g, "&");
+  assert.ok(src.startsWith(`/_next/image?url=${encodeURIComponent(work.src)}&`), `src: ${src}`);
+  assert.match(src, /&q=90$/, `src: ${src}`);
 });
 
 test("F9: a work's video that isn't ready yet takes no keyboard focus, so Tab and Space can't play it hidden", () => {

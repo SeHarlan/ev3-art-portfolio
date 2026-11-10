@@ -1,5 +1,6 @@
 import { ZeumsItem, ZeumsWindow } from "@/data/zeums"
 import clsx from "clsx"
+import Image from "next/image"
 import { FC, useEffect, useRef, useState } from "react"
 import usePieceFocus from "@/hooks/usePieceFocus"
 import Loading from "./Loading"
@@ -61,15 +62,18 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
     switch (item.kind) {
       case "image":
         return (
-          <img
+          <Image
             key={key}
             // A cached image can finish before React attaches onLoad.
             ref={el => { if (el?.complete && el.naturalWidth) markReady() }}
             src={item.src}
             alt={item.title}
+            fill
+            sizes="100vw"
+            quality={90}
             onLoad={markReady}
             onError={markReady}
-            className={clsx("w-full h-full object-contain", !ready && "opacity-0 pointer-events-none")}
+            className={clsx("object-contain", !ready && "opacity-0 pointer-events-none")}
           />
         )
       case "video":
