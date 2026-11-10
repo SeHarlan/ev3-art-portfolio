@@ -5,14 +5,14 @@ import { FC } from "react";
 const Icons: FC = () => {
   const { handleOpen } = useWindowsContext()
   return (
-    <div className="flex z-[2] flex-col flex-wrap h-[90svh] gap-5 relative top-10 left-10 items-center w-24">
+    <div className="flex z-[2] flex-col flex-wrap content-start h-[90svh] gap-5 relative top-10 left-10 items-center w-fit">
       {Object.values(WINDOWS)
         .map((windowKey) => {
           const handleClick = () => handleOpen(windowKey);
           return (
             <div
               key={windowKey}
-              className="p95-chrome custom-cursor text-white flex flex-col items-center w-fit text-center"
+              className="p95-chrome custom-cursor text-white flex flex-col items-center w-24 text-center break-words"
               onDoubleClick={handleClick}
               onTouchEnd={handleClick}
             >

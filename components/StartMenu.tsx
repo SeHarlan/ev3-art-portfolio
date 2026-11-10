@@ -27,7 +27,8 @@ const StartMenu: FC = () => {
                 EV3
               </p>
             </div>
-            <div>
+            {/* Scrolls once the list is taller than the screen above the taskbar. */}
+            <div className="max-h-[calc(100svh-3.5rem)] overflow-y-auto">
               {Object.values(WINDOWS)
                 .map((windowKey) => {
                   const handleClick = () => handleOpen(windowKey);
