@@ -27,31 +27,18 @@ interface WorkMediaProps {
  */
 export const WorkMedia: FC<WorkMediaProps> = ({ item, fullRes, ready, onReady, onPlaying, videoRef }) => {
   const hidden = !ready && "opacity-0 pointer-events-none"
-  // A cached image can finish before React attaches onLoad.
-  const readyIfLoaded = (el: HTMLImageElement | null) => { if (el?.complete && el.naturalWidth) onReady() }
 
   if (item.kind === "image") {
+    const image = { src: item.src, alt: item.title, onLoad: onReady, onError: onReady }
     return fullRes ? (
       <img
-        ref={readyIfLoaded}
-        src={item.src}
-        alt={item.title}
-        onLoad={onReady}
-        onError={onReady}
+        {...image}
+        // A cached image can finish before React attaches onLoad (next/image handles this itself).
+        ref={el => { if (el?.complete && el.naturalWidth) onReady() }}
         className={clsx("w-full h-full object-contain", hidden)}
       />
     ) : (
-      <Image
-        ref={readyIfLoaded}
-        src={item.src}
-        alt={item.title}
-        fill
-        sizes="100vw"
-        quality={90}
-        onLoad={onReady}
-        onError={onReady}
-        className={clsx("object-contain", hidden)}
-      />
+      <Image {...image} fill sizes="100vw" quality={90} className={clsx("object-contain", hidden)} />
     )
   }
 
@@ -137,32 +124,29 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   // The mount key whose video has started playing; Play shows over a ready video until then.
   const [startedKey, setStartedKey] = useState<string>()
 
-  const renderItem = (item: ZeumsItem, key: string) =>
-    item.kind === "html" ? (
-      <iframe
-        key={key}
-        ref={iframeRef}
-        src={item.src}
-        title={item.title}
-        onLoad={focusPiece}
-        className="w-full h-full border-0 block"
-      />
-    ) : (
-      <WorkMedia
-        key={key}
-        item={item}
-        fullRes={fullRes}
-        ready={ready}
-        onReady={markReady}
-        onPlaying={() => setStartedKey(itemKey)}
-        videoRef={videoRef}
-      />
-    )
-
   return (
     <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} wrapperClassName="bg-windowsPaper">
       <div className={clsx("absolute inset-0 bg-black flex items-center justify-center", view !== "work" && "invisible")}>
-        {item && itemKey && renderItem(item, itemKey)}
+        {item && (item.kind === "html" ? (
+          <iframe
+            key={itemKey}
+            ref={iframeRef}
+            src={item.src}
+            title={item.title}
+            onLoad={focusPiece}
+            className="w-full h-full border-0 block"
+          />
+        ) : (
+          <WorkMedia
+            key={itemKey}
+            item={item}
+            fullRes={fullRes}
+            ready={ready}
+            onReady={markReady}
+            onPlaying={() => setStartedKey(itemKey)}
+            videoRef={videoRef}
+          />
+        ))}
         {item && item.kind !== "html" && !ready && <Loading />}
         {item?.kind === "video" && ready && startedKey !== itemKey && <PlayButton onClick={() => videoRef.current?.play()} />}
       </div>

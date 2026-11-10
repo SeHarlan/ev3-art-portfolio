@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     // Full-size works live in the project's Vercel Blob store.
-    remotePatterns: [new URL('https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/**')],
+    remotePatterns: [{ protocol: 'https', hostname: 'k4xw43ajr4eh6re3.public.blob.vercel-storage.com', pathname: '/**' }],
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 90],
   },

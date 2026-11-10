@@ -18,15 +18,9 @@ import RememberWindow from "./Remember";
 import STEV3Window from "./STEV3";
 import SomeDaysWindow from "./SomeDays";
 
-// next/image reads the app's image config from the build; give the test render the same config,
-// with remotePatterns' URLs normalized the way next.config loading does.
+// next/image reads the app's image config from the build; give the test render the same config.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const appImages = require(join(process.cwd(), "next.config.js")).images as { remotePatterns: URL[]; qualities: number[] };
-const imageConfig = {
-  ...imageConfigDefault,
-  ...appImages,
-  remotePatterns: appImages.remotePatterns.map((u) => ({ protocol: u.protocol.replace(/:$/, "") as "https", hostname: u.hostname, pathname: u.pathname })),
-};
+const imageConfig = { ...imageConfigDefault, ...require(join(process.cwd(), "next.config.js")).images };
 const html = (el: ReactElement) =>
   renderToStaticMarkup(<ImageConfigContext.Provider value={imageConfig}>{el}</ImageConfigContext.Provider>);
 // A menu item renders its first letter underlined, then the rest of its label (then any dropdown).
@@ -46,12 +40,11 @@ const windows: Record<string, () => string> = {
   ITB: () => html(<InTheBeginningWindow />),
   "some days": () => html(<SomeDaysWindow />),
 };
+// A window showing just this work, open.
+const singleWork = (work: ZeumsItem) => html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [work] }} />);
 // The open work's <img> when a single image work is shown (the Window's own icon is an <img> too).
-const workImage = (work: ZeumsItem) =>
-  html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [work] }} />)
-    .match(/<img [^>]*>/g)
-    ?.find((tag) => tag.includes(`alt="${work.title}"`));
-const selectorWindows =["Tune Out (gallery)", "remember.exe", "R3MIX", "3xGP", "on being human"];
+const workImage = (work: ZeumsItem) => singleWork(work).match(/<img [^>]*>/g)?.find((tag) => tag.includes(`alt="${work.title}"`));
+const selectorWindows = ["Tune Out (gallery)", "remember.exe", "R3MIX", "3xGP", "on being human"];
 
 test("B2: the content box's scroll wrapper is positioned, so absolutely placed content sits inside the inset bevel instead of covering it", () => {
   const markup = windows["CEASEFIRE (single)"]();
@@ -120,15 +113,6 @@ test("F7: a work's image or video that isn't ready yet takes no clicks, so click
   assert.match(image!, /class="[^"]*\bpointer-events-none\b/, `image: ${image}`);
 });
 
-test("SCOTT-987: an image work loads its Blob original through /_next/image at quality 90", () => {
-  const work = ZEUMS.SEASONS.items[0];
-  const image = workImage(work);
-  assert.ok(image, "a single image work renders its image");
-  const src = image!.match(/\bsrc="([^"]*)"/)![1].replace(/&amp;/g, "&");
-  assert.ok(src.startsWith(`/_next/image?url=${encodeURIComponent(work.src)}&`), `src: ${src}`);
-  assert.match(src, /&q=90$/, `src: ${src}`);
-});
-
 test("F9: a work's video that isn't ready yet takes no keyboard focus, so Tab and Space can't play it hidden", () => {
   const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
   assert.ok(video, "CEASEFIRE renders its video");
@@ -139,10 +123,12 @@ const media = (item: ZeumsItem, fullRes: boolean) =>
   html(<WorkMedia item={item} fullRes={fullRes} ready={false} onReady={() => {}} onPlaying={() => {}} videoRef={null} />);
 const srcOf = (tag: string) => tag.match(/\bsrc="([^"]*)"/)?.[1].replace(/&amp;/g, "&");
 
-test("SCOTT-987: Full Res shows an image work's original Blob file instead of the optimized copy", () => {
+test("SCOTT-987: an image work loads its Blob original through /_next/image at quality 90, and Full Res shows the original", () => {
   const work = ZEUMS.SEASONS.items[0];
+  const optimized = srcOf(media(work, false).match(/<img [^>]*>/)![0])!;
+  assert.ok(optimized.startsWith(`/_next/image?url=${encodeURIComponent(work.src)}&`), `src: ${optimized}`);
+  assert.match(optimized, /&q=90$/, `src: ${optimized}`);
   assert.equal(srcOf(media(work, true).match(/<img [^>]*>/)![0]), work.src);
-  assert.ok(srcOf(media(work, false).match(/<img [^>]*>/)![0])!.startsWith("/_next/image?url="));
 });
 
 test("SCOTT-987: a video work plays its display copy, and Full Res plays the original", () => {
@@ -158,7 +144,7 @@ test("SCOTT-987: image and video works have Full Res after Refresh and before Ab
     const labels = menuLabels(windows[name]());
     assert.deepEqual(labels.slice(labels.indexOf("Refresh"), labels.indexOf("About") + 1), ["Refresh", "Full Res", "About"], `${name}: ${labels.join(", ")}`);
   }
-  const image = menuLabels(html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [ZEUMS.SEASONS.items[0]] }} />));
+  const image = menuLabels(singleWork(ZEUMS.SEASONS.items[0]));
   assert.ok(image.includes("Full Res"), image.join(", "));
   const piece = menuLabels(html(<MediaWindow windowKey="Progress" data={ZEUMS.PROGRESS} />));
   assert.ok(!piece.includes("Full Res"), piece.join(", "));
