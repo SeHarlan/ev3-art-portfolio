@@ -1,5 +1,5 @@
-import { ICONS, useWindowsContext } from "../context/WindowsProvider";
-import { FOLDER_ICON } from "../data/groups";
+import { useWindowsContext } from "../context/WindowsProvider";
+import { iconFor } from "../data/groups";
 import clsx from "clsx";
 import { FC, useEffect, useState } from "react";
 import Button from "./Button";
@@ -66,7 +66,7 @@ const Footer: FC = () => {
               className={clsx("px-2 w-36 py-1 text-start flex items-center gap-2", { active })}
               onClick={handleClick}
             >
-              <img src={ICONS[windowKey] ?? FOLDER_ICON} alt="" className="w-5 h-5 object-contain" />
+              <img src={iconFor(windowKey)} alt="" className="w-5 h-5 object-contain" />
               <span>{windowKey}</span>
             </Button>
           )

@@ -122,7 +122,7 @@ export default function Home() {
             ? <MediaWindow key={key} windowKey={WINDOWS[key]} data={ZEUMS[key]} />
             : null)}
           {groupsFor(groupBy).map(group => openMap[group.name]
-            ? <FolderWindow key={group.name} name={group.name} keys={group.keys} />
+            ? <FolderWindow key={group.name} group={group} />
             : null)}
           {openMap[WINDOWS.FIND] ? <FindWindow /> : null}
           {openMap[WINDOWS.SETTINGS] ? <SettingsWindow /> : null}

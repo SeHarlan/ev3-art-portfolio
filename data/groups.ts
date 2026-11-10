@@ -1,7 +1,7 @@
 // Group-by folders for the desktop and Start menu (SCOTT-995). Tags per the ticket's table.
 import { ICONS, WINDOWS } from "./windows";
 
-export const GROUP_BYS = ["year", "media", "experience"] as const
+const GROUP_BYS =["year", "media", "experience"] as const
 export type GroupBy = typeof GROUP_BYS[number]
 export const DEFAULT_GROUP_BY: GroupBy = "year"
 
@@ -40,23 +40,24 @@ const TAGS: Record<string, Tags> = {
   [WINDOWS.TUNEOUT]: { year: "2022", media: ["video", "audio"], experience: "Fixed" },
 }
 
-const NOT_ART: (keyof typeof WINDOWS)[] = ["HOME", "SETTINGS", "FIND"]
+/** For tests: whether a window has tags. */
+export const hasTags = (key: string) => key in TAGS
 
 /** The art windows' names, in WINDOWS order. */
-export const ART_KEYS: string[] = (Object.keys(WINDOWS) as (keyof typeof WINDOWS)[])
-  .filter(key => !NOT_ART.includes(key))
-  .map(key => WINDOWS[key])
+export const ART_KEYS: string[] = Object.values(WINDOWS).filter(hasTags)
 
-/** The WINDOWS enum key for a window name, e.g. "T3RRA" → "TERRA". */
-export const windowId = (name: string) =>
-  (Object.keys(WINDOWS) as (keyof typeof WINDOWS)[]).find(key => WINDOWS[key] === name)
+/** The WINDOWS enum key for each window name, e.g. "T3RRA" → "TERRA". */
+const ID_BY_NAME: Record<string, string> = Object.fromEntries(Object.entries(WINDOWS).map(([id, name]) => [name, id]))
 
 /** WorkSelector entries for window names. Ids are WINDOWS enum keys, since names carry spaces and quotes. */
 export const selectorWorks = (keys: string[]) =>
-  keys.map(key => ({ id: windowId(key) ?? key, title: key, thumb: ICONS[key] }))
+  keys.map(key => ({ id: ID_BY_NAME[key] ?? key, title: key, thumb: ICONS[key] }))
 
 /** The window name for a selectorWorks id. */
 export const windowFromId = (id: string): string => WINDOWS[id as keyof typeof WINDOWS] ?? id
+
+/** A window's icon; group folders aren't in ICONS. */
+export const iconFor = (key: string): string => ICONS[key] ?? FOLDER_ICON
 
 export interface Group {
   name: string;
@@ -78,20 +79,21 @@ const groupNames = (groupBy: GroupBy): readonly string[] => {
   return Array.from(new Set(ART_KEYS.map(key => TAGS[key].year))).sort().reverse()
 }
 
-export const groupsFor = (groupBy: GroupBy): Group[] =>
+// The tags are static, so each grouping is built once.
+const GROUPS = Object.fromEntries(GROUP_BYS.map(groupBy => [
+  groupBy,
   groupNames(groupBy).map(name => ({
     name,
     keys: ART_KEYS.filter(key => tagsOf(key, groupBy).includes(name)),
-  }))
+  })),
+])) as Record<GroupBy, Group[]>
+
+export const groupsFor = (groupBy: GroupBy): Group[] => GROUPS[groupBy]
 
 /** Case-insensitive substring match on the work's name or any of its tags, whatever the grouping. */
 export const matchesSearch = (key: string, query: string) => {
   const q = query.trim().toLowerCase()
   if (!q) return true
-  const tags = TAGS[key]
-  if (!tags) return false
-  return [key, tags.year, ...tags.media, tags.experience].some(text => text.toLowerCase().includes(q))
+  if (!hasTags(key)) return false
+  return [key, ...GROUP_BYS.flatMap(groupBy => tagsOf(key, groupBy))].some(text => text.toLowerCase().includes(q))
 }
-
-/** For tests: whether a window has tags. */
-export const hasTags = (key: string) => key in TAGS

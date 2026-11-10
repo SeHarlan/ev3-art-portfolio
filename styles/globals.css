@@ -317,6 +317,13 @@ html, body {
   border-color: var(--p95-shadow) var(--p95-hilight) var(--p95-hilight) var(--p95-shadow);
   border-width: 0 var(--u);
 }
+/* The same line lying flat, for menu separators. */
+.classic-divider-h {
+  height: calc(2 * var(--u));
+  border-style: solid;
+  border-color: var(--p95-shadow) var(--p95-hilight) var(--p95-hilight) var(--p95-shadow);
+  border-width: var(--u) 0;
+}
 /* The taskbar's raised grab bar beside Start. */
 .classic-bump::before {
   position: absolute;
@@ -360,6 +367,12 @@ html, body {
   background: var(--p95-select-bg);
   color: var(--p95-select-fg);
   outline: none;
+}
+/* A Start menu group whose cascade is open, arrow included. */
+.ev3-menu-item[aria-expanded='true'] {
+  background: var(--p95-select-bg);
+  color: var(--p95-select-fg);
+  --p95-icon-ink: var(--p95-select-fg);
 }
 /* Touch: press feedback without hover. */
 @media (hover: none) {

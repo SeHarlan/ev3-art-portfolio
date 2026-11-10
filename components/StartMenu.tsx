@@ -7,6 +7,7 @@ import PixelGlyph from "./PixelGlyph";
 import clsx from "clsx";
 
 const ITEM = "ev3-menu-item px-2 py-1 select-none"
+const PANEL = "p95-chrome absolute z-10 bg-windowsGray text-windowsText classic-border p-1"
 
 const Label: FC<{ label: string }> = ({ label }) => (
   <span>
@@ -38,7 +39,7 @@ const Cascade: FC<{ group: Group }> = ({ group }) => {
   return (
     <div
       ref={panelRef}
-      className="p95-chrome absolute left-full top-0 z-10 w-44 overflow-y-auto bg-windowsGray text-windowsText classic-border p-1"
+      className={clsx(PANEL, "left-full top-0 w-44 overflow-y-auto")}
       style={{ transform: `translate(${fit.x}px, ${fit.y}px)`, maxHeight: fit.maxHeight }}
     >
       {group.keys.map(key => (
@@ -75,8 +76,9 @@ const StartMenuList: FC = () => {
         return (
           <div key={group.name} className="relative">
             <div
-              className={clsx(ITEM, "w-36 flex items-center justify-between gap-2",
-                open && "bg-windowsSelect text-windowsSelectText [--p95-icon-ink:var(--p95-select-fg)]")}
+              className={clsx(ITEM, "w-36 flex items-center justify-between gap-2")}
+              aria-haspopup="menu"
+              aria-expanded={open}
               onMouseEnter={show}
               onClick={show}
             >
@@ -87,10 +89,7 @@ const StartMenuList: FC = () => {
           </div>
         )
       })}
-      <div
-        className="mx-0.5 my-1"
-        style={{ borderTop: "var(--u) solid var(--p95-shadow)", borderBottom: "var(--u) solid var(--p95-hilight)" }}
-      />
+      <div className="classic-divider-h mx-0.5 my-1" />
       {item(WINDOWS.FIND)}
       {item(WINDOWS.SETTINGS)}
     </div>
@@ -112,7 +111,7 @@ const StartMenu: FC = () => {
             <p className="-mb-0.5">Start</p>
           </Menu.Button>
 
-          <Menu.Items className="p95-chrome absolute bottom-[100%] left-0 z-10 bg-windowsGray text-windowsText classic-border p-1 flex">
+          <Menu.Items className={clsx(PANEL, "bottom-[100%] left-0 flex")}>
             <div className="bg-windowsDarkGray w-8 h-full min-h-[14rem] flex items-center justify-center">
               <p className="text-windowsHilight flex-shrink-0 w-[14rem] pl-3 -rotate-90">
                 EV3

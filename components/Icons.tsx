@@ -1,23 +1,20 @@
 import Image from "next/image";
-import { ICONS, useWindowsContext, WINDOWS } from "../context/WindowsProvider";
-import { FOLDER_ICON, groupsFor } from "../data/groups";
+import { useWindowsContext, WINDOWS } from "../context/WindowsProvider";
+import { groupsFor, iconFor } from "../data/groups";
+import clsx from "clsx";
 import { FC } from "react";
 
 const Icons: FC = () => {
   const { handleOpen, groupBy, ready } = useWindowsContext()
-  if (!ready) return null
 
   // Introduction, then the active grouping's folders, then Find and Settings.
-  const entries = [
-    { windowKey: WINDOWS.HOME, icon: ICONS[WINDOWS.HOME] },
-    ...groupsFor(groupBy).map(group => ({ windowKey: group.name, icon: FOLDER_ICON })),
-    { windowKey: WINDOWS.FIND, icon: ICONS[WINDOWS.FIND] },
-    { windowKey: WINDOWS.SETTINGS, icon: ICONS[WINDOWS.SETTINGS] },
-  ]
+  const windowKeys = [WINDOWS.HOME, ...groupsFor(groupBy).map(group => group.name), WINDOWS.FIND, WINDOWS.SETTINGS]
 
   return (
-    <div className="flex z-[2] flex-col flex-wrap content-start h-[90svh] gap-5 relative top-10 left-10 items-center w-fit">
-      {entries.map(({ windowKey, icon }) => {
+    // Invisible until the saved grouping is read, so the wrong grouping never shows,
+    // while the icons still load from the server HTML and hold their space.
+    <div className={clsx("flex z-[2] flex-col flex-wrap content-start h-[90svh] gap-5 relative top-10 left-10 items-center w-fit", !ready && "invisible")}>
+      {windowKeys.map((windowKey) => {
           const handleClick = () => handleOpen(windowKey);
           return (
             <div
@@ -29,7 +26,7 @@ const Icons: FC = () => {
               <Image
                 width={56}
                 height={56}
-                src={icon}
+                src={iconFor(windowKey)}
                 alt={`${windowKey} Icon`}
                 className="w-14 h-14 object-contain mb-1 flex-shrink-0"
               />

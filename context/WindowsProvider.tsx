@@ -36,37 +36,11 @@ const initContext: InitContext = {
   ready: false
 }
 
-export const GROUP_BY_STORAGE_KEY = "ev3-p95-group-by"
+const GROUP_BY_STORAGE_KEY = "ev3-p95-group-by"
 
 export const WindowsContext = createContext(initContext)
 
 export const useWindowsContext = () => useContext(WindowsContext)
-
-type WINDOWS = {
-  HOME: string;
-  NOISE: string;
-  DUET: string;
-  MAURER: string;
-  SOMEDAYS: string;
-  R3MIX: string;
-  ITB: string;
-  GP: string;
-  TECHTONIC: string;
-  OBH: string;
-  SK3TCH: string;
-  CEASEFIRE: string;
-  REMEMBER: string;
-  SEASONS: string;
-  ISAAC: string;
-  PROGRESS: string;
-  SINGLEPATH: string;
-  TERRA: string;
-  FLOWER: string;
-  TUNEOUT: string;
-  FIND: string;
-  SETTINGS: string;
-}
-
 
 const defaultMin = Object.values(WINDOWS).reduce((acc: {[key:string]: boolean}, curr) => {
   acc[curr] = false
@@ -89,7 +63,7 @@ export default function WindowsProvider({ children }: { children: ReactNode }) {
 
   const activeWindow = orderList[orderList.length - 1]
 
-  const openWindow = (router.query.window as string)?.toUpperCase() as keyof WINDOWS;
+  const openWindow = (router.query.window as string)?.toUpperCase() as keyof typeof WINDOWS;
 
   useEffect(() => {
     if (openWindow && Object.keys(WINDOWS).includes(openWindow)) {
