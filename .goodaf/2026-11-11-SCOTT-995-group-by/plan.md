@@ -65,6 +65,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 step 1: data/groups.ts tag table, groupsFor, matchesSearch, ART_KEYS; WINDOWS.FIND entry; components/groups.test.tsx added to the test script; checks 2, 3, 4, 7 (test parts) pass
 - 2026-11-11 step 2: groupBy/setGroupBy/ready in WindowsProvider, saved under `ev3-p95-group-by`; Settings Group by row; `yarn test` and `npx tsc --noEmit` pass; check 1 runs in the browser once the desktop renders folders (step 3–4)
 - 2026-11-11 step 3: desktop renders Introduction, the active grouping's folders, Find, Settings, gated on `ready`; checks 2, 3, 4 pass (test, and browser: Year shows 2026→2022, Media shows code/video/image/audio, Experience shows Interactive/Generative/Fixed, Experience survives reload); check 1's desktop part passes, its Start part waits for step 6
+- 2026-11-11 step 4: Folder window with WorkSelector, FOLDER_ICON fallback in Window and Footer, folders rendered in pages/index; check 5 passes (browser: 2023 lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA; DUET opens on top and the folder stays open, by double-click at desktop size and by tap + Open at 375×812); check 1's close-on-switch part passes (open 2023 closes and leaves the taskbar on switching to Media); `yarn test` passes
 
 ## Decisions
 
