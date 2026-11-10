@@ -94,6 +94,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
             }}
             onError={markReady}
             onPlaying={() => setStartedKey(itemKey)}
+            tabIndex={ready ? undefined : -1}
             className={clsx("w-full h-full object-contain", !ready && "opacity-0 pointer-events-none")}
           />
         )

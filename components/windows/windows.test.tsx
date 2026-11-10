@@ -104,3 +104,9 @@ test("F7: a work's image or video that isn't ready yet takes no clicks, so click
   assert.ok(image, "a single image work renders its image");
   assert.match(image!, /class="[^"]*\bpointer-events-none\b/, `image: ${image}`);
 });
+
+test("F9: a work's video that isn't ready yet takes no keyboard focus, so Tab and Space can't play it hidden", () => {
+  const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
+  assert.ok(video, "CEASEFIRE renders its video");
+  assert.match(video!, /\btabindex="-1"/, `video: ${video}`);
+});
