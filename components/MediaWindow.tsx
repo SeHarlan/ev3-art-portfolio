@@ -69,7 +69,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
             alt={item.title}
             onLoad={markReady}
             onError={markReady}
-            className={clsx("w-full h-full object-contain", !ready && "opacity-0")}
+            className={clsx("w-full h-full object-contain", !ready && "opacity-0 pointer-events-none")}
           />
         )
       case "video":
@@ -94,7 +94,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
             }}
             onError={markReady}
             onPlaying={() => setStartedKey(itemKey)}
-            className={clsx("w-full h-full object-contain", !ready && "opacity-0")}
+            className={clsx("w-full h-full object-contain", !ready && "opacity-0 pointer-events-none")}
           />
         )
       case "html":

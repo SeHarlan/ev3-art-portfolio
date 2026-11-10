@@ -92,3 +92,15 @@ test("B8: a Win95 Play button with a play icon, shown only once the video is rea
   assert.match(button, /<svg[^>]*>.*<\/svg>.*Play/, button);
   assert.ok(!/>Play</.test(windows["CEASEFIRE (single)"]()), "no Play button before the video is ready");
 });
+
+test("F7: a work's image or video that isn't ready yet takes no clicks, so clicking loading... can't play the hidden video", () => {
+  const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
+  assert.ok(video, "CEASEFIRE renders its video");
+  assert.match(video!, /class="[^"]*\bpointer-events-none\b/, `video: ${video}`);
+  const work = ZEUMS.SEASONS.items[0];
+  const image = html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [work] }} />)
+    .match(/<img [^>]*>/g)
+    ?.find((tag) => tag.includes(`src="${work.src}"`));
+  assert.ok(image, "a single image work renders its image");
+  assert.match(image!, /class="[^"]*\bpointer-events-none\b/, `image: ${image}`);
+});
