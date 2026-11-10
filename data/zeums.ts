@@ -41,7 +41,7 @@ export const ZEUMS = {
     size: { w: 960, h: 600 },
     position: { x: 150, y: 30 },
     items: [
-      { id: "ceasefire", title: "CEASEFIRE", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/ceasefire/CI_vFQErs62V5PEifCmIEAfdiZfFfmiWK-38tQxwYEc.mp4", thumb: "/images/thumbs/ceasefire-ceasefire.jpg" },
+      { id: "ceasefire", title: "CEASEFIRE", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/ceasefire/CI_vFQErs62V5PEifCmIEAfdiZfFfmiWK-38tQxwYEc.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/ceasefire/display/CI_vFQErs62V5PEifCmIEAfdiZfFfmiWK-38tQxwYEc.mp4", thumb: "/images/thumbs/ceasefire-ceasefire.jpg" },
     ],
   },
   REMEMBER: {
@@ -101,7 +101,7 @@ export const ZEUMS = {
     size: { w: 960, h: 600 },
     position: { x: 225, y: 75 },
     items: [
-      { id: "exaltation-of-isaac", title: "Exaltation of Isaac", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/isaac/KJzBUMvw4-1wwvmTaxRaJiMh0itQ37Dd7OTM7IScNlY.mp4", thumb: "/images/thumbs/isaac-exaltation-of-isaac.jpg" },
+      { id: "exaltation-of-isaac", title: "Exaltation of Isaac", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/isaac/KJzBUMvw4-1wwvmTaxRaJiMh0itQ37Dd7OTM7IScNlY.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/isaac/display/KJzBUMvw4-1wwvmTaxRaJiMh0itQ37Dd7OTM7IScNlY.mp4", thumb: "/images/thumbs/isaac-exaltation-of-isaac.jpg" },
     ],
   },
   PROGRESS: {
@@ -150,7 +150,7 @@ export const ZEUMS = {
     size: { w: 800, h: 800 },
     position: { x: 300, y: 120 },
     items: [
-      { id: "eden", title: "Eden", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/terra/kW0u88yNNed_hMf-F2lwsIf3ktbMzudJmnKNnwPEWNQ.mp4", thumb: "/images/thumbs/terra-eden.jpg" },
+      { id: "eden", title: "Eden", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/terra/kW0u88yNNed_hMf-F2lwsIf3ktbMzudJmnKNnwPEWNQ.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/terra/display/kW0u88yNNed_hMf-F2lwsIf3ktbMzudJmnKNnwPEWNQ.mp4", thumb: "/images/thumbs/terra-eden.jpg" },
       { id: "t3rra-13", title: "T3RRA-13", kind: "image", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/terra/akG_AfMWN3GBj7G83MwVB18EsM2bh3cJ9LizaZZckxA.png", thumb: "/images/thumbs/terra-t3rra-13.jpg" },
       { id: "t3rra-5", title: "T3RRA-5", kind: "image", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/terra/jUMCdTLyrA2dxUChfYFfAHU9yPBfhdPgCWS7OpBZIXE.png", thumb: "/images/thumbs/terra-t3rra-5.jpg" },
       { id: "t3rra-16", title: "T3RRA-16", kind: "image", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/terra/NasOrOSz8F-pB6YeKzTDC-j3rwmflZx9MWxBaqZ39e0.png", thumb: "/images/thumbs/terra-t3rra-16.jpg" },
@@ -184,7 +184,7 @@ export const ZEUMS = {
     size: { w: 960, h: 600 },
     position: { x: 325, y: 135 },
     items: [
-      { id: "a-flower-blooms-in-autumn", title: "A Flower Blooms in Autumn", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/flower/iZV_ZhClE2Q42A5zZtOHsQwb_ZirJBbqqn110N6H7uk.mp4", thumb: "/images/thumbs/flower-a-flower-blooms-in-autumn.jpg" },
+      { id: "a-flower-blooms-in-autumn", title: "A Flower Blooms in Autumn", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/flower/iZV_ZhClE2Q42A5zZtOHsQwb_ZirJBbqqn110N6H7uk.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/flower/display/iZV_ZhClE2Q42A5zZtOHsQwb_ZirJBbqqn110N6H7uk.mp4", thumb: "/images/thumbs/flower-a-flower-blooms-in-autumn.jpg" },
     ],
   },
   TUNEOUT: {
@@ -196,11 +196,11 @@ export const ZEUMS = {
     size: { w: 960, h: 600 },
     position: { x: 350, y: 150 },
     items: [
-      { id: "ch1-the-endless", title: "CH1 - The Endless", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH1%20-%20The%20Endless.mp4", thumb: "/images/thumbs/tuneout-ch1-the-endless.jpg" },
-      { id: "ch2-the-expanse", title: "CH2 - The Expanse", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH2%20-%20The%20Expanse.mp4", thumb: "/images/thumbs/tuneout-ch2-the-expanse.jpg" },
-      { id: "ch3-the-serene", title: "CH3 - The Serene", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH3%20-%20The%20Serene.mp4", thumb: "/images/thumbs/tuneout-ch3-the-serene.jpg" },
-      { id: "ch4-the-disturbed", title: "CH4 - The Disturbed", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH4%20-%20The%20Disturbed.mp4", thumb: "/images/thumbs/tuneout-ch4-the-disturbed.jpg" },
-      { id: "ch5-the-traveler", title: "CH5 - The Traveler", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH5%20-%20The%20Traveler.mp4", thumb: "/images/thumbs/tuneout-ch5-the-traveler.jpg" },
+      { id: "ch1-the-endless", title: "CH1 - The Endless", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH1%20-%20The%20Endless.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/display/CH1%20-%20The%20Endless.mp4", thumb: "/images/thumbs/tuneout-ch1-the-endless.jpg" },
+      { id: "ch2-the-expanse", title: "CH2 - The Expanse", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH2%20-%20The%20Expanse.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/display/CH2%20-%20The%20Expanse.mp4", thumb: "/images/thumbs/tuneout-ch2-the-expanse.jpg" },
+      { id: "ch3-the-serene", title: "CH3 - The Serene", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH3%20-%20The%20Serene.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/display/CH3%20-%20The%20Serene.mp4", thumb: "/images/thumbs/tuneout-ch3-the-serene.jpg" },
+      { id: "ch4-the-disturbed", title: "CH4 - The Disturbed", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH4%20-%20The%20Disturbed.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/display/CH4%20-%20The%20Disturbed.mp4", thumb: "/images/thumbs/tuneout-ch4-the-disturbed.jpg" },
+      { id: "ch5-the-traveler", title: "CH5 - The Traveler", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH5%20-%20The%20Traveler.mp4", display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/display/CH5%20-%20The%20Traveler.mp4", thumb: "/images/thumbs/tuneout-ch5-the-traveler.jpg" },
       { id: "ch6-the-mystic", title: "CH6 - The Mystic", kind: "video", src: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/tuneout/CH6%20-%20The%20Mystic.mp4", thumb: "/images/thumbs/tuneout-ch6-the-mystic.jpg" },
     ],
   },
