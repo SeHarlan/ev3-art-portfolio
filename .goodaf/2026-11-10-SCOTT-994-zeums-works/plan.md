@@ -192,3 +192,12 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 
 Base: 41b5475 (the merge of main, so this follow-up's review diff holds only its own work)
 - B1: desktop icons redone. The 4 single-work icons keep their source's aspect with no square crop. The 5 zeums galleries, 3xGP, R3MIX and "on being human" get a fan-out of up to three of their selector thumbs, each at its true aspect. Every other icon stays as it is.
+
+## Follow-up 2
+
+Base: 0f7c151
+- B2: every content window shows its sunken inset bevel; absolutely placed content (a work, the selector, About) sits inside it instead of covering it.
+- B3: one shared pulsing "loading..." component, shown over a work's image or video until the image has loaded or the video can play.
+- B4: every selector's menu item reads "Select Piece" (galleries, remember.exe, R3MIX, STEV3, on being human).
+- B5: every window's menu follows Select Piece, Seed, Refresh, About, Purchase, skipping items it lacks.
+- B6: "some days" shows its zeums video (served from Blob) instead of the interactive sketch.
