@@ -24,6 +24,12 @@
     font-smooth: never;
     -webkit-font-smoothing : none;
   }
+  /* The static icon (Introduction, Start, favicon art) is pure-color pixels:
+     scale it by whole pixels so small sizes don't blend them into gray.
+     Matches next/image's /_next/image?url=%2Fimages%2Fstatic-icon.png too. */
+  img[src*="static-icon.png"] {
+    image-rendering: pixelated;
+  }
 }
 /* Sk3tch's Win95 palettes (sk3tch paint.css). Classic (win95) is the base;
    [data-p95-theme] on <html> swaps to gray (Standard) or bw (1-Bit). */
