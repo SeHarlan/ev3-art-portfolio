@@ -43,7 +43,7 @@ const FindWindow: FC = () => {
               className="px-1 outline-none w-full h-full"
             />
           </div>
-          <Button className="[--p95-dots:4px] flex-none min-w-[75px] h-[23px] px-2" onClick={randomize}>
+          <Button className="[--p95-dots:4px] pointer-events-auto flex-none min-w-[75px] h-[23px] px-2" onClick={randomize}>
             <span>Randomize</span>
           </Button>
         </div>

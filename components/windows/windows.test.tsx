@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { ZEUMS } from "../../data/zeums";
 import MediaWindow from "../MediaWindow";
 import DUETWindow from "./DUET";
+import FindWindow from "./Find";
 import InTheBeginningWindow from "./InTheBeginning";
 import MaurerWindow from "./Maurer";
 import NoiseWindow from "./Noise";
@@ -109,4 +110,11 @@ test("F9: a work's video that isn't ready yet takes no keyboard focus, so Tab an
   const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
   assert.ok(video, "CEASEFIRE renders its video");
   assert.match(video!, /\btabindex="-1"/, `video: ${video}`);
+});
+
+test("F3: Find's Randomize button takes clicks while Find isn't the active window, so each click opens a work", () => {
+  // An inactive window's content wrapper is pointer-events-none; Randomize opens a work on top, so Find is inactive.
+  const button = html(<FindWindow />).match(/<button [^>]*class="([^"]*)"[^>]*><span>Randomize<\/span>/);
+  assert.ok(button, "Find renders a Randomize button");
+  assert.ok(button![1].split(" ").includes("pointer-events-auto"), `button classes: ${button![1]}`);
 });
