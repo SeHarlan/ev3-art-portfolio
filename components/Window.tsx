@@ -27,7 +27,7 @@ interface WindowProps {
   wrapperClassName?: string;
 }
 const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bare = false, initSize, inset = true, menu, wrapperClassName = "bg-windowsGray" }) => {
-  const { dragRef, position, isDragging, resizeRef, containerRef, size, handleMaximize, isMax } = useDragResize(initPosition, initSize, windowKey)
+  const { dragRef, position, isDragging, isResizing, resizeRef, containerRef, size, handleMaximize, isMax } = useDragResize(initPosition, initSize, windowKey)
   const {orderState, minimizedState, openState, activeWindow} = useWindowsContext()
   const [orderList, setOrderList] = orderState
   const [minimizedMap, setMinimizedMap] = minimizedState
@@ -170,7 +170,8 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
       style={bare ? undefined : { height: `calc(100% - ${offsetHeight}px)` }}>
         <div className={clsx(
           bare ? "overflow-hidden h-full" : "overflow-auto h-full",
-          !isActive && "pointer-events-none",
+          // While dragging or resizing, keep iframes from swallowing mousemove.
+          (!isActive || isDragging || isResizing) && "pointer-events-none",
           wrapperClassName
         )}>
           {children}

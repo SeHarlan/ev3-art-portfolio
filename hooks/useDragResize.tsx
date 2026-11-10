@@ -24,6 +24,7 @@ export default function useDragResize(initPosition = defaultPosition, initSize =
   const [position, setPosition] = useState<Position>(initPosition);
   const [size, setSize] = useState(initSize)
   const [isDragging, setIsDragging] = useState(false)
+  const [isResizing, setIsResizing] = useState(false)
 
   const { minimizedState } = useWindowsContext()
   const [minimizedMap] = minimizedState
@@ -124,6 +125,7 @@ export default function useDragResize(initPosition = defaultPosition, initSize =
   }
   const onResizeMouseDown = () => {
     if (isMax.current) return
+    setIsResizing(true)
     window.addEventListener('mousemove', onResizeMouseMove);
     window.addEventListener('mouseup', onResizeMouseUp);
   }
@@ -136,6 +138,7 @@ export default function useDragResize(initPosition = defaultPosition, initSize =
   const onResizeMouseUp = () => {
     window.removeEventListener('mousemove', onResizeMouseMove);
     window.removeEventListener('mouseup', onResizeMouseUp);
+    setIsResizing(false)
   }
 
   useEffect(() => {
@@ -169,5 +172,5 @@ export default function useDragResize(initPosition = defaultPosition, initSize =
     }
     : size
   
-  return { dragRef, position, isDragging, resizeRef, containerRef, size: currentSize, handleMaximize, isMax: isMax.current}
+  return { dragRef, position, isDragging, isResizing, resizeRef, containerRef, size: currentSize, handleMaximize, isMax: isMax.current}
 }
