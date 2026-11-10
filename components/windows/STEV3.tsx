@@ -58,14 +58,14 @@ const STEV3_Window: FC = () => {
 
   const menu: WindowMenuItem[] = [
     {
+      label: "Select Piece",
+      function: () => setView("selector")
+    },
+    {
       label: "Refresh",
       function: () => {
         setSketchCounter((prev) => prev + 1); //just needs to reset state for the component
       },
-    },
-    {
-      label: "Select Piece",
-      function: () => setView("selector")
     },
     {
       label: "About",

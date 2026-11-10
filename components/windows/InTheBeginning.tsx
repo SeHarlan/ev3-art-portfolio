@@ -52,15 +52,15 @@ const ITBWindow: FC = () => {
 
   const menu: WindowMenuItem[] = [
     {
+      label: "Seed",
+      function: handleDropDown,
+      component: <SeedDropdown onUseSeed={useSeed} seedOpen={seedOpen} setSeedOpen={setSeedOpen} />,
+    },
+    {
       label: "Refresh",
       function: () => {
         setSketchCounter(prev => prev + 1) //just needs to reset state for the component
       },
-    },
-    {
-      label: "Seed",
-      function: handleDropDown,
-      component: <SeedDropdown onUseSeed={useSeed} seedOpen={seedOpen} setSeedOpen={setSeedOpen} />,
     },
     {
       label: "About",

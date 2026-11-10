@@ -39,14 +39,14 @@ const RememberWindow: FC = () => {
   }
 
   const menu: WindowMenuItem[] = [
-    { label: "Refresh", function: () => setRefreshCount(n => n + 1) },
+    { label: "Select Piece", function: () => setView("selector") },
     {
       label: "Seed",
       function: () => setSeedOpen(open => !open),
       component: <SeedDropdown multiline initialSeed={seed ?? ""} onUseSeed={useSeed} seedOpen={seedOpen} setSeedOpen={setSeedOpen} />,
     },
+    { label: "Refresh", function: () => setRefreshCount(n => n + 1) },
     { label: "About", function: () => setView("about") },
-    { label: "Select Piece", function: () => setView("selector") },
   ]
 
   return (
