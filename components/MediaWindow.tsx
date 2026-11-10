@@ -38,7 +38,8 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   }, [view, isMin, activeId])
 
   const focusPiece = () => {
-    iframeRef.current?.focus()
+    // A focused element scrolls into view, and body scrolls even with overflow hidden.
+    iframeRef.current?.focus({ preventScroll: true })
     iframeRef.current?.contentWindow?.focus()
   }
 
