@@ -67,6 +67,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 step 3: desktop renders Introduction, the active grouping's folders, Find, Settings, gated on `ready`; checks 2, 3, 4 pass (test, and browser: Year shows 2026→2022, Media shows code/video/image/audio, Experience shows Interactive/Generative/Fixed, Experience survives reload); check 1's desktop part passes, its Start part waits for step 6
 - 2026-11-11 step 4: Folder window with WorkSelector, FOLDER_ICON fallback in Window and Footer, folders rendered in pages/index; check 5 passes (browser: 2023 lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA; DUET opens on top and the folder stays open, by double-click at desktop size and by tap + Open at 375×812); check 1's close-on-switch part passes (open 2023 closes and leaves the taskbar on switching to Media); `yarn test` passes
 - 2026-11-11 step 5: original 16×16 pixel-art folder, Control Panel (`settings-icon.svg`) and Find icons; check 8 run as a browser look at 112/56/16px and on the desktop (reads as closed folder, folder with tools, page with magnifier; all three load 200, no 404s), final say is the user's E2E; `yarn test`, `npx tsc --noEmit` and `yarn build` pass
+- 2026-11-11 slice 1 done
 
 ## Decisions
 
