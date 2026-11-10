@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-989</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-989 on being human window: live pieces with selector</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-989-obh-window</code>, not merged · reviewed commit <code>8756021</code>, final <code>714bec7</code> (after follow-up 6) · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds · follow-up 1 (B1): general reviewer, no findings · follow-up 2 (B2–B7): general reviewer, 1 fix round (F3 fixed), 1 tracked · follow-up 3 (B8–B10): general reviewer, no findings · follow-up 4 (B11): general reviewer, no findings · follow-up 5 (B12): general reviewer, no findings · follow-up 6 (B13): general reviewer, no findings</p>
+  <p>Running at <a href="http://localhost:3089">http://localhost:3089</a></p>
+</div>
+
+<h2>Asks</h2>
+<p class="muted">The recommendation happens unless you say otherwise.</p>
+<div class="ask">
+  <p><span class="tag">A1 · parked: spec meaning</span><strong>Your image-priority note (B1) asked for the thumbnail to load only if the engine fails, but the engine uses that thumbnail as its own first frame, so it can't be held back. Instead, both engine images start downloading at page load. Keep it that way?</strong></p>
+  <p>Left as is, each piece downloads the same two files as before, side by side instead of one after the other, and the still shows until the first frame at no extra cost. Since follow-up 2 (B2), the imagein starts with a <code>fetch()</code> in the page's <code>&lt;head&gt;</code> rather than a preload; the preload broke the engine once the file was cached.</p>
+  <p class="rec">Recommend: leave — holding the thumbnail back would block the engine, and lowering the fallback's priority would slow the engine's first frame.</p>
+  <details><summary>Where</summary><p><code>public/obh/a.html</code> (all five pages) — the engine calls <code>loadSession(seed, …, thumbnailUrl, …)</code>, which loads the thumbnail with <code>new Image()</code>, before it fetches the imagein; the fallback <code>&lt;img&gt;</code> shares that same download.</p></details>
+</div>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>Open a piece with DevTools' Network panel open, Disable cache ticked and throttling on (Fast 4G) → "LOADING..." blinks in the center in the same font, size, spacing and green as the action bar's "TOOLS" label, until the piece starts moving; maximize the window and both grow to 11px together</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Selector of five; opening one runs it; other windows' keys unaffected</td><td class="pass">pass</td><td>Browser, opened from the Start menu: five thumbs and titles A–E; each piece's canvas changes over 1.5s (C 1920×1080, letterboxed); with Sk3tch open, <code>s</code>/<code>f</code> in the piece reached only the iframe, and in Sk3tch only the page</td></tr>
+  <tr><td>2</td><td>Images from Vercel Blob, none from Irys</td><td class="pass">pass</td><td><code>grep -o "gateway.irys.xyz/[A-Za-z0-9]*" public/obh/*.html | sort -u</code> → one <code>jsonUri</code> id per file; each piece's iframe requested only <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> from the Blob host (200), no gateway.irys.xyz request</td></tr>
+  <tr><td>3</td><td>Purchase opens the marketplace page; Choose piece and About work</td><td class="pass">pass</td><td>Originally: on D, Purchase opened OpenSea's token 4 page. Since B5, it opens the Manifold collection page; see the follow-up 2 row</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code> → exit 0; <code>yarn test</code> → 1 pass; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 1 rerun (<code>2aa1e37</code>)</td><td class="pass">pass</td><td>1: piece C runs in the window. 2: grep → one <code>jsonUri</code> id per file; each page requests its imagein and thumb from the Blob host, no Irys request. Full check: <code>yarn test</code> → 2 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 2 rerun (<code>ecd3809</code>)</td><td class="pass">pass</td><td>1: opened from the desktop's new person icon; titles read "A: there must be something" … "E: something was found"; 12 piece switches through Choose piece (C four times) and C three times maximized all removed the still and ran, no console error. 2: grep → one <code>jsonUri</code> id per file; each page requests <code>&lt;letter&gt;-thumb.png</code> and <code>&lt;letter&gt;-imagein</code> only from the Blob host, no Irys request. 3: Purchase called <code>window.open("https://manifold.xyz/@ev3/contract/124346608", "_blank", "noopener")</code> from the selector, before any piece was opened; the URL returns 200; Choose piece returned with D selected; About shows the new copy, inset, with 16px padding, and Go back works. Full check: <code>yarn test</code> → 9 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 3 rerun (<code>15503a5</code>)</td><td class="pass">pass</td><td>1: the selector shows the thumbs at their own shape (A, B, D, E 54×96, C 96×54) in 96×96 boxes; opening A–E and C again through Choose piece, each removed its still and ran, none failed; with Sk3tch open, <code>s</code>/<code>f</code> in Sk3tch reached only the page, and in the piece only the iframe. 2: grep → one <code>jsonUri</code> id per file; each page requests its thumb and imagein only from the Blob host, no Irys request. 3: Purchase called <code>window.open</code> with the Manifold page (200 to <code>curl</code>); Choose piece returned with C selected; About and Go back work. Full check: <code>yarn test</code> → 13 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 4 rerun (<code>3034a08</code>)</td><td class="pass">pass</td><td>B11: in each page, "Loading..." is now 16px in <code>#00ff80</code>; in the browser it computed to rgb(0, 255, 128), 16px, W95FA, drawn small and green at the center. 1: opened from the Start menu, selector of five; C ran (1920×1080, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; C requested only its thumb and imagein from the Blob host. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (C selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 5 rerun (<code>7ed3e49</code>)</td><td class="pass">pass</td><td>B12: "Loading..." now uses <code>#00ff8099</code>, the bar's resting text color; in the browser it and the bar's buttons both compute to rgba(0, 255, 128, 0.6), the same tone as "TOOLS". 1: opened from the Start menu, selector of five; D ran (1080×1920, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; D requested only its thumb and imagein from the Blob host. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (D selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+  <tr><td>—</td><td>Follow-up 6 rerun (<code>714bec7</code>)</td><td class="pass">pass</td><td>B13: "Loading..." now copies the "TOOLS" label: Courier New, uppercase, normal weight, the same green, 10px with 2px spacing up to 480px wide and 11px with 3px above, as the engine's label does. In the browser the two matched on every text property at 310px and 900px wide, and on black they read the same. 1: opened from the Start menu, selector of five; D ran (1080×1920, pixels changing, still removed). 2: grep → one <code>jsonUri</code> id per file; D requested only its thumb and imagein from the Blob host, no font request. 3: Purchase called <code>window.open</code> with the Manifold page; About, Go back and Choose piece (D selected) work. Full check: <code>yarn test</code> → 14 pass; <code>npx tsc --noEmit</code> → exit 0; <code>yarn build</code> → exit 0</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<ul>
+  <li>Purchase opens the Manifold collection page, the same for every piece, and is in the menu before a piece is opened. The spec said the open piece's marketplace page; your B5 note asked for this instead.</li>
+</ul>
+
+<h2>Elevated decisions</h2>
+<div class="elevated">
+  <p><strong>B1 asked for the thumbnail to load only if the engine fails, but the engine loads the thumbnail itself as its base frame, and the imagein only after it.</strong></p>
+  <p>Options: load the thumbnail only on failure (blocks the engine); mark the fallback <code>fetchpriority="low"</code> as Sk3tch does (slows the engine's base frame, since it shares the download); start both engine images in <code>&lt;head&gt;</code>.</p>
+  <p>Chose: start both at page load, fallback untouched (as amended by B2 below). This relaxes the plan's rule that only the three image URLs change in the vendored pages; engine bytes are untouched.</p>
+  <p>Reverse: delete the two added <code>&lt;head&gt;</code> lines in each page and the B1 test.</p>
+</div>
+<div class="elevated">
+  <p><strong>B2: B1's <code>&lt;link rel="preload" as="fetch" crossorigin&gt;</code> for the imagein made the engine's own fetch fail with "Failed to fetch" once the file was cached, so a piece showed its still and never moved.</strong></p>
+  <p>Options: drop the imagein preload (the engine fetches it only after the thumbnail, about 2.5s slower cold in one test run); a preload without <code>crossorigin</code> (Chrome doesn't use it, "credentials mode does not match", so the file would download twice); a plain <code>fetch()</code> in <code>&lt;head&gt;</code>.</p>
+  <p>Chose: <code>&lt;script&gt;fetch("&lt;imagein&gt;").catch(() =&gt; {})&lt;/script&gt;</code> in each page's <code>&lt;head&gt;</code>. It uses the same request mode as the engine's fetch, so the engine reuses it. In a cold run, both requests finished at the same moment. This adds a new one-line script to each vendored page; the existing scripts and engine bytes are untouched.</p>
+  <p>Reverse: delete that line in each page (the imagein then loads after the thumbnail).</p>
+</div>
+<div class="elevated">
+  <p><strong>B8: with the still hidden, a piece whose engine fails to start would show "Loading..." forever, where it used to show the still (and your B1 note asked for the still on failure). The engine only logs its failures to the console.</strong></p>
+  <p>Options: accept "Loading..." forever on a failure; show the still after a timeout (on a slow first load that brings back the chunked still B8 removes); catch the engine's two failure messages.</p>
+  <p>Chose: a small <code>&lt;script&gt;</code> in each page's <code>&lt;head&gt;</code> wraps <code>console.error</code>; on "[epoch-one] loadNft failed" or "[epoch-one] mount threw" it marks the page, which shows the still and drops "Loading...". Every message still reaches the console. It adds another script block to each vendored page; the existing scripts and engine bytes are untouched.</p>
+  <p>Reverse: delete the B8 <code>&lt;script&gt;</code> block and the two <code>html.obh-failed</code> rules in each page.</p>
+</div>
+<div class="elevated">
+  <p><strong>B13: with "Loading..." in the "TOOLS" font, the copy of the pixel font that B8 added (<code>public/obh/w95fa.woff2</code>, 7KB) and the <code>@font-face</code> line in each page were no longer used.</strong></p>
+  <p>Options: keep them; delete them.</p>
+  <p>Chose: delete them; a test checks the file is gone. The portfolio's own W95FA in <code>styles/fonts/</code> is untouched.</p>
+  <p>Reverse: restore <code>public/obh/w95fa.woff2</code> from commit <code>725340a</code> and the <code>@font-face</code> line in each page.</p>
+</div>
+
+<h2>Decided for you</h2>
+<details><summary>19 decisions</summary>
+<ul>
+  <li>Selector order: A–E, matching the token IDs</li>
+  <li>Each page's 2KB engine-state <code>jsonUri</code> stays on Irys (the pages embed their engine block, so it isn't fetched)</li>
+  <li>No stop-on-minimize, matching 3xGP and R3MIX</li>
+  <li>No <code>pointer-events-none</code> on the iframe while dragging: a title-bar drag across the piece already works</li>
+  <li>No extra focus handling: the first click on an inactive OBH window brings it forward, later clicks reach the piece</li>
+  <li>About gets its own cream background over the window's black, like 3xGP's About</li>
+  <li>Purchase opens with <code>noopener</code></li>
+  <li>The window was built before the Blob upload; only the vendored pages changed afterwards</li>
+  <li>Follow-up 2: the person icon is a white head and a teal body with a black outline, in Win95 colors</li>
+  <li>Follow-up 2: the works list, the Purchase URL and the About view moved to <code>components/windows/obh.tsx</code> so tests can load them</li>
+  <li>Follow-up 2: Purchase is always in the menu, since the collection page doesn't depend on a piece (replaces "only once a piece is open")</li>
+  <li>Follow-up 2: Purchase goes to Manifold's collection page (replaces OpenSea's per-token page)</li>
+  <li>Follow-up 2: "inset" means Win95's sunken bevel on the About view; the cream background stays</li>
+  <li>Follow-up 2: the About view keeps its bold "on being human" heading above your new copy</li>
+  <li>Follow-up 3: "Loading..." is white, 32px (twice the font's pixel size), with a hard one-second on/off blink; the font is a 7KB copy of the portfolio's W95FA at <code>public/obh/w95fa.woff2</code>, since the iframe page can't reach the bundled one</li>
+  <li>Follow-up 3: the System button is dimmed and unclickable rather than hidden, so Tools doesn't shift; the engine's own help list in the Tools drawer still names it</li>
+  <li>Follow-up 3: the selection highlight covers only the thumbnail, not the empty space beside a tall one, as in Win95; each icon space stays 96×96 so the grid doesn't move</li>
+  <li>Follow-up 4: "smaller" is 16px, the pixel font's own size, so it stays crisp; the green was first <code>#00ff80</code>, the engine's pressed-button green; your B12 note moved it to <code>#00ff8099</code>, the bar's resting text</li>
+  <li>Follow-up 6: "Loading..." copies the "TOOLS" label's uppercase too, so it reads "LOADING...", and its size step at 480px wide, so the two still match in a maximized window</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>Purchase was checked by capturing the <code>window.open</code> call, not by opening a real tab; the Manifold URL returned 200 to <code>curl</code>.</li>
+  <li>Not checked on a Vercel deploy: Blob URLs were checked from localhost only (each returns 200 with <code>access-control-allow-origin: *</code>).</li>
+  <li>Follow-up 2: the claim that the imagein downloads only once rests on Chromium. In a cold run, the engine's request finished at the same moment as the <code>&lt;head&gt;</code> fetch. Download sizes weren't visible: the Blob host sends no <code>Timing-Allow-Origin</code>. Firefox and Safari weren't tried; if they don't share the in-flight download, the file downloads twice there, but pieces still run.</li>
+  <li>Follow-up 2: cold-load timings were taken with the browser pane hidden (throttled), so they compare the options rather than measure real load times.</li>
+  <li>Follow-up 2: the B2 test only checks the page files (no <code>as="fetch"</code> preload). Whether pieces start after switching was checked in the browser, not by a test.</li>
+  <li>Follow-up 2: the tests check the About view's classes, not its rendered padding; the 16px was read in the browser.</li>
+  <li>Follow-up 3: the "Loading..." screen was checked by putting a still back into a running page (it drew in W95FA over the canvas and blinked), and on a real first load the piece came up black with no still, then ran; a long throttled load wasn't watched end to end.</li>
+  <li>Follow-up 3: the engine-failure path was checked by logging the engine's failure message by hand (the still showed, "Loading..." went), not by a real failure. If the engine ever fails without logging one of its two messages, or an image download hangs, "Loading..." stays up.</li>
+  <li>Follow-up 3: the B8 and B9 tests check the page files' rules, not how they draw; drawing was checked in Chromium only.</li>
+  <li>Follow-up 4: the new look was checked by putting a still back into a running page, as in follow-up 3, not on a real slow load. The key-isolation part of check 1 (Sk3tch) wasn't rerun, since B11 changed only the pages' Loading CSS. Follow-up 5 (B12) was checked the same way. Follow-up 6 (B13) compared the two texts' computed styles at 310px and 900px wide, and looked at them on a black background; a real slow load wasn't watched.</li>
+</ul>
+
+<h2>Review</h2>
+<p>1 fixed · 2 tracked · 0 dropped · 1 ask</p>
+<details><summary>Fixed</summary>
+<ul>
+  <li>F3 Follow-up 2's inset style (B6) overrode the About view's padding, leaving its text 2px from the edge instead of 16px — <code>ecd3809</code></li>
+</ul>
+</details>
+<details><summary>Dropped</summary>
+<p>None.</p>
+</details>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<h3>OBH test coverage (window wiring)</h3>
+<ul>
+  <li>T2 The B5 test pins the Purchase URL, but nothing tests that the menu's Purchase uses it (<code>components/windows/OnBeingHuman.tsx:41</code>); the window can't be rendered by the node tests, whose build doesn't resolve its <code>@/</code> imports.</li>
+</ul>
+<h3>3xGP key handling (pre-existing)</h3>
+<ul>
+  <li>T1 3xGP's sketches check the active window against R3MIX instead of 3xGP (<code>components/windows/STEV3.tsx:40</code>). Answered: filed as its own ticket, SCOTT-991.</li>
+</ul>
+
+<footer>
+  <p>Answer in the review session, one line: "A1 leave, T2 in", "all as recommended", or a bug you found.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-989-obh-window/.goodaf/2026-11-09-SCOTT-989-obh-window/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>

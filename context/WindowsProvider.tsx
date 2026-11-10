@@ -87,7 +87,7 @@ export const ICONS = {
   [WINDOWS.R3MIX]: "/images/r3mix-icon.png",
   [WINDOWS.ITB]: "/images/ITB-icon.png",
   [WINDOWS.TECHTONIC]: "/images/small-logo.png",
-  [WINDOWS.OBH]: "/images/small-logo.png",
+  [WINDOWS.OBH]: "/svg/obh-icon.svg",
   [WINDOWS.SK3TCH]: "/svg/sk3tch-icon.svg",
   [WINDOWS.CEASEFIRE]: "/images/ceasefire-icon.png",
   [WINDOWS.REMEMBER]: "/images/remember-icon.png",

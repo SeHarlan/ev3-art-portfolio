@@ -1,37 +1,79 @@
 import { WINDOWS } from "@/context/WindowsProvider"
 import Window, { WindowMenuItem } from "../Window"
-import { FC } from "react"
+import { FC, useState } from "react"
+import clsx from "clsx"
+import WorkSelector from "../WorkSelector"
+import { About, PURCHASE_URL, works } from "./obh"
 
-const SITE = "https://epoch1.ev3.art?tab=obh"
+type View = "selector" | "piece" | "about"
 
 const OnBeingHumanWindow: FC = () => {
+  const [view, setView] = useState<View>("selector")
+  const [activeId, setActiveId] = useState<string>()
+
   const initSize = {
-    h: 800,
-    w: 1300,
+    h: 890 * 1.4,
+    w: 560 * 1.4,
   }
   const initPos = {
     x: 200,
-    y: 60
+    y: 0
   }
 
-  const visit = () => {
-    typeof window !== "undefined" && window.open(SITE, "_blank")
+  const active = works.find(w => w.id === activeId)
+
+  const openWork = (id: string) => {
+    setActiveId(id)
+    setView("piece")
   }
 
   const menu: WindowMenuItem[] = [
     {
-      label: "Visit",
-      function: visit
+      label: "Choose piece",
+      function: () => setView("selector")
+    },
+    {
+      label: "About",
+      function: () => setView("about")
+    },
+    {
+      label: "Purchase",
+      function: () => window.open(PURCHASE_URL, "_blank", "noopener")
     },
   ]
 
   return (
-    <Window windowKey={WINDOWS.OBH} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-black">
-      <div className="w-full h-full flex items-center justify-center">
-        <a href={SITE} target="_blank" rel="noreferrer" className="classic-button px-4 py-1">
-          <span>Visit on being human</span>
-        </a>
+    <Window
+      windowKey={WINDOWS.OBH}
+      initSize={initSize}
+      initPosition={initPos}
+      menu={menu}
+      wrapperClassName="bg-black"
+    >
+      <div
+        className={clsx(
+          "w-full h-full",
+          view === "piece" ? "block" : "hidden"
+        )}
+      >
+        {active && (
+          <iframe
+            key={active.id}
+            src={`/obh/${active.id}.html`}
+            title={active.title}
+            className="w-full h-full block border-0"
+          />
+        )}
       </div>
+
+      {view === "selector" && (
+        <WorkSelector works={works} selectedId={activeId} onOpen={openWork} />
+      )}
+
+      <About
+        visible={view === "about"}
+        onBack={() => setView(active ? "piece" : "selector")}
+      />
     </Window>
   )
 }
