@@ -216,3 +216,9 @@ Base: 0f7c151
 - B4: every selector's menu item reads "Select Piece" (galleries, remember.exe, R3MIX, STEV3, on being human).
 - B5: every window's menu follows Select Piece, Seed, Refresh, About, Purchase, skipping items it lacks.
 - B6: "some days" shows its zeums video (served from Blob) instead of the interactive sketch.
+
+## Follow-up 3
+
+Base: 196c4f9
+- B7: a work's image or video stays hidden (transparent) until it's ready: an image until it has fully loaded, a video until the browser expects it to play through without stopping to buffer (`canplaythrough`). "loading..." shows over the black backdrop meanwhile.
+- B8: a ready, not-yet-started video shows a centered Win95 "Play" button with a play icon; it starts the video and goes away once the video starts playing.
