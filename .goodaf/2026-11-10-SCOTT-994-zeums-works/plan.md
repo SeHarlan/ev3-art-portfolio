@@ -145,6 +145,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - 2026-11-10 step 8: 9 `WINDOWS` keys after SK3TCH with `ICONS`; `filterOutFromMenu` and its two call sites removed, so "some days" is on the desktop and in Start; `pages/index.tsx` renders a MediaWindow per `ZEUMS` key (REMEMBER included as the slice-3 placeholder). Browser (1280×800, then 375×812 in Playwright): all 10 icons open a window titled with the zeums title. Checks 2 (counts 21/4/14/23/6, every thumb loads, singles open on their work with no Choose, T3RRA image and video and an A Single Path image render, Choose returns to the selector), 5 (Tune Out and T3RRA video paused after minimize, Choose and About), 8 (About 1–3 sentences in all 9, Go back to the work or the selector) pass; check 1 passes with step 9; `npx tsc --noEmit` exit 0
 - 2026-11-10 step 7 fix: browser check at 1280×600 found the body scrolled 164px after opening windows (body scrolls programmatically despite `overflow: hidden`); iframe focus now passes `preventScroll`. Rechecked in Playwright: `document.body.scrollTop` stays 0 after opening T3RRA, Tune Out, CEASEFIRE and "Progress", the "Progress" iframe takes focus on open, and dragging its title bar sets the content to `pointer-events: none` until mouseup
 - 2026-11-10 step 9: icon column container `w-fit content-start` with fixed `w-24` cells; Start item list `max-h-[calc(100svh-3.5rem)] overflow-y-auto`. Check 1: 21 icons in 3 columns, no overlap or overflow at 1280×800 and 375×812. Check 7: Start lists 21 incl. "some days"; at 1280×600 the 458px list fits with no scroll needed, at 1280×400 it caps at 344px, scrolls to the last entry and its top entry sits at y=20. Full check: `npx tsc --noEmit` exit 0, `yarn test` exit 0 (1 pass), `yarn build` exit 0. checks 1, 2, 5, 7, 8 pass
+- 2026-11-10 slice 2 done
 
 ## Decisions
 
@@ -164,6 +165,10 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - Normal: window sizes are 960×600 for the video singles and Tune Out, 800×800 for remember.exe, A Single Path and T3RRA, 800×700 for s34s0ns and 700×700 for "Progress"; positions are staggered by 25/15 px. Reverse: edit `size`/`position` in `data/zeums.ts`.
 - Normal: `data/zeums.ts` exports `REMEMBER_ENGINE` and `rememberSrc(seed)`, which omits `?hash=` for an empty seed. Every remember item's `src` is `REMEMBER_ENGINE`, so slice 3 builds the URL from it. Item ids are slugs of titles; thumbnails are `/images/thumbs/<slug>-<title slug>.jpg`. Reverse: inline the builder in `Remember.tsx`.
 - Normal: Isaac's Blob filename gets `.mp4` (its zeums URL has no `ext`). Reverse: re-upload under another name.
+- Normal: until slice 3, remember.exe opens through MediaWindow (`pages/index.tsx` maps every `ZEUMS` key), so its icon works now; its items load the engine with no `?hash=`, a random seed. Slice 3 swaps in `Remember.tsx`. Reverse: skip REMEMBER in the map.
+- Normal: the drag/resize guard lives in the shared `Window` (`pointer-events-none` on content while `isDragging` or the new `isResizing`), so every window gets it, not only MediaWindow. Reverse: pass the flag to MediaWindow only.
+- Normal: MediaWindow pauses its one `<video>` via a ref; Refresh remounts the item by key (`<id>-<count>`), which restarts a video and reloads an iframe. Reverse: key on id only.
+- Normal: video `poster` is the item's 96px thumb, as planned; it shows upscaled and soft until play. Reverse: drop `poster` so browsers show the first frame from `preload="metadata"`.
 
 ## Parked asks
 
