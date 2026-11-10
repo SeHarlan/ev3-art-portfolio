@@ -3,6 +3,7 @@ import clsx from "clsx"
 import { FC, useEffect, useRef, useState } from "react"
 import usePieceFocus from "@/hooks/usePieceFocus"
 import Loading from "./Loading"
+import PlayButton from "./PlayButton"
 import Window, { WindowMenuItem } from "./Window"
 import WorkSelector from "./WorkSelector"
 
@@ -50,6 +51,8 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   const [readyKey, setReadyKey] = useState<string>()
   const markReady = () => setReadyKey(itemKey)
   const ready = readyKey === itemKey
+  // The mount key whose video has started playing; Play shows over a ready video until then.
+  const [startedKey, setStartedKey] = useState<string>()
 
   const renderItem = (item: ZeumsItem, key: string) => {
     switch (item.kind) {
@@ -78,9 +81,16 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
             preload="auto"
             // Ready once the browser expects to play to the end without stopping to buffer.
             onCanPlayThrough={markReady}
-            // A browser that stops fetching before that (one that won't preload) is as ready as it gets.
-            onSuspend={e => { if (e.currentTarget.readyState < e.currentTarget.HAVE_FUTURE_DATA) markReady() }}
+            // A browser that stays idle short of playable data (one that won't preload) is as ready as
+            // it gets. Chrome also suspends briefly when reusing cached data, hence the wait.
+            onSuspend={e => {
+              const video = e.currentTarget
+              setTimeout(() => {
+                if (video.readyState < video.HAVE_FUTURE_DATA && video.networkState === video.NETWORK_IDLE) markReady()
+              }, 1000)
+            }}
             onError={markReady}
+            onPlaying={() => setStartedKey(itemKey)}
             className={clsx("w-full h-full object-contain", !ready && "opacity-0")}
           />
         )
@@ -103,6 +113,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
       <div className={clsx("absolute inset-0 bg-black flex items-center justify-center", view !== "work" && "invisible")}>
         {item && itemKey && renderItem(item, itemKey)}
         {item && item.kind !== "html" && !ready && <Loading />}
+        {item?.kind === "video" && ready && startedKey !== itemKey && <PlayButton onClick={() => videoRef.current?.play()} />}
       </div>
 
       {view === "selector" && <WorkSelector works={items} selectedId={activeId} onOpen={openWork} />}
