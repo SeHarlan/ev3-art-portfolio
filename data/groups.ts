@@ -1,5 +1,5 @@
 // Group-by folders for the desktop and Start menu (SCOTT-995). Tags per the ticket's table.
-import { WINDOWS } from "./windows";
+import { ICONS, WINDOWS } from "./windows";
 
 export const GROUP_BYS = ["year", "media", "experience"] as const
 export type GroupBy = typeof GROUP_BYS[number]
@@ -50,6 +50,13 @@ export const ART_KEYS: string[] = (Object.keys(WINDOWS) as (keyof typeof WINDOWS
 /** The WINDOWS enum key for a window name, e.g. "T3RRA" → "TERRA". */
 export const windowId = (name: string) =>
   (Object.keys(WINDOWS) as (keyof typeof WINDOWS)[]).find(key => WINDOWS[key] === name)
+
+/** WorkSelector entries for window names. Ids are WINDOWS enum keys, since names carry spaces and quotes. */
+export const selectorWorks = (keys: string[]) =>
+  keys.map(key => ({ id: windowId(key) ?? key, title: key, thumb: ICONS[key] }))
+
+/** The window name for a selectorWorks id. */
+export const windowFromId = (id: string): string => WINDOWS[id as keyof typeof WINDOWS] ?? id
 
 export interface Group {
   name: string;

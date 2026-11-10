@@ -69,6 +69,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 step 5: original 16×16 pixel-art folder, Control Panel (`settings-icon.svg`) and Find icons; check 8 run as a browser look at 112/56/16px and on the desktop (reads as closed folder, folder with tools, page with magnifier; all three load 200, no 404s), final say is the user's E2E; `yarn test`, `npx tsc --noEmit` and `yarn build` pass
 - 2026-11-11 slice 1 done
 - 2026-11-11 step 6: Start menu cascades (plain group entries with a `cascade` PixelGlyph arrow, `Menu.Item` works in a flyout kept on screen); check 6 passes (browser: 1280×600 hover 2025 → CEASEFIRE, remember.exe, s34s0ns, Exaltation of Isaac beside it, remember.exe opens and the menu closes; Media code's 11 works shift up to sit on the taskbar; 375×812 tap audio and code both fit inside 375px, tapping Sk3tch opens it and closes the menu); `yarn test` and `npx tsc --noEmit` pass
+- 2026-11-11 step 7: Find window (Named: field focused on open, Randomize, WorkSelector of the matches keyed by the query), rendered in pages/index; `selectorWorks`/`windowFromId` in data/groups.ts now shared by Folder and Find; WindowsProvider needed no change (FIND landed in slice 1); check 7 passes (`yarn test` 30 pass incl. matchesSearch; browser: opens from the desktop icon and from Start with the field focused, 19 works when empty, `audio` → DUET, A Flower Blooms in Autumn, Tune Out, `maur` → Maurer Expanse, `2026` → techtonic, on being human, Sk3tch, `xyz` → empty with Open disabled, 5 Randomize clicks each brought a work to the front with no repeat in a row); check 1's Start part passes (switching to Experience in Settings changes Start to Interactive, Generative, Fixed with no reload); `npx tsc --noEmit` passes
 
 ## Decisions
 
@@ -94,6 +95,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - Normal: hovering Introduction, Find or Settings closes an open cascade, as Win95 does. Reverse: drop their `onMouseEnter`.
 - Normal: a flyout that would pass the right edge shifts left over the menu, since the menu sits at the left edge and can't flip. Reverse: the `x` term in `Cascade`'s fit.
 - Normal: group entries take no keyboard focus; Headless UI's arrow keys move over Introduction, Find, Settings and an open cascade's works. Reverse: make entries focusable and open on ArrowRight.
+- Normal: the WorkSelector mapping (`selectorWorks`, `windowFromId`) moved from Folder into data/groups.ts so Folder and Find share it. Reverse: inline it in each window.
 
 ## Parked asks
 

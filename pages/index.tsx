@@ -19,6 +19,7 @@ import RememberWindow from '@/components/windows/Remember'
 import { ZEUMS, ZeumsKey } from '@/data/zeums'
 import { groupsFor } from '@/data/groups'
 import FolderWindow from '@/components/windows/Folder'
+import FindWindow from '@/components/windows/Find'
 
 // remember.exe has its own window for its seeds; the other zeums entries share MediaWindow.
 const MEDIA_WINDOWS = (Object.keys(ZEUMS) as ZeumsKey[]).filter(key => key !== 'REMEMBER')
@@ -123,6 +124,7 @@ export default function Home() {
           {groupsFor(groupBy).map(group => openMap[group.name]
             ? <FolderWindow key={group.name} name={group.name} keys={group.keys} />
             : null)}
+          {openMap[WINDOWS.FIND] ? <FindWindow /> : null}
           {openMap[WINDOWS.SETTINGS] ? <SettingsWindow /> : null}
         </div>
         <Footer />
