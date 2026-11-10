@@ -43,7 +43,9 @@ test("every art window has tags; Introduction, Settings and Find don't and aren'
     assert.ok(!hasTags(key), key);
     assert.ok(!ART_KEYS.includes(key), key);
   }
-  assert.deepEqual(ART_KEYS, Object.values(WINDOWS).filter(k => hasTags(k)));
+  // Independent of how ART_KEYS is built: every window but these three is art, so a window with no TAGS row fails here.
+  const nonArt: string[] = [WINDOWS.HOME, WINDOWS.SETTINGS, WINDOWS.FIND];
+  assert.deepEqual(ART_KEYS, Object.values(WINDOWS).filter(k => !nonArt.includes(k)));
 });
 
 test("matchesSearch: case-insensitive substring of the name or any tag", () => {
