@@ -2,6 +2,7 @@ import { ZeumsItem, ZeumsWindow } from "@/data/zeums"
 import clsx from "clsx"
 import { FC, useEffect, useRef, useState } from "react"
 import usePieceFocus from "@/hooks/usePieceFocus"
+import Loading from "./Loading"
 import Window, { WindowMenuItem } from "./Window"
 import WorkSelector from "./WorkSelector"
 
@@ -42,11 +43,27 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
     { label: "About", function: () => setView("about") },
   ]
 
-  const renderItem = (item: ZeumsItem) => {
-    const key = `${item.id}-${refreshCount}`
+  // The open item's mount key: Refresh remounts it, which restarts a video and reloads an iframe.
+  const itemKey = item && `${item.id}-${refreshCount}`
+  // The mount key whose image or video is ready; Loading shows until it matches the open one.
+  const [readyKey, setReadyKey] = useState<string>()
+  const markReady = () => setReadyKey(itemKey)
+
+  const renderItem = (item: ZeumsItem, key: string) => {
     switch (item.kind) {
       case "image":
-        return <img key={key} src={item.src} alt={item.title} className="w-full h-full object-contain" />
+        return (
+          <img
+            key={key}
+            // A cached image can finish before React attaches onLoad.
+            ref={el => { if (el?.complete && el.naturalWidth) markReady() }}
+            src={item.src}
+            alt={item.title}
+            onLoad={markReady}
+            onError={markReady}
+            className="w-full h-full object-contain"
+          />
+        )
       case "video":
         return (
           <video
@@ -56,7 +73,10 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
             poster={item.thumb}
             controls
             playsInline
-            preload="metadata"
+            preload="auto"
+            onCanPlay={markReady}
+            onPlaying={markReady}
+            onError={markReady}
             className="w-full h-full object-contain"
           />
         )
@@ -77,7 +97,8 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   return (
     <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} wrapperClassName="bg-windowsPaper">
       <div className={clsx("absolute inset-0 bg-black flex items-center justify-center", view !== "work" && "invisible")}>
-        {item && renderItem(item)}
+        {item && itemKey && renderItem(item, itemKey)}
+        {item && item.kind !== "html" && readyKey !== itemKey && <Loading />}
       </div>
 
       {view === "selector" && <WorkSelector works={items} selectedId={activeId} onOpen={openWork} />}

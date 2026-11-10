@@ -18,7 +18,7 @@ import SomeDaysWindow from "./SomeDays";
 const html = (el: ReactElement) => renderToStaticMarkup(el);
 // A menu item renders its first letter underlined, then the rest of its label (then any dropdown).
 const menuLabels = (markup: string) =>
-  [...markup.matchAll(/<button class="ev3-menu-item[^"]*"><span class="underline">(.)<\/span>([^<]*)/g)].map((m) => m[1] + m[2]);
+  Array.from(markup.matchAll(/<button class="ev3-menu-item[^"]*"><span class="underline">(.)<\/span>([^<]*)/g), (m) => m[1] + m[2]);
 
 const windows: Record<string, () => string> = {
   "Tune Out (gallery)": () => html(<MediaWindow windowKey="Tune Out" data={ZEUMS.TUNEOUT} />),
