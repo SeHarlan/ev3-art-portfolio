@@ -1,0 +1,73 @@
+import "../testAlias";
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import { ReactElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ZEUMS } from "../../data/zeums";
+import MediaWindow from "../MediaWindow";
+import DUETWindow from "./DUET";
+import InTheBeginningWindow from "./InTheBeginning";
+import MaurerWindow from "./Maurer";
+import NoiseWindow from "./Noise";
+import OnBeingHumanWindow from "./OnBeingHuman";
+import R3MIXWindow from "./R3MIX";
+import RememberWindow from "./Remember";
+import STEV3Window from "./STEV3";
+import SomeDaysWindow from "./SomeDays";
+
+const html = (el: ReactElement) => renderToStaticMarkup(el);
+// A menu item renders its first letter underlined, then the rest of its label (then any dropdown).
+const menuLabels = (markup: string) =>
+  [...markup.matchAll(/<button class="ev3-menu-item[^"]*"><span class="underline">(.)<\/span>([^<]*)/g)].map((m) => m[1] + m[2]);
+
+const windows: Record<string, () => string> = {
+  "Tune Out (gallery)": () => html(<MediaWindow windowKey="Tune Out" data={ZEUMS.TUNEOUT} />),
+  "CEASEFIRE (single)": () => html(<MediaWindow windowKey="CEASEFIRE" data={ZEUMS.CEASEFIRE} />),
+  "remember.exe": () => html(<RememberWindow />),
+  R3MIX: () => html(<R3MIXWindow />),
+  "3xGP": () => html(<STEV3Window />),
+  "on being human": () => html(<OnBeingHumanWindow />),
+  DUET: () => html(<DUETWindow />),
+  "it's just noise": () => html(<NoiseWindow />),
+  "Maurer Expanse": () => html(<MaurerWindow />),
+  ITB: () => html(<InTheBeginningWindow />),
+  "some days": () => html(<SomeDaysWindow />),
+};
+const selectorWindows = ["Tune Out (gallery)", "remember.exe", "R3MIX", "3xGP", "on being human"];
+
+test("B2: the content box's scroll wrapper is positioned, so absolutely placed content sits inside the inset bevel instead of covering it", () => {
+  const markup = windows["CEASEFIRE (single)"]();
+  const wrapper = markup.match(/<div class="classic-inset[^"]*"[^>]*><div class="([^"]*)"/);
+  assert.ok(wrapper, "a classic-inset content box with a wrapper div");
+  assert.match(wrapper![1], /(^| )relative( |$)/, `wrapper classes: ${wrapper![1]}`);
+});
+
+test("B3: an open work's video shows the shared pulsing loading... until it can play", () => {
+  const markup = windows["CEASEFIRE (single)"]();
+  assert.ok(/<video /.test(markup), "CEASEFIRE renders its video");
+  assert.ok(/class="[^"]*animate-pulse[^"]*"[^>]*>loading\.\.\.</.test(markup), "a pulsing loading... is shown");
+});
+
+test("B4: every selector window's menu says Select Piece, never Choose <x>", () => {
+  for (const name of selectorWindows) {
+    const labels = menuLabels(windows[name]());
+    assert.ok(labels.includes("Select Piece"), `${name}: ${labels.join(", ")}`);
+    assert.ok(!labels.some((l) => l.startsWith("Choose")), `${name}: ${labels.join(", ")}`);
+  }
+});
+
+test("B5: every window's menu runs Select Piece, Seed, Refresh, About, Purchase, skipping what it lacks", () => {
+  const order = ["Select Piece", "Seed", "Refresh", "About", "Purchase"];
+  for (const [name, render] of Object.entries(windows)) {
+    const labels = menuLabels(render()).filter((l) => order.includes(l));
+    const sorted = [...labels].sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    assert.deepEqual(labels, sorted, `${name}: ${labels.join(", ")}`);
+  }
+});
+
+test("B6: some days shows its zeums video from the Blob store, not the interactive sketch", () => {
+  const markup = windows["some days"]();
+  const video = markup.match(/<video [^>]*>/)?.[0];
+  assert.ok(video, "some days renders a video");
+  assert.ok(/src="https:\/\/k4xw43ajr4eh6re3\.public\.blob\.vercel-storage\.com\/somedays\/[^"]+\.mp4"/.test(video!), `video: ${video}`);
+});

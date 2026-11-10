@@ -169,7 +169,9 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
         )} 
       style={bare ? undefined : { height: `calc(100% - ${offsetHeight}px)` }}>
         <div className={clsx(
-          bare ? "overflow-hidden h-full" : "overflow-auto h-full",
+          // relative: absolutely placed content (a work, a selector, About) fills this box,
+          // inside the inset's padding, so it can't cover the sunken bevel.
+          bare ? "overflow-hidden h-full" : "relative overflow-auto h-full",
           // While dragging or resizing, keep iframes from swallowing mousemove.
           (!isActive || isDragging || isResizing) && "pointer-events-none",
           wrapperClassName

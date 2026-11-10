@@ -20,10 +20,10 @@ interface AboutProps {
 }
 
 export const About: FC<AboutProps> = ({ visible, onBack }) => (
-  // classic-inset redraws the sunken well this covers, as the selector does.
+  // Fills the window's content box, inside its inset bevel, as the selector does.
   <div
     className={clsx(
-      "classic-inset !p-4 absolute top-0 left-0 h-full w-full overflow-auto bg-amber-50",
+      "p-4 absolute top-0 left-0 h-full w-full overflow-auto bg-amber-50",
       visible ? "block" : "hidden"
     )}
   >

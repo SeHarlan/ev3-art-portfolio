@@ -32,18 +32,22 @@ test("B5: Purchase opens the Manifold collection page, the same for every piece"
   );
 });
 
-test("B6: the About view is drawn inset, with the sunken bevel over the window's well", () => {
+// SCOTT-994 B2 moved the bevel to Window: its content wrapper is positioned, so the About view
+// fills the box inside the window's own inset (see windows.test.tsx "B2"). A classic-inset here
+// would now draw a second bevel.
+test("B6, after SCOTT-994 B2: the About view sits inside the window's sunken bevel, drawing no second one", () => {
   const html = renderToStaticMarkup(<About visible onBack={() => {}} />);
   const root = html.match(/^<div class="([^"]*)"/)![1].split(" ");
-  assert.ok(root.includes("classic-inset"), "the About root has classic-inset");
+  assert.ok(root.includes("absolute") && root.includes("h-full") && root.includes("w-full"), "the About root fills the content box");
+  assert.ok(!root.includes("classic-inset"), "no second bevel on the About root");
 });
 
-test("F3: the About view keeps its 16px padding under classic-inset's 2px", () => {
-  // .classic-inset sets padding after @tailwind utilities, so plain p-4 loses; !p-4 wins, as in Footer.
+test("F3: the About view keeps its 16px padding", () => {
+  // .classic-inset would set a 2px padding after @tailwind utilities, overriding p-4; the root has none.
   const html = renderToStaticMarkup(<About visible onBack={() => {}} />);
   const root = html.match(/^<div class="([^"]*)"/)![1].split(" ");
-  assert.ok(root.includes("!p-4"), "the About root has !p-4");
-  assert.ok(!root.includes("p-4"), "no plain p-4, which classic-inset overrides");
+  assert.ok(root.includes("p-4") || root.includes("!p-4"), "the About root has 16px padding");
+  assert.ok(!root.includes("classic-inset"), "nothing overrides that padding");
 });
 
 test("B7: the About copy is the series line, then the five lettered titles", () => {

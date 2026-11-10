@@ -57,8 +57,8 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
   };
 
   return (
-    // classic-inset redraws the sunken well this covers.
-    <div className="p95-chrome p95-field classic-inset absolute inset-0 flex flex-col">
+    // Fills the window's content box, inside its inset bevel.
+    <div className="p95-chrome p95-field absolute inset-0 flex flex-col">
       {/* The bar scrolls with the grid, so it sits under the last row and
           sticks to the bottom only once items overflow; the scroll padding
           keeps a keyboard-selected item clear of it. */}
