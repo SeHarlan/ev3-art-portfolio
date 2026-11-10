@@ -66,6 +66,8 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   Done: 2026-11-10, 695a897, repro `components/windows/windows.test.tsx` "B5"
 - B6. 2026-11-10 "replace the interactive html in Some days with the Video from zeums"
   Done: 2026-11-10, 8edf389, repro `components/windows/windows.test.tsx` "B6"
+- B7. 2026-11-11 "I want images and videos to be hidden/transparent until they are ready to be displayed. the loading looks fine, but I'm still seeing the chunked images coming in and videos that buffer immediately when I click play."
+- B8. 2026-11-11 "also for videos add a play button with a play icon and "Play" copy (win95 style) centered, that appears when the video is ready to play with minimal buffering. and goes away when the video starts playing"
 
 ## Follow-ups
 
