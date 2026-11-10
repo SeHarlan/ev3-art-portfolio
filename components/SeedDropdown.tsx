@@ -55,6 +55,12 @@ const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen,
           e.preventDefault()
         }
       }}
+      onKeyUp={(e) => {
+        // The dropdown sits inside its menu button, which a space keyup would click, closing it.
+        if (e.key === " ") {
+          e.preventDefault()
+        }
+      }}
       className={clsx(
       seedOpen ? "flex flex-col items-start " : "hidden",
         "p95-chrome bg-windowsGray text-windowsText classic-border p-2 shadow-md absolute top-full left-0 cursor-default z-30",
