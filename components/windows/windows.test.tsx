@@ -149,3 +149,10 @@ test("SCOTT-987: image and video works have Full Res after Refresh and before Ab
   const piece = menuLabels(html(<MediaWindow windowKey="Progress" data={ZEUMS.PROGRESS} />));
   assert.ok(!piece.includes("Full Res"), piece.join(", "));
 });
+
+test("SCOTT-987: the title-bar icon is requested at its 16px display size", () => {
+  const icon = windows["CEASEFIRE (single)"]().match(/<img [^>]*>/g)?.find((tag) => tag.includes("w-4 h-4"));
+  assert.ok(icon, "no title-bar icon");
+  assert.match(icon, /\bwidth="16"/, icon);
+  assert.match(icon, /\bheight="16"/, icon);
+});
