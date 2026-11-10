@@ -22,7 +22,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
 
   const [view, setView] = useState<View>(isGallery ? "selector" : "work")
   const [activeId, setActiveId] = useState<string | undefined>(isGallery ? undefined : items[0]?.id)
-  const [refreshCount, setRefreshCount] = useState(0)
+  const [mountCount, setMountCount] = useState(0)
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const { iframeRef, focusPiece, isMin } = usePieceFocus(windowKey, view === "work")
@@ -34,18 +34,21 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   }, [view, isMin, activeId])
 
   const openWork = (id: string) => {
+    // Opening another item mounts it fresh; reopening the open one keeps its mount.
+    if (id !== activeId) setMountCount(n => n + 1)
     setActiveId(id)
     setView("work")
   }
 
   const menu: WindowMenuItem[] = [
     ...(isGallery ? [{ label: "Select Piece", function: () => setView("selector") }] : []),
-    { label: "Refresh", function: () => setRefreshCount(n => n + 1) },
+    { label: "Refresh", function: () => setMountCount(n => n + 1) },
     { label: "About", function: () => setView("about") },
   ]
 
-  // The open item's mount key: Refresh remounts it, which restarts a video and reloads an iframe.
-  const itemKey = item && `${item.id}-${refreshCount}`
+  // The open item's mount key, new on each open of another item and on Refresh, which restarts a
+  // video and reloads an iframe.
+  const itemKey = item && `${item.id}-${mountCount}`
   // The mount key whose image or video is ready; until it matches the open one, the work is
   // transparent and Loading shows.
   const [readyKey, setReadyKey] = useState<string>()
