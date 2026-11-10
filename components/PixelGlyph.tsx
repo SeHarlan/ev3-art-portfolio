@@ -13,6 +13,8 @@ const GLYPHS = {
   minimize: ["........", "........", "........", "........", "........", ".kkkkkk.", ".kkkkkk."],
   maximize: ["kkkkkkkkk", "kkkkkkkkk", "k.......k", "k.......k", "k.......k", "k.......k", "k.......k", "kkkkkkkkk"],
   close: ["kk....kk", ".kk..kk.", "..kkkk..", "...kk...", "..kkkk..", ".kk..kk.", "kk....kk"],
+  // Win95's cascading-menu arrow.
+  cascade: ["k...", "kk..", "kkk.", "kkkk", "kkk.", "kk..", "k..."],
   // Win95's size grip: three embossed diagonal ridges.
   grip: [
     ".................w",

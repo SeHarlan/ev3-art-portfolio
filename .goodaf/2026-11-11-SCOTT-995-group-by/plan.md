@@ -68,6 +68,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 step 4: Folder window with WorkSelector, FOLDER_ICON fallback in Window and Footer, folders rendered in pages/index; check 5 passes (browser: 2023 lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA; DUET opens on top and the folder stays open, by double-click at desktop size and by tap + Open at 375×812); check 1's close-on-switch part passes (open 2023 closes and leaves the taskbar on switching to Media); `yarn test` passes
 - 2026-11-11 step 5: original 16×16 pixel-art folder, Control Panel (`settings-icon.svg`) and Find icons; check 8 run as a browser look at 112/56/16px and on the desktop (reads as closed folder, folder with tools, page with magnifier; all three load 200, no 404s), final say is the user's E2E; `yarn test`, `npx tsc --noEmit` and `yarn build` pass
 - 2026-11-11 slice 1 done
+- 2026-11-11 step 6: Start menu cascades (plain group entries with a `cascade` PixelGlyph arrow, `Menu.Item` works in a flyout kept on screen); check 6 passes (browser: 1280×600 hover 2025 → CEASEFIRE, remember.exe, s34s0ns, Exaltation of Isaac beside it, remember.exe opens and the menu closes; Media code's 11 works shift up to sit on the taskbar; 375×812 tap audio and code both fit inside 375px, tapping Sk3tch opens it and closes the menu); `yarn test` and `npx tsc --noEmit` pass
 
 ## Decisions
 
@@ -89,6 +90,10 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - Elevated: plan departure. Situation: the plan keeps `WINDOWS` and `ICONS` in `WindowsProvider`, but the provider now imports `data/groups.ts`, which reads `WINDOWS` at load, an import cycle that throws. Options: move them to their own module, or have the provider compute folder names lazily. Choice: moved verbatim to `data/windows.ts`, re-exported from `WindowsProvider` so every existing import still works. Reverse: move them back and make `groups.ts` read `WINDOWS` lazily.
 - Elevated: visual call. Situation: the spec asks for icons as close to Win95's as possible; tracing Microsoft's icon bitmaps pixel for pixel would copy their art. Options: trace the Win9x bitmaps, or draw original pixel art with the same read. Choice: original 16×16 art in the Win95 style, compared against Win9x reference icons in the browser: a flat yellow closed folder with a tab, black outline and olive shading (no yellow/gray dither, which reads as texture at 56px); the same folder with a hammer and screwdriver for Control Panel; a dog-eared page under a cyan-lensed magnifier for Find. Reverse: redraw in `public/svg/`, or trace if the user accepts that.
 - Normal: the Find icon is drawn in step 5 with the other two, so the slice 1 desktop has no broken image; step 8 only needs to check it. Reverse: redraw in step 8.
+- Normal: the cascade arrow is a new `cascade` glyph in `PixelGlyph`, recolored with the highlight like the title-bar glyphs. Reverse: drop the glyph and use a text arrow.
+- Normal: hovering Introduction, Find or Settings closes an open cascade, as Win95 does. Reverse: drop their `onMouseEnter`.
+- Normal: a flyout that would pass the right edge shifts left over the menu, since the menu sits at the left edge and can't flip. Reverse: the `x` term in `Cascade`'s fit.
+- Normal: group entries take no keyboard focus; Headless UI's arrow keys move over Introduction, Find, Settings and an open cascade's works. Reverse: make entries focusable and open on ArrowRight.
 
 ## Parked asks
 
