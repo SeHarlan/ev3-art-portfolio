@@ -152,6 +152,7 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 - 2026-11-10 simplify: 2 edits (shared `hooks/usePieceFocus.tsx` for MediaWindow and Remember; one `fieldProps` object for SeedDropdown's two fields). Skipped: folding Remember into MediaWindow (Decisions keep it separate), rendering menu components beside rather than inside the menu `<button>` in `Window.tsx` (changes every existing seed window), deriving the `WINDOWS`/`ICONS` entries from `ZEUMS` (departs from the file's pattern), pausing p5 loops in hidden iframes (Decisions keep pieces mounted). Rerun: `npx tsc --noEmit` exit 0, `yarn test` exit 0 (1 pass), `yarn build` exit 0; check 3: 50 / 50 / 0 and `"name": "ev3-portfolio"`; check 4 grep prints nothing (exit 1); check 9 `21/21 match` (exit 0), `ls public/pieces` → `progress remember`; browser: "Progress" iframe focused on open, Tune Out video paused after About, Her eyes hash matches its seed with the iframe focused, Seed pre-filled, a typed two-line seed (Shift+Enter) loads with its hash. All checks pass
 - 2026-11-10 check 8 on `Remember.tsx`: About opens; Go back returns to the selector before any piece is opened, and to the work after opening Grandma Dale (iframe visible, hash unchanged, focused)
 - 2026-11-10 slice 3 done
+- 2026-11-10 follow-up 1: merged main (SCOTT-989) into the branch with no conflicts, as B1 requires; `npx tsc --noEmit` exit 0, `yarn test` exit 0 (14 pass)
 
 ## Decisions
 
@@ -181,3 +182,8 @@ Media lives in Blob and the windows only reference URLs, so slice 1 gathers ever
 ## Parked asks
 
 - None open. The Blob store rename was done by the user in the dashboard (2026-11-10); the store reads `"name": "ev3-portfolio"`.
+
+## Follow-up 1
+
+Base: 41b5475 (the merge of main, so this follow-up's review diff holds only its own work)
+- B1: desktop icons redone. The 4 single-work icons keep their source's aspect with no square crop. The 5 zeums galleries, 3xGP, R3MIX and "on being human" get a fan-out of up to three of their selector thumbs, each at its true aspect. Every other icon stays as it is.
