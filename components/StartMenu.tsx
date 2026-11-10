@@ -1,4 +1,4 @@
-import { filterOutFromMenu, useWindowsContext, WINDOWS } from "@/context/WindowsProvider";
+import { useWindowsContext, WINDOWS } from "@/context/WindowsProvider";
 import { FC } from "react";
 import { Menu } from '@headlessui/react'
 import Button from "./Button";
@@ -29,7 +29,6 @@ const StartMenu: FC = () => {
             </div>
             <div>
               {Object.values(WINDOWS)
-                .filter(filterOutFromMenu)
                 .map((windowKey) => {
                   const handleClick = () => handleOpen(windowKey);
                   const label = windowKey;

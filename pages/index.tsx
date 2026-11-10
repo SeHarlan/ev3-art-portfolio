@@ -14,6 +14,11 @@ import TechtonicWindow from '@/components/windows/Techtonic'
 import OnBeingHumanWindow from '@/components/windows/OnBeingHuman'
 import SettingsWindow from '@/components/windows/Settings'
 import Sk3tchWindow from '@/components/windows/Sk3tch'
+import MediaWindow from '@/components/MediaWindow'
+import { ZEUMS, ZeumsKey } from '@/data/zeums'
+
+// remember.exe renders through MediaWindow until its own window lands (SCOTT-994 slice 3).
+const MEDIA_WINDOWS = Object.keys(ZEUMS) as ZeumsKey[]
 
 export default function Home() {
   const { openState } = useWindowsContext()
@@ -108,6 +113,9 @@ export default function Home() {
           {openMap[WINDOWS.TECHTONIC] ? <TechtonicWindow /> : null}
           {openMap[WINDOWS.OBH] ? <OnBeingHumanWindow /> : null}
           {openMap[WINDOWS.SK3TCH] ? <Sk3tchWindow /> : null}
+          {MEDIA_WINDOWS.map(key => openMap[WINDOWS[key]]
+            ? <MediaWindow key={key} windowKey={WINDOWS[key]} data={ZEUMS[key]} />
+            : null)}
           {openMap[WINDOWS.SETTINGS] ? <SettingsWindow /> : null}
         </div>
         <Footer />

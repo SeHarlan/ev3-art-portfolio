@@ -41,6 +41,15 @@ export const WINDOWS = {
   TECHTONIC: "techtonic",
   OBH: "on being human",
   SK3TCH: "Sk3tch",
+  CEASEFIRE: "CEASEFIRE",
+  REMEMBER: "remember.exe",
+  SEASONS: "s34s0ns",
+  ISAAC: "Exaltation of Isaac",
+  PROGRESS: '"Progress"',
+  SINGLEPATH: "A Single Path",
+  TERRA: "T3RRA",
+  FLOWER: "A Flower Blooms in Autumn",
+  TUNEOUT: "Tune Out",
   SETTINGS: "Settings",
 }
 
@@ -56,6 +65,15 @@ type WINDOWS = {
   TECHTONIC: string;
   OBH: string;
   SK3TCH: string;
+  CEASEFIRE: string;
+  REMEMBER: string;
+  SEASONS: string;
+  ISAAC: string;
+  PROGRESS: string;
+  SINGLEPATH: string;
+  TERRA: string;
+  FLOWER: string;
+  TUNEOUT: string;
   SETTINGS: string;
 }
 
@@ -71,12 +89,17 @@ export const ICONS = {
   [WINDOWS.TECHTONIC]: "/images/small-logo.png",
   [WINDOWS.OBH]: "/images/small-logo.png",
   [WINDOWS.SK3TCH]: "/svg/sk3tch-icon.svg",
+  [WINDOWS.CEASEFIRE]: "/images/ceasefire-icon.png",
+  [WINDOWS.REMEMBER]: "/images/remember-icon.png",
+  [WINDOWS.SEASONS]: "/images/seasons-icon.png",
+  [WINDOWS.ISAAC]: "/images/isaac-icon.png",
+  [WINDOWS.PROGRESS]: "/images/progress-icon.png",
+  [WINDOWS.SINGLEPATH]: "/images/singlepath-icon.png",
+  [WINDOWS.TERRA]: "/images/terra-icon.png",
+  [WINDOWS.FLOWER]: "/images/flower-icon.png",
+  [WINDOWS.TUNEOUT]: "/images/tuneout-icon.png",
   [WINDOWS.SETTINGS]: "/svg/settings-icon.svg",
 };
-
-export const filterOutFromMenu = (windowKey: string) => { 
-  return windowKey !== WINDOWS.SOMEDAYS
-}
 
 const defaultMin = Object.values(WINDOWS).reduce((acc: {[key:string]: boolean}, curr) => {
   acc[curr] = false

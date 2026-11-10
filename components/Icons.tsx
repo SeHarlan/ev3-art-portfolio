@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { filterOutFromMenu, ICONS, useWindowsContext, WINDOWS } from "../context/WindowsProvider";
+import { ICONS, useWindowsContext, WINDOWS } from "../context/WindowsProvider";
 import { FC } from "react";
 
 const Icons: FC = () => {
@@ -7,7 +7,6 @@ const Icons: FC = () => {
   return (
     <div className="flex z-[2] flex-col flex-wrap h-[90svh] gap-5 relative top-10 left-10 items-center w-24">
       {Object.values(WINDOWS)
-        .filter(filterOutFromMenu)
         .map((windowKey) => {
           const handleClick = () => handleOpen(windowKey);
           return (
