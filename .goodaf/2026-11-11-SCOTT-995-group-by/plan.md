@@ -64,6 +64,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 plan check: 1 must-fix fixed, 1 notes adopted, 0 dismissed
 - 2026-11-11 step 1: data/groups.ts tag table, groupsFor, matchesSearch, ART_KEYS; WINDOWS.FIND entry; components/groups.test.tsx added to the test script; checks 2, 3, 4, 7 (test parts) pass
 - 2026-11-11 step 2: groupBy/setGroupBy/ready in WindowsProvider, saved under `ev3-p95-group-by`; Settings Group by row; `yarn test` and `npx tsc --noEmit` pass; check 1 runs in the browser once the desktop renders folders (step 3–4)
+- 2026-11-11 step 3: desktop renders Introduction, the active grouping's folders, Find, Settings, gated on `ready`; checks 2, 3, 4 pass (test, and browser: Year shows 2026→2022, Media shows code/video/image/audio, Experience shows Interactive/Generative/Fixed, Experience survives reload); check 1's desktop part passes, its Start part waits for step 6
 
 ## Decisions
 

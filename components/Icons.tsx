@@ -1,13 +1,23 @@
 import Image from "next/image";
 import { ICONS, useWindowsContext, WINDOWS } from "../context/WindowsProvider";
+import { FOLDER_ICON, groupsFor } from "../data/groups";
 import { FC } from "react";
 
 const Icons: FC = () => {
-  const { handleOpen } = useWindowsContext()
+  const { handleOpen, groupBy, ready } = useWindowsContext()
+  if (!ready) return null
+
+  // Introduction, then the active grouping's folders, then Find and Settings.
+  const entries = [
+    { windowKey: WINDOWS.HOME, icon: ICONS[WINDOWS.HOME] },
+    ...groupsFor(groupBy).map(group => ({ windowKey: group.name, icon: FOLDER_ICON })),
+    { windowKey: WINDOWS.FIND, icon: ICONS[WINDOWS.FIND] },
+    { windowKey: WINDOWS.SETTINGS, icon: ICONS[WINDOWS.SETTINGS] },
+  ]
+
   return (
     <div className="flex z-[2] flex-col flex-wrap content-start h-[90svh] gap-5 relative top-10 left-10 items-center w-fit">
-      {Object.values(WINDOWS)
-        .map((windowKey) => {
+      {entries.map(({ windowKey, icon }) => {
           const handleClick = () => handleOpen(windowKey);
           return (
             <div
@@ -19,7 +29,7 @@ const Icons: FC = () => {
               <Image
                 width={56}
                 height={56}
-                src={ICONS[windowKey]}
+                src={icon}
                 alt={`${windowKey} Icon`}
                 className="w-14 h-14 object-contain mb-1 flex-shrink-0"
               />
