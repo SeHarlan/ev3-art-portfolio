@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-994</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-994 Add missing zeums works as desktop windows</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-994-zeums-works</code>, not merged · reviewed commit <code>3968797</code>, final <code>3968797</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds</p>
+  <p>Running at <a href="http://localhost:3994">http://localhost:3994</a></p>
+</div>
+
+<h2>Asks</h2>
+<p>None.</p>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>Press s in any remember.exe piece → the PNG saves as <code>remember-.png</code>, not <code>remember-&lt;title&gt;.png</code> as on the originals, since the shared engine has no baked title</li>
+  <li>Open a few T3RRA and A Single Path images → several are 20–40 MB PNGs from Blob, so they take a moment to appear on a slow connection</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>10 desktop icons open their windows</td><td class="pass">pass</td><td>Browser at 1280×800 and 375×812 → all 10 open, titled with the zeums title; 21 icons, no overlap, none off-screen</td></tr>
+  <tr><td>2</td><td>Galleries list every item with thumbs; Choose returns; singles open on their work</td><td class="pass">pass</td><td>Browser → 21, 4, 14, 23 and 6 items, every thumb loaded; items open; Choose returns; the 4 singles open on their work with no selector</td></tr>
+  <tr><td>3</td><td>Full-size media from the <code>ev3-portfolio</code> Blob store; store renamed</td><td class="pass">pass</td><td>The four step 6 commands → <code>50</code>, <code>50</code>, <code>0</code>, <code>"name": "ev3-portfolio"</code></td></tr>
+  <tr><td>4</td><td>HTML pieces load only from the site and respond to their controls</td><td class="pass">pass</td><td><code>grep -noE 'https?://' public/pieces/*/index.html</code> → nothing; browser: one Solana and one Tezos piece respond to c, f, g, r, s, arrows; "Progress" responds to clicks and n; nothing requested off-site but the host page's fonts and analytics</td></tr>
+  <tr><td>5</td><td>A video stops when minimized or its view is replaced</td><td class="pass">pass</td><td>Browser on Tune Out → <code>paused === true</code> after Minimize, Choose and About</td></tr>
+  <tr><td>6</td><td>Seed text area; a piece's seed reproduces it</td><td class="pass">pass</td><td>Browser → 8-row area pre-filled with the piece's seed; a hand-typed memory gives that piece's hash; Shift+Enter adds a line, Enter submits; <code>hello world</code> gives a different hash</td></tr>
+  <tr><td>7</td><td>Start menu lists 21 windows and scrolls</td><td class="pass">pass</td><td>Browser → 21 entries including "some days"; at 400px tall the list caps at 344px and scrolls, top entry reachable</td></tr>
+  <tr><td>8</td><td>Each new window has a 1–3 sentence About with Go back</td><td class="pass">pass</td><td>Browser on all 9 → 1–3 sentences; Go back returns to the selector or the work</td></tr>
+  <tr><td>9</td><td>All 21 remember items open the one engine with their own exact seed</td><td class="pass">pass</td><td><code>node …/SCOTT-994-check9/check-seeds.mjs</code> → <code>21/21 match</code>; <code>ls public/pieces</code> → <code>progress remember</code></td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code>, <code>yarn test</code>, <code>yarn build</code> all exit 0</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<ul>
+  <li>remember.exe's s key saves <code>remember-.png</code> instead of the originals' <code>remember-&lt;title&gt;.png</code>. The one shared engine has an empty baked title, and the spec allows rewriting only script URLs, so the engine was left as published.</li>
+  <li>The Blob store rename went through the dashboard, not the API: the API returned 404 for the rename. The spec provides for this, and the store now reads <code>ev3-portfolio</code>.</li>
+</ul>
+
+<h2>Elevated decisions</h2>
+<div class="elevated">
+  <p><strong>Desktop icons for the 9 new windows</strong></p>
+  <p>Options: a thumbnail, a thumbnail collage or a representational icon per entry</p>
+  <p>Chose: singles use their own preview cropped square; CEASEFIRE uses its video frame at 0.5 s, since its preview is nearly black at 56px; galleries use a 2×2 collage of their first four items</p>
+  <p>Reverse: regenerate <code>public/images/&lt;slug&gt;-icon.png</code> from another source</p>
+</div>
+<div class="elevated">
+  <p><strong>Storage cost guard before uploading</strong></p>
+  <p>Options: stop and ask, or upload since the spec approved these uploads</p>
+  <p>Chose: upload. The plan's test ("past the plan's included Blob storage") has no literal answer on Pro, where Blob storage is usage-based; the 50 files add about 1.16 GB, roughly $0.03/month</p>
+  <p>Reverse: <code>vercel blob del</code> the 50 collection paths listed in <code>data/zeums.ts</code></p>
+</div>
+
+<h2>Decided for you</h2>
+<details><summary>17 decisions</summary>
+<ul>
+  <li>remember.exe window: its own file, not MediaWindow, since it alone has seeds</li>
+  <li>Vendored engine's baked seed: empty, so an empty seed gives the engine's random fallback</li>
+  <li>HTML pieces and videos stay mounted behind the selector and About; videos are paused</li>
+  <li>Data: one <code>data/zeums.ts</code> module for all 9 windows</li>
+  <li>A remember item's seed: the baked text, trimmed (hashing strips whitespace, so this can't change a piece)</li>
+  <li>Deep-link keys: CEASEFIRE, REMEMBER, SEASONS, ISAAC, PROGRESS, SINGLEPATH, TERRA, FLOWER, TUNEOUT</li>
+  <li>Blob paths: <code>&lt;slug&gt;/&lt;original filename&gt;</code>, each collection a top-level folder (your call)</li>
+  <li>New windows sit after Sk3tch, newest first, so the existing order doesn't move</li>
+  <li>s34s0ns image folder: <code>uploaded-image/</code>, confirmed by a range request</li>
+  <li>Exaltation of Isaac's video: fetched from <code>turbo-gateway.com</code>, since arweave.net returns 404 for it</li>
+  <li>About texts: condensed from each zeums description; Isaac's corrects "Primivera" to "Primavera Digitale"</li>
+  <li>Window sizes: 960×600 for video singles and Tune Out, 800×800 for remember.exe, A Single Path and T3RRA, 800×700 for s34s0ns, 700×700 for "Progress"</li>
+  <li><code>rememberSrc(seed)</code> in <code>data/zeums.ts</code> builds the engine URL and omits <code>?hash=</code> for an empty seed</li>
+  <li>Isaac's Blob filename gets <code>.mp4</code></li>
+  <li>The drag/resize guard (<code>pointer-events-none</code> on content) lives in the shared <code>Window</code>, so every window gets it</li>
+  <li>Refresh remounts the item by key, which restarts a video and reloads an iframe; video poster is the 96px thumb</li>
+  <li>Using a seed in remember.exe clears the selected item and always reloads the engine</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>Check 6's visual match of a hand-typed seed's render against the piece's selector thumbnail wasn't redone; the hashes were compared instead, and execute recorded the visual match.</li>
+  <li>Video sound stopping was checked through the <code>paused</code> flag on muted playback, not by ear.</li>
+  <li>Exaltation of Isaac being 4K and the Tezos mint order aren't checkable from the repo; execute set them from the source file and TzKT.</li>
+  <li>Whether a remember iframe hidden by Choose or About keeps keyboard focus, so arrow keys would change the hidden engine, wasn't tested.</li>
+  <li>Two console warnings come from code already on main: a hydration mismatch in the Introduction window, and the seed dropdown nested inside a menu button, a pattern the existing seed windows share.</li>
+  <li>No Codex pass and no resample: visual diffs get the general reviewer only.</li>
+</ul>
+
+<h2>Review</h2>
+<p>0 fixed · 1 tracked · 0 dropped · 0 asks</p>
+<details><summary>Fixed</summary>
+<ul>
+  <li>None.</li>
+</ul>
+</details>
+<details><summary>Dropped</summary>
+<ul>
+  <li>None.</li>
+</ul>
+</details>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<h3>iframe focus handling</h3>
+<ul>
+  <li>T1 A piece that finishes loading after you've switched to another window pulls keyboard focus into its hidden iframe, so your keys go to the engine behind; guard the on-load focus on the window being active.</li>
+</ul>
+
+<footer>
+  <p>Answer in the review session, one line: "T1 in", "all as recommended", or a bug you found.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-994-zeums-works/.goodaf/2026-11-10-SCOTT-994-zeums-works/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>
