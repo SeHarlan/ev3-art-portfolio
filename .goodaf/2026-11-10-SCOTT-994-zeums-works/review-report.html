@@ -51,10 +51,18 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h1>SCOTT-994 Add missing zeums works as desktop windows</h1>
 <div class="status">
   <p class="verdict ok">Ready for your check</p>
-  <p>Built on <code>goodaf/SCOTT-994-zeums-works</code>, not merged · reviewed commit <code>3968797</code>, final <code>3968797</code> · follow-up 1 final <code>5da8f94</code> · follow-up 2 final <code>8edf389</code> · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds, in the review and in both follow-ups</p>
+  <p>Built on <code>goodaf/SCOTT-994-zeums-works</code>, not merged · reviewed commit <code>3968797</code>, final <code>3968797</code> · follow-up 1 final <code>5da8f94</code> · follow-up 2 final <code>8edf389</code> · follow-up 3 final <code>ea660ef</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds in the review and follow-ups 1–2; 2 in follow-up 3 (3 fixed)</p>
   <p>Running at <a href="http://localhost:3994">http://localhost:3994</a> (restarted; reload any open tab)</p>
 </div>
+
+<h2>Follow-up 3</h2>
+<ul>
+  <li>B7 done (<code>9864e18</code>, review fixes <code>9802e8a</code>, <code>7541ac1</code>, <code>ea660ef</code>): an open image or video stays transparent until it's ready, with only "loading..." over black. An image shows once it has fully loaded, so no chunked rows. A video shows once the browser expects it to play through without stopping to buffer (<code>canplaythrough</code>, was "can play"). While hidden it takes no clicks or keyboard focus.</li>
+  <li>B8 done (<code>675782b</code>): a ready video that hasn't played yet shows a centered Win95 "▶ Play" button (<code>components/PlayButton.tsx</code>). Clicking it plays the video and the button goes; it comes back on Refresh or when you open the video again.</li>
+  <li>Review fixed 3: coming back to a video in a gallery showed it before it was ready or left out Play (F5); a click (F7) or Tab and Space (F9) on "loading..." played the hidden video.</li>
+  <li>Repro tests "B7", "B8", "F7" and "F9" in <code>components/windows/windows.test.tsx</code>, each seen failing first.</li>
+</ul>
 
 <h2>Follow-up 2</h2>
 <ul>
@@ -79,8 +87,10 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <ul>
   <li>Look over the desktop icons → the four single works show at their own shape, uncropped; the 5 galleries, 3xGP, R3MIX and on being human each show a fan of three cards at their own shapes</li>
   <li>Press s in any remember.exe piece → the PNG saves as <code>remember-.png</code>, not <code>remember-&lt;title&gt;.png</code> as on the originals, since the shared engine has no baked title</li>
-  <li>Open a few T3RRA and A Single Path images → several are 20–40 MB PNGs from Blob; "loading..." pulses over them until they finish (T3RRA-13 took about 2 minutes here)</li>
-  <li>Open a video window (CEASEFIRE, Tune Out, some days) → it now downloads the whole video on open so it can say when it's ready to play, which costs more Blob transfer per open than before</li>
+  <li>Open a few T3RRA and A Single Path images → several are 20–40 MB PNGs from Blob; only "loading..." over black until each has fully loaded, then the whole image at once. T3RRA's second item took 23 s to 156 s here, depending on how fast Blob was serving</li>
+  <li>Open a video window (CEASEFIRE, Tune Out, some days) → "loading..." until the browser expects it to play through, then the video and "▶ Play". The wait is much longer than before: CEASEFIRE's 20 s video took 3 s to 110 s here, against ~12 s with the old signal. Each open preloads the video, which costs Blob transfer</li>
+  <li>Click Play → it plays and the button goes; pausing doesn't bring it back (the native controls resume); Refresh does. Clicks and Tab do nothing while "loading..." shows</li>
+  <li>On a phone (not checked) → if the browser won't preload video, Play should still appear about a second after loading stalls, and the video buffers once you press it</li>
   <li>Open some days → it plays the zeums video; its Blob file name has a random suffix the upload tool added, left in place rather than deleted</li>
   <li>Look at any window's menu and content edge → menus read Select Piece, Seed, Refresh, About (Purchase or Mint last); each content box has one sunken bevel, over videos and About pages too</li>
 </ul>
@@ -97,13 +107,14 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <tr><td>7</td><td>Start menu lists 21 windows and scrolls</td><td class="pass">pass</td><td>Browser → 21 entries including "some days"; at 400px tall the list caps at 344px and scrolls, top entry reachable</td></tr>
   <tr><td>8</td><td>Each new window has a 1–3 sentence About with Go back</td><td class="pass">pass</td><td>Browser on all 9 → 1–3 sentences; Go back returns to the selector or the work; rerun after follow-up 2</td></tr>
   <tr><td>9</td><td>All 21 remember items open the one engine with their own exact seed</td><td class="pass">pass</td><td><code>node …/SCOTT-994-check9/check-seeds.mjs</code> → <code>21/21 match</code>; <code>ls public/pieces</code> → <code>progress remember</code></td></tr>
-  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code>, <code>yarn test</code>, <code>yarn build</code> all exit 0; after follow-up 2, 21 tests pass, and checks 3, 4's grep and 9 rerun and pass</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>npx tsc --noEmit</code>, <code>yarn test</code>, <code>yarn build</code> all exit 0; after follow-up 2, 21 tests pass, and checks 3, 4's grep and 9 rerun and pass. After follow-up 3 (at <code>ea660ef</code>): all three exit 0 with 25 tests passing, and browser checks 2, 5, 6 (lighter) and 8 rerun and pass</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
 <ul>
   <li>remember.exe's s key saves <code>remember-.png</code> instead of the originals' <code>remember-&lt;title&gt;.png</code>. The one shared engine has an empty baked title, and the spec allows rewriting only script URLs, so the engine was left as published.</li>
   <li>The Blob store rename went through the dashboard, not the API: the API returned 404 for the rename. The spec provides for this, and the store now reads <code>ev3-portfolio</code>.</li>
+  <li>Your follow-up 3 notes change the spec's "videos: click to play" on purpose: a video now waits hidden until it can play through, then offers a Play button over the native controls.</li>
   <li>Your follow-up 2 notes change the spec on purpose: menus say "Select Piece", not "Choose &lt;name&gt;"; menus follow one order across all windows; existing windows changed (bevel, menus); and some days shows its zeums video, where the spec said no video is added.</li>
 </ul>
 
@@ -134,11 +145,14 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 </div>
 
 <h2>Decided for you</h2>
-<details><summary>26 decisions</summary>
+<details><summary>29 decisions</summary>
 <ul>
+  <li>Follow-up 3: "ready" for a video is the browser's own <code>canplaythrough</code> estimate, so the wait depends on the connection; hidden means transparent, no clicks and no keyboard focus, while it keeps loading</li>
+  <li>Follow-up 3: if a browser stops loading short of playable data for a second (one that won't preload), the video counts as ready, so it isn't hidden forever</li>
+  <li>Follow-up 3: Play shows once per open, before the first play; pausing leaves resuming to the native controls, which stay; a video that fails to load also shows Play, which then does nothing</li>
   <li>Follow-up 2: the selector and on being human's About stop drawing their own bevel; SCOTT-989's two About tests now check for one bevel and 16px padding</li>
   <li>Follow-up 2: ITB's Mint stays last, in Purchase's place; Techtonic's Visit and the Introduction's Skip/Reset aren't in the order list and stay</li>
-  <li>Follow-up 2: an open video preloads in full so "ready to play" arrives without a click; starting playback also clears loading</li>
+  <li>Follow-up 2: an open video preloads in full so "ready to play" arrives without a click (follow-up 3 dropped "starting playback also clears loading", since a hidden video can't be started)</li>
   <li>Follow-up 2: loading covers works' images and videos only, not HTML pieces, thumbs or the older p5 sketches; white text on the work's black backdrop</li>
   <li>Follow-up 2: some days' Blob file keeps the random suffix the upload tool added, rather than deleting and uploading again</li>
   <li>Follow-up 2: some days' data lives in <code>SomeDays.tsx</code>, so check 3's count of 50 URLs in <code>data/zeums.ts</code> stays as written; its About is condensed from the zeums poem; size, position and icon unchanged</li>
@@ -175,13 +189,16 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>No Codex pass and no resample: visual diffs get the general reviewer only.</li>
   <li>Follow-up 1: browser checks 2 and 5–8 weren't rerun, since only icons changed. The fan-outs' look was checked by eye on a contact sheet, not by a test (T2).</li>
   <li>Follow-up 2: browser check 4's piece controls and check 7 (Start menu) weren't rerun, since no piece or Start menu code changed; check 6 was rerun lighter (pre-fill and one typed seed's hash). Loading clearing was checked in a headless browser, not by a test (T3). The bevel was checked on zoomed screenshots of CEASEFIRE, Tune Out and on being human, not every window.</li>
+  <li>Follow-up 3: checked in headless Chromium only, not Safari, Firefox or a phone; the no-preload fallback is untested on a real phone. That Play shows on ready and goes on play, and F5's fix, were checked in the browser, not by a test (T3). Browser checks 1, 4's piece controls and 7 weren't rerun, since no icon, piece or Start menu code changed.</li>
 </ul>
 
 <h2>Review</h2>
-<p>0 fixed · 4 tracked · 0 dropped · 0 asks</p>
+<p>3 fixed · 5 tracked · 0 dropped · 0 asks</p>
 <details><summary>Fixed</summary>
 <ul>
-  <li>None.</li>
+  <li>F5 (<code>9802e8a</code>) Coming back to a gallery video reused the last open's state, so it showed before it was ready, or never showed Play after you'd played it. Each open of another work now mounts it fresh.</li>
+  <li>F7 (<code>7541ac1</code>) A click on "loading..." played the hidden video. An unready work now takes no clicks.</li>
+  <li>F9 (<code>ea660ef</code>) Tab, then Space, still played it. An unready video now takes no keyboard focus.</li>
 </ul>
 </details>
 <details><summary>Dropped</summary>
@@ -202,15 +219,19 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 </ul>
 <h3>loading test coverage</h3>
 <ul>
-  <li>T3 The loading test checks only that "loading..." shows when a work opens, not that it clears once the image loads or the video can play; testing that needs a DOM test library, a new dev dependency. The clearing was checked in a headless browser.</li>
+  <li>T3 The loading test checks only that "loading..." shows when a work opens, not that it clears once the image loads or the video can play. Likewise the Play test checks the button on its own, not that the window shows it on ready and hides it on play, and F5's fix has no test. Testing these needs a DOM test library, a new dev dependency. All were checked in a headless browser.</li>
 </ul>
 <h3>unused prop</h3>
 <ul>
   <li>T4 <code>components/Loading.tsx</code> takes a <code>className</code> no caller passes; dropping it changes nothing.</li>
 </ul>
+<h3>stale ready timer</h3>
+<ul>
+  <li>T5 A video's no-preload fallback marks it ready a second after loading pauses, without checking it's still the work on screen. Switching works inside that second could hide the new one behind "loading..." until Refresh. No tested browser gets there; a one-condition check closes it.</li>
+</ul>
 
 <footer>
-  <p>Answer in the review session, one line: "T1 in", "T3 in", or a bug you found.</p>
+  <p>Answer in this session, one line: "T5 in", "T3 in", or a bug you found.</p>
   <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-994-zeums-works/.goodaf/2026-11-10-SCOTT-994-zeums-works/review.md</code></p>
 </footer>
 
