@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { ZEUMS } from "../../data/zeums";
+import { ZEUMS, ZeumsKey } from "../../data/zeums";
+import { WINDOWS } from "../../data/windows";
 import MediaWindow from "../MediaWindow";
 import DUETWindow from "./DUET";
 import FindWindow from "./Find";
@@ -14,7 +15,9 @@ import OnBeingHumanWindow from "./OnBeingHuman";
 import R3MIXWindow from "./R3MIX";
 import RememberWindow from "./Remember";
 import STEV3Window from "./STEV3";
+import Sk3tchWindow from "./Sk3tch";
 import SomeDaysWindow from "./SomeDays";
+import TechtonicWindow from "./Techtonic";
 
 const html = (el: ReactElement) => renderToStaticMarkup(el);
 // A menu item renders its first letter underlined, then the rest of its label (then any dropdown).
@@ -117,4 +120,19 @@ test("F3: Find's Randomize button takes clicks while Find isn't the active windo
   const button = html(<FindWindow />).match(/<button [^>]*class="([^"]*)"[^>]*><span>Randomize<\/span>/);
   assert.ok(button, "Find renders a Randomize button");
   assert.ok(button![1].split(" ").includes("pointer-events-auto"), `button classes: ${button![1]}`);
+});
+
+test("F4: Find's Randomize sits left of where every work opens, so the work it opens can't cover it", () => {
+  // A window's markup starts with its own style; React writes left:0 for 0.
+  const left = (markup: string) => Number(markup.match(/^<div [^>]*style="[^"]*left:(\d+)/)![1]);
+  const works = [
+    ...Object.values(windows).map((render) => render()),
+    ...(Object.keys(ZEUMS) as ZeumsKey[]).map((key) => html(<MediaWindow windowKey={WINDOWS[key]} data={ZEUMS[key]} />)),
+    html(<TechtonicWindow />),
+    html(<Sk3tchWindow />),
+  ];
+  const find = html(<FindWindow />);
+  const workLeft = Math.min(...works.map(left));
+  assert.ok(left(find) < workLeft, `Find left ${left(find)}, leftmost work ${workLeft}`);
+  assert.ok(find.indexOf("<span>Randomize</span>") < find.indexOf("<input"), "Randomize comes before the Named field");
 });

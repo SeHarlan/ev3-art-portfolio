@@ -6,7 +6,7 @@ import Button from "../Button"
 import { FC, useId, useRef, useState } from "react"
 
 const initSize = { w: 560, h: 420 }
-const initPos = { x: 160, y: 80 }
+const initPos = { x: 0, y: 80 }
 
 /** Win95's Find: every work, filtered by name or any tag, plus Randomize. */
 const FindWindow: FC = () => {
@@ -28,7 +28,11 @@ const FindWindow: FC = () => {
   return (
     <Window windowKey={WINDOWS.FIND} initSize={initSize} initPosition={initPos}>
       <div className="p95-chrome absolute inset-0 flex flex-col bg-windowsGray text-windowsText">
+        {/* Randomize at the window's left, at x 0: every work opens at x 60 or more, so the work it opens can't cover it. */}
         <div className="flex items-center gap-2 p-1.5">
+          <Button className="[--p95-dots:4px] pointer-events-auto flex-none min-w-[75px] h-[23px] px-2" onClick={randomize}>
+            <span>Randomize</span>
+          </Button>
           <label htmlFor={inputId} className="flex-none">
             <span className="underline">N</span>amed:
           </label>
@@ -43,9 +47,6 @@ const FindWindow: FC = () => {
               className="px-1 outline-none w-full h-full"
             />
           </div>
-          <Button className="[--p95-dots:4px] pointer-events-auto flex-none min-w-[75px] h-[23px] px-2" onClick={randomize}>
-            <span>Randomize</span>
-          </Button>
         </div>
         {/* Keyed by the query, so the selection resets as the list changes. */}
         <div className="relative flex-1 min-h-0">
