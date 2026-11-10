@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
+import { ChangeEvent, FC, KeyboardEvent, useEffect, useRef, useState } from "react"
 
 interface SeedDropdownProps {
   seedOpen: boolean
@@ -35,13 +35,18 @@ const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen,
     return() => inputRef.current?.blur()
   })
 
-  const onFieldKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && !(multiline && e.shiftKey)) {
-      e.preventDefault()
-      useSeed()
-    } else if (e.key === "Escape") {
-      setSeedOpen(false)
-    }
+  const fieldProps = {
+    value: seed,
+    placeholder: "Seed",
+    onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setSeed(e.target.value),
+    onKeyDown: (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !(multiline && e.shiftKey)) {
+        e.preventDefault()
+        useSeed()
+      } else if (e.key === "Escape") {
+        setSeedOpen(false)
+      }
+    },
   }
 
   return (
@@ -68,28 +73,8 @@ const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen,
     )}>
       <div className="classic-inset p95-field w-full">
         {multiline
-          ? <textarea
-              ref={el => { inputRef.current = el }}
-              rows={8}
-              className="px-1 outline-none w-full resize-none block"
-              onKeyDown={onFieldKeyDown}
-              onChange={(e) => setSeed(e.target.value)}
-              value={seed}
-              placeholder="Seed"
-            />
-          : <input
-              type="text"
-              ref={el => { inputRef.current = el }}
-              className={clsx("px-1 outline-none w-full")}
-              onKeyDown={onFieldKeyDown}
-              onChange={(e) => {
-
-                setSeed(e.target.value)
-
-              }}
-              value={seed}
-              placeholder="Seed"
-            />}
+          ? <textarea {...fieldProps} ref={el => { inputRef.current = el }} rows={8} className="px-1 outline-none w-full resize-none block" />
+          : <input {...fieldProps} ref={el => { inputRef.current = el }} type="text" className="px-1 outline-none w-full" />}
       </div>
 
       <div className="flex justify-end gap-2 w-full mt-1 p-0.5">

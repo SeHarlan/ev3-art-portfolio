@@ -1,7 +1,7 @@
-import { useWindowsContext } from "@/context/WindowsProvider"
 import { ZeumsItem, ZeumsWindow } from "@/data/zeums"
 import clsx from "clsx"
 import { FC, useEffect, useRef, useState } from "react"
+import usePieceFocus from "@/hooks/usePieceFocus"
 import Window, { WindowMenuItem } from "./Window"
 import WorkSelector from "./WorkSelector"
 
@@ -22,30 +22,14 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   const [activeId, setActiveId] = useState<string | undefined>(isGallery ? undefined : items[0]?.id)
   const [refreshCount, setRefreshCount] = useState(0)
 
-  const { activeWindow, minimizedState } = useWindowsContext()
-  const [minimizedMap] = minimizedState
-  const isMin = Boolean(minimizedMap[windowKey])
-  // A minimized window stays last in the order, so it'd still count as active.
-  const isActive = activeWindow === windowKey && !isMin
-
   const videoRef = useRef<HTMLVideoElement | null>(null)
-  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const { iframeRef, focusPiece, isMin } = usePieceFocus(windowKey, view === "work")
 
   const item = items.find(i => i.id === activeId)
 
   useEffect(() => {
     if (view !== "work" || isMin) videoRef.current?.pause()
   }, [view, isMin, activeId])
-
-  const focusPiece = () => {
-    // A focused element scrolls into view, and body scrolls even with overflow hidden.
-    iframeRef.current?.focus({ preventScroll: true })
-    iframeRef.current?.contentWindow?.focus()
-  }
-
-  useEffect(() => {
-    if (isActive && view === "work") focusPiece()
-  }, [isActive, view])
 
   const openWork = (id: string) => {
     setActiveId(id)

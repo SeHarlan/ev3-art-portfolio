@@ -1,7 +1,8 @@
-import { WINDOWS, useWindowsContext } from "@/context/WindowsProvider"
+import { WINDOWS } from "@/context/WindowsProvider"
+import usePieceFocus from "@/hooks/usePieceFocus"
 import { ZEUMS, rememberSrc } from "@/data/zeums"
 import clsx from "clsx"
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, useState } from "react"
 import SeedDropdown from "../SeedDropdown"
 import Window, { WindowMenuItem } from "../Window"
 import WorkSelector from "../WorkSelector"
@@ -20,22 +21,7 @@ const RememberWindow: FC = () => {
   const [seedOpen, setSeedOpen] = useState(false)
   const [refreshCount, setRefreshCount] = useState(0)
 
-  const { activeWindow, minimizedState } = useWindowsContext()
-  const [minimizedMap] = minimizedState
-  // A minimized window stays last in the order, so it'd still count as active.
-  const isActive = activeWindow === windowKey && !minimizedMap[windowKey]
-
-  const iframeRef = useRef<HTMLIFrameElement | null>(null)
-
-  const focusPiece = () => {
-    // A focused element scrolls into view, and body scrolls even with overflow hidden.
-    iframeRef.current?.focus({ preventScroll: true })
-    iframeRef.current?.contentWindow?.focus()
-  }
-
-  useEffect(() => {
-    if (isActive && view === "work") focusPiece()
-  }, [isActive, view])
+  const { iframeRef, focusPiece } = usePieceFocus(windowKey, view === "work")
 
   const openWork = (id: string) => {
     setActiveId(id)
