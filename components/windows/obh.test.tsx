@@ -7,8 +7,8 @@ import { ICONS, WINDOWS } from "../../context/WindowsProvider";
 import * as obh from "./obh";
 import { About, works } from "./obh";
 
-test("B3: OBH's icon is its own person icon in public/svg", () => {
-  assert.equal(ICONS[WINDOWS.OBH], "/svg/obh-icon.svg");
+test("B3, replaced by SCOTT-994 B1: OBH's icon is its own fan-out of its thumbs in public/images", () => {
+  assert.equal(ICONS[WINDOWS.OBH], "/images/obh-icon.png");
   assert.ok(existsSync(join(process.cwd(), "public", ICONS[WINDOWS.OBH])), "the icon file exists");
 });
 
