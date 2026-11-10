@@ -48,6 +48,8 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 - 2026-11-11 step 1: Blob host in next.config images; image works render through next/image (fill, q90); test render gets the app image config via ImageConfigContext; checks 1 (tests) pass
 - 2026-11-11 step 2: Full Res menu item (after Refresh, image/video only, label flips to Optimized), mode in the mount key, reset on opening another item; `display` field on ZeumsItem; tests for Full Res image/video src and menu placement; checks 1, 2 (tests) pass
 - 2026-11-11 step 3: taskbar (20px), title-bar (16px, invert kept) and start-menu (20px) icons through next/image; public/e1.png, e2.png, e4.png removed; checks 3 pass (grep prints nothing, ls reports all three missing); yarn test and yarn build pass
+- 2026-11-11 browser check 1 on `yarn build && yarn start` (port 3987): A Single Path → Path Ten loads `/_next/image?url=…WJQ7…png&w=2048&q=90` (curl with Accept avif: 200 `image/avif`, 2048×2048, 78KB); Full Res swaps to the raw Blob PNG (4000px) and the menu label reads Optimized. `seasons/spring-ps.png` gave 500 from the local optimizer: Next's 7s upstream fetch timed out on this machine's slow link (3.1MB took 15s by curl); Vercel's optimizer is the real check
+- 2026-11-11 step 4: 15 videos re-encoded (CRF 18, longest side ≤2160); 10 smaller copies kept, 5 larger ones dropped (Elevated below); copies in `<git-dir>/goodaf-video/display/`; check 2 pending the upload, step 5
 
 ## Decisions
 
@@ -58,6 +60,10 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 - Elevated: Vercel's docs give 8192px max source dimensions and 10MB max output, but no source file-size limit; whether the optimizer handles a 40MB PNG shows only on a preview deploy (the user's check). Options: runtime `next/image` (chosen with the user), or write-time display copies. If the preview shows `/_next/image` failing for the large PNGs, the fallback is write-time copies (`vercel blob put-image`, credentials again). Reverse: set `unoptimized` on the failing items.
 - Normal: image and video rendering moved into an exported `WorkMedia` component in `MediaWindow.tsx`, so the static test render can drive Full Res without a DOM. Reverse: inline it back into `renderItem` and drop the WorkMedia tests.
 - Normal: choosing Full Res/Optimized from Select Piece or About also switches the window back to the work, so the swap is visible. Reverse: drop `setView("work")` from the menu item.
+- Normal: the encode script downloaded originals to the session scratchpad, then the display copies moved to `<git-dir>/goodaf-video/display/` as the plan says; this session's worktree guard refuses commands that reach `.git` paths through a variable or script. Reverse: none needed.
+- Elevated: four T3RRA videos, Ararat (`terra/31K8R…`), Babylon (`terra/Mo-adtl…`), Gomorrah (`terra/3SX-Iq…`) and Hebron (`terra/zPjSh…`), 4096² at ~30Mbps and 40–41MB each, came out 64–72MB at 2160² with CRF 18 (the GAN grain takes more bits than the originals were given). Choice: per step 4, no `display`; they play their originals. Reverse: re-encode with a bitrate cap (e.g. `-maxrate 15M -bufsize 30M`) or a higher CRF, upload, set `display`.
+- Elevated: some days (`somedays/B6A1z…`, 562×842 at 11.9Mbps, 67.9MB) came out 68.3MB with CRF 18 at the same size. Choice: no `display`; it plays its original. Reverse: as above, with a cap near 6Mbps.
+- Elevated: Done-when 2 ("plays a re-encoded copy smaller than its original") therefore holds for 10 of the 15 video works. Eden (41.3→16.9MB), CEASEFIRE (46.8→20.9MB) and Exaltation of Isaac (93.7→47.4MB) gain the most; A Flower Blooms (54.8→48.8MB) and Tune Out CH1–5 (6–17%) gain little, and CH6 only a few KB. Reverse: re-encode the other five with a cap, or drop the marginal copies.
 
 ## Parked asks
 
