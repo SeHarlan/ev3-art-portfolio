@@ -41,7 +41,7 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 
 ## Bug notes
 
-none
+- B1. 2026-11-10 "Icon redo, for follow-up after review" (the user's comment on SCOTT-994, 2026-11-10): "1. Every desktop icon made from a thumbnail keeps its source's aspect ratio, with no square crop: CEASEFIRE, Exaltation of Isaac, "Progress", A Flower Blooms in Autumn. 2. Galleries drop the 2×2 grid collage for a fan-out of up to three thumbnails, each in its true aspect ratio: remember.exe, s34s0ns, A Single Path, T3RRA, Tune Out. 3. 3xGP and R3MIX get the same fan-out, from their existing selector thumbs (`public/images/thumbs/3xgp-1…3.jpg`, `rmx-*.jpg`). 4. "on being human" swaps its pixel-person icon (`/svg/obh-icon.svg`, added by SCOTT-989 on main) for the same fan-out, made from its thumbs (`public/images/thumbs/obh-a…e.jpg`). This branch doesn't have SCOTT-989's work yet, so main has to be merged into it first. Scope: the 9 new windows, 3xGP, R3MIX and "on being human". Every other existing icon stays as it is."
 
 ## Follow-ups
 
