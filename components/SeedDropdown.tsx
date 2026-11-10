@@ -1,15 +1,19 @@
 import clsx from "clsx"
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, KeyboardEvent, useEffect, useRef, useState } from "react"
 
-interface SeedDropdownProps { 
+interface SeedDropdownProps {
   seedOpen: boolean
   setSeedOpen: (open: boolean) => void
   onUseSeed: (seed: string) => void
+  /** A text area for long seeds: Enter uses the seed, Shift+Enter adds a line. */
+  multiline?: boolean
+  /** Fills the field each time the dropdown opens. */
+  initialSeed?: string
 }
 
-const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen }) => { 
+const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen, multiline = false, initialSeed }) => {
   const [seed, setSeed] = useState("")
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null)
   const useSeed = () => {
     onUseSeed(seed)
     setSeedOpen(false)
@@ -21,48 +25,67 @@ const SeedDropdown: FC<SeedDropdownProps> = ({ onUseSeed, seedOpen, setSeedOpen 
   }
 
   useEffect(() => {
+    if (seedOpen && initialSeed !== undefined) setSeed(initialSeed)
+  }, [seedOpen, initialSeed])
+
+  useEffect(() => {
     if (seedOpen) {
       inputRef.current?.focus()
     }
     return() => inputRef.current?.blur()
   })
+
+  const onFieldKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && !(multiline && e.shiftKey)) {
+      e.preventDefault()
+      useSeed()
+    } else if (e.key === "Escape") {
+      setSeedOpen(false)
+    }
+  }
+
   return (
     <div
       onClick={(e) => {
         e.stopPropagation()
       }}
-      onKeyDown={(e) => { 
-        if (e.key === " ") {
+      onKeyDown={(e) => {
+        // Memories have spaces, so only the single-line field blocks them.
+        if (e.key === " " && !multiline) {
           e.preventDefault()
         }
-      }}    
+      }}
       className={clsx(
       seedOpen ? "flex flex-col items-start " : "hidden",
         "p95-chrome bg-windowsGray text-windowsText classic-border p-2 shadow-md absolute top-full left-0 cursor-default z-30",
         "w-[20rem] max-w-[calc(100vw-1rem)] pointer-events-auto"
     )}>
       <div className="classic-inset p95-field w-full">
-        <input
-          type="text"
-          ref={inputRef}
-          className={clsx("px-1 outline-none w-full")}
-          onKeyDown={(e) => { 
-            if (e.key === "Enter") {
-              useSeed()
-            } else if (e.key === "Escape") { 
-              setSeedOpen(false)
-            } 
-          }}
-          onChange={(e) => {
-           
-            setSeed(e.target.value)
-            
-          }}
-          value={seed}
-          placeholder="Seed"
-        />
+        {multiline
+          ? <textarea
+              ref={el => { inputRef.current = el }}
+              rows={8}
+              className="px-1 outline-none w-full resize-none block"
+              onKeyDown={onFieldKeyDown}
+              onChange={(e) => setSeed(e.target.value)}
+              value={seed}
+              placeholder="Seed"
+            />
+          : <input
+              type="text"
+              ref={el => { inputRef.current = el }}
+              className={clsx("px-1 outline-none w-full")}
+              onKeyDown={onFieldKeyDown}
+              onChange={(e) => {
+
+                setSeed(e.target.value)
+
+              }}
+              value={seed}
+              placeholder="Seed"
+            />}
       </div>
-    
+
       <div className="flex justify-end gap-2 w-full mt-1 p-0.5">
         <button className="classic-button px-2" onClick={clearSeed}>
           <span>clear</span>
