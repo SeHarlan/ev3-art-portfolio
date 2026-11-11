@@ -33,8 +33,15 @@ none
 
 ## Bug notes
 
-none
+- B1. 2026-11-11 "make the text go out a little slower, like a realy fast human typing speed."
+  Done: 2026-11-11, 7fdd925, small change, no repro test (15ms per character, 120ms at line ends; measures 10.5 s)
+- B2. 2026-11-11 "remove the extra newline after "I have recently finished two large projects:" and "Enjoy""
+  Done: 2026-11-11, 92daea4, small change, no repro test
+- B3. 2026-11-11 "make the Social Links component aligned to the left and remove the extra padding around it"
+  Done: 2026-11-11, 0616604, small change, no repro test
+- B4. 2026-11-11 "increase the default window dimensions so there's no scroll bar and only the bullet points over flow to a second line"
+  Done: 2026-11-11, 366745d, small change, no repro test (660×460; at 1024×768 no scroll bar, only the two bullets wrap)
 
 ## Follow-ups
 
-none
+- 2026-11-11 small changes in review: head 366745d; did B1, B2, B3, B4; not reviewed
