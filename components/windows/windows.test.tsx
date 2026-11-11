@@ -139,16 +139,22 @@ test("SCOTT-987: a video work plays its display copy, and Full Res plays the ori
   assert.equal(srcOf(media(original, false).match(/<video [^>]*>/)![0]), original.src);
 });
 
-test("SCOTT-987: image works and videos with a display copy have Full Res after Refresh and before About; other videos and HTML pieces don't", () => {
-  const labels = menuLabels(windows["CEASEFIRE (single)"]());
-  assert.deepEqual(labels.slice(labels.indexOf("Refresh"), labels.indexOf("About") + 1), ["Refresh", "Full Res", "About"], labels.join(", "));
-  const image = menuLabels(singleWork(ZEUMS.SEASONS.items[0]));
-  assert.ok(image.includes("Full Res"), image.join(", "));
+// The labels of the About page's buttons, in order.
+const aboutButtons = (markup: string) =>
+  Array.from(markup.matchAll(/<button class="classic-button[^"]*"><span>([^<]*)<\/span><\/button>/g), (m) => m[1]);
+
+test("SCOTT-987: image works and videos with a display copy have a Full Res button right of Go back on About, not in the menu; other videos and HTML pieces don't", () => {
+  const ceasefire = windows["CEASEFIRE (single)"]();
+  assert.deepEqual(aboutButtons(ceasefire), ["Go back", "Full Res"]);
+  const image = singleWork(ZEUMS.SEASONS.items[0]);
+  assert.deepEqual(aboutButtons(image), ["Go back", "Full Res"]);
+  for (const markup of [ceasefire, image]) {
+    const labels = menuLabels(markup);
+    assert.ok(!labels.includes("Full Res") && !labels.includes("Optimized"), labels.join(", "));
+  }
   // some days has no display copy, so its original is all there is.
-  const noDisplay = menuLabels(windows["some days"]());
-  assert.ok(!noDisplay.includes("Full Res"), noDisplay.join(", "));
-  const piece = menuLabels(html(<MediaWindow windowKey="Progress" data={ZEUMS.PROGRESS} />));
-  assert.ok(!piece.includes("Full Res"), piece.join(", "));
+  assert.deepEqual(aboutButtons(windows["some days"]()), ["Go back"]);
+  assert.deepEqual(aboutButtons(html(<MediaWindow windowKey="Progress" data={ZEUMS.PROGRESS} />)), ["Go back"]);
 });
 
 test("SCOTT-987: the title-bar icon is requested at its 16px display size", () => {

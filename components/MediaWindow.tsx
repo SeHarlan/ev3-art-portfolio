@@ -110,9 +110,6 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   const menu: WindowMenuItem[] = [
     ...(isGallery ? [{ label: "Select Piece", function: () => setView("selector") }] : []),
     { label: "Refresh", function: () => setMountCount(n => n + 1) },
-    ...(hasFullRes
-      ? [{ label: fullRes ? "Optimized" : "Full Res", function: () => { setFullRes(f => !f); setView("work") } }]
-      : []),
     { label: "About", function: () => setView("about") },
   ]
 
@@ -161,6 +158,11 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
         <button className="classic-button px-2" onClick={() => setView(item ? "work" : "selector")}>
           <span>Go back</span>
         </button>
+        {hasFullRes && (
+          <button className="classic-button px-2 ml-2" onClick={() => { setFullRes(f => !f); setView("work") }}>
+            <span>{fullRes ? "Optimized" : "Full Res"}</span>
+          </button>
+        )}
       </div>
     </Window>
   )
