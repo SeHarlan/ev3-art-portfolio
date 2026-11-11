@@ -6,9 +6,11 @@ import { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { imageConfigDefault } from "next/dist/shared/lib/image-config";
 import { ImageConfigContext } from "next/dist/shared/lib/image-config-context.shared-runtime";
-import { ZEUMS, ZeumsItem } from "../../data/zeums";
+import { ZEUMS, ZeumsItem, ZeumsKey } from "../../data/zeums";
+import { WINDOWS } from "../../data/windows";
 import MediaWindow, { WorkMedia } from "../MediaWindow";
 import DUETWindow from "./DUET";
+import FindWindow from "./Find";
 import InTheBeginningWindow from "./InTheBeginning";
 import MaurerWindow from "./Maurer";
 import NoiseWindow from "./Noise";
@@ -16,7 +18,9 @@ import OnBeingHumanWindow from "./OnBeingHuman";
 import R3MIXWindow from "./R3MIX";
 import RememberWindow from "./Remember";
 import STEV3Window from "./STEV3";
+import Sk3tchWindow from "./Sk3tch";
 import SomeDaysWindow from "./SomeDays";
+import TechtonicWindow from "./Techtonic";
 
 // next/image reads the app's image config from the build; give the test render the same config.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -117,6 +121,33 @@ test("F9: a work's video that isn't ready yet takes no keyboard focus, so Tab an
   const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
   assert.ok(video, "CEASEFIRE renders its video");
   assert.match(video!, /\btabindex="-1"/, `video: ${video}`);
+});
+
+test("F3: Find's Randomize button takes clicks while Find isn't the active window, so each click opens a work", () => {
+  // An inactive window's content wrapper is pointer-events-none; Randomize opens a work on top, so Find is inactive.
+  const button = html(<FindWindow />).match(/<button [^>]*class="([^"]*)"[^>]*><span>Randomize<\/span>/);
+  assert.ok(button, "Find renders a Randomize button");
+  assert.ok(button![1].split(" ").includes("pointer-events-auto"), `button classes: ${button![1]}`);
+});
+
+test("F4: Find's Randomize sits left of where every work opens, so the work it opens can't cover it", () => {
+  // A window's markup starts with its own style; React writes left:0 for 0.
+  const left = (markup: string) => Number(markup.match(/^<div [^>]*style="[^"]*left:(\d+)/)![1]);
+  const works = [
+    ...Object.values(windows).map((render) => render()),
+    ...(Object.keys(ZEUMS) as ZeumsKey[]).map((key) => html(<MediaWindow windowKey={WINDOWS[key]} data={ZEUMS[key]} />)),
+    html(<TechtonicWindow />),
+    html(<Sk3tchWindow />),
+  ];
+  const find = html(<FindWindow />);
+  const workLeft = Math.min(...works.map(left));
+  assert.ok(left(find) < workLeft, `Find left ${left(find)}, leftmost work ${workLeft}`);
+  assert.ok(find.indexOf("<span>Randomize</span>") < find.indexOf("<input"), "Randomize comes before the Search field");
+});
+
+test("SCOTT-995 B7: Find's search field is labeled Search, not Named", () => {
+  const label = html(<FindWindow />).match(/<label [^>]*>(.*?)<\/label>/)![1].replace(/<[^>]+>/g, "");
+  assert.equal(label, "Search:");
 });
 
 const media = (item: ZeumsItem, fullRes: boolean) =>

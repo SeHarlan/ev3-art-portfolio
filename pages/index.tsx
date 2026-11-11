@@ -17,12 +17,15 @@ import Sk3tchWindow from '@/components/windows/Sk3tch'
 import MediaWindow from '@/components/MediaWindow'
 import RememberWindow from '@/components/windows/Remember'
 import { ZEUMS, ZeumsKey } from '@/data/zeums'
+import { groupsFor } from '@/data/groups'
+import FolderWindow from '@/components/windows/Folder'
+import FindWindow from '@/components/windows/Find'
 
 // remember.exe has its own window for its seeds; the other zeums entries share MediaWindow.
 const MEDIA_WINDOWS = (Object.keys(ZEUMS) as ZeumsKey[]).filter(key => key !== 'REMEMBER')
 
 export default function Home() {
-  const { openState } = useWindowsContext()
+  const { openState, groupBy } = useWindowsContext()
   const [openMap] = openState
   return (
     <>
@@ -118,6 +121,10 @@ export default function Home() {
           {MEDIA_WINDOWS.map(key => openMap[WINDOWS[key]]
             ? <MediaWindow key={key} windowKey={WINDOWS[key]} data={ZEUMS[key]} />
             : null)}
+          {groupsFor(groupBy).map(group => openMap[group.name]
+            ? <FolderWindow key={group.name} group={group} />
+            : null)}
+          {openMap[WINDOWS.FIND] ? <FindWindow /> : null}
           {openMap[WINDOWS.SETTINGS] ? <SettingsWindow /> : null}
         </div>
         <Footer />

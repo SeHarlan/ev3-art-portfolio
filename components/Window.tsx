@@ -2,7 +2,8 @@ import useDragResize, { Position, Size } from "../hooks/useDragResize";
 import clsx from "clsx";
 import Image from "next/image";
 import { FC, MouseEventHandler, ReactNode, useEffect, useRef, useState } from "react";
-import { ICONS, WINDOWS, useWindowsContext } from "../context/WindowsProvider";
+import { WINDOWS, useWindowsContext } from "../context/WindowsProvider";
+import { iconFor } from "../data/groups";
 import Button from "./Button";
 import PixelGlyph from "./PixelGlyph";
 
@@ -118,7 +119,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
         ref={dragRef}
       >
         <div className="flex items-center gap-[5px] min-w-0">
-          <Image src={ICONS[windowKey]} width={16} height={16} alt="" className="w-4 h-4 object-contain flex-none" style={{filter: invertIcon ? "invert(1)" : ""}} />
+          <Image src={iconFor(windowKey)} width={16} height={16} alt="" className="w-4 h-4 object-contain flex-none" style={{filter: invertIcon ? "invert(1)" : ""}} />
           <p className="translate-y-px whitespace-nowrap min-w-0 overflow-x-clip">{title ?? windowKey}</p>
         </div>
         <div className="flex items-center">

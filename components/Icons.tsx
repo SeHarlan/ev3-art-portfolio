@@ -1,13 +1,19 @@
 import Image from "next/image";
-import { ICONS, useWindowsContext, WINDOWS } from "../context/WindowsProvider";
+import { useWindowsContext } from "../context/WindowsProvider";
+import { desktopKeys, iconFor } from "../data/groups";
+import clsx from "clsx";
 import { FC } from "react";
 
 const Icons: FC = () => {
-  const { handleOpen } = useWindowsContext()
+  const { handleOpen, groupBy, ready } = useWindowsContext()
+
+  const windowKeys = desktopKeys(groupBy)
+
   return (
-    <div className="flex z-[2] flex-col flex-wrap content-start h-[90svh] gap-5 relative top-10 left-10 items-center w-fit">
-      {Object.values(WINDOWS)
-        .map((windowKey) => {
+    // Invisible until the saved grouping is read, so the wrong grouping never shows,
+    // while the icons still load from the server HTML and hold their space.
+    <div className={clsx("flex z-[2] flex-col flex-wrap content-start h-[90svh] gap-5 relative top-10 left-10 items-center w-fit", !ready && "invisible")}>
+      {windowKeys.map((windowKey) => {
           const handleClick = () => handleOpen(windowKey);
           return (
             <div
@@ -19,7 +25,7 @@ const Icons: FC = () => {
               <Image
                 width={56}
                 height={56}
-                src={ICONS[windowKey]}
+                src={iconFor(windowKey)}
                 alt={`${windowKey} Icon`}
                 className="w-14 h-14 object-contain mb-1 flex-shrink-0"
               />
