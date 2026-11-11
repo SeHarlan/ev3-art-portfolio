@@ -1,15 +1,12 @@
 import { FC, useState, useEffect, useRef } from "react"
 import { WINDOWS, useWindowsContext } from "../../context/WindowsProvider"
-import { ART_KEYS } from "../../data/groups"
+import { randomArtKey } from "../../data/groups"
+import { TECHTONIC_SITE } from "../../data/windows"
 import Window, { WindowMenuItem } from "../Window"
 import Links from "../Links"
 
-const TECHTONIC_SITE = "https://techtonic.ev3.art/"
-
 const CHAR_DELAY = 8
 const BREAK_DELAY = 60
-
-const randomArtKey = () => ART_KEYS[Math.floor(Math.random() * ART_KEYS.length)]
 
 type Segment =
   | { type: "text", text: string }
@@ -36,7 +33,7 @@ const contentList: Line[] = [
   ] },
   { type: "p", segments: [
     text("To explore my full portfolio double click on any of the folders, or "),
-    { type: "window", text: "click here", windowKey: randomArtKey },
+    { type: "window", text: "click here", windowKey: () => randomArtKey() },
     text(" for a random piece."),
   ] },
   { type: "p", segments: [
@@ -53,8 +50,9 @@ const contentList: Line[] = [
 const lineLength = (line: Line) =>
   line.type === "element" ? 1 : line.segments.reduce((sum, segment) => sum + segment.text.length, 0)
 
-const lineEnds = contentList.reduce<number[]>((ends, line) => [...ends, (ends[ends.length - 1] ?? 0) + lineLength(line)], [])
-const totalLength = lineEnds[lineEnds.length - 1]
+let typedSoFar = 0
+const lineEnds = contentList.map(line => (typedSoFar += lineLength(line)))
+const totalLength = typedSoFar
 
 const renderSegment = (segment: Segment, shown: number, key: number) => {
   const visible = segment.text.slice(0, shown)
@@ -75,12 +73,12 @@ const renderContent = (typed: number) => {
     items = []
   }
 
+  let remaining = typed
   contentList.forEach((line, index) => {
-    const start = index ? lineEnds[index - 1] : 0
-    let remaining = Math.min(typed - start, lineLength(line))
     if (remaining <= 0) return
 
     if (line.type === "element") {
+      remaining -= 1
       flushList()
       blocks.push(<div key={index}>{line.element}</div>)
       return

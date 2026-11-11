@@ -1,8 +1,7 @@
 import { WINDOWS } from "@/context/WindowsProvider"
 import Window, { WindowMenuItem } from "../Window"
+import { TECHTONIC_SITE as SITE } from "@/data/windows"
 import { FC } from "react"
-
-const SITE = "https://techtonic.ev3.art/"
 
 const TechtonicWindow: FC = () => {
   const initSize = {

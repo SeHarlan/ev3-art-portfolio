@@ -46,6 +46,12 @@ export const hasTags = (key: string) => key in TAGS
 /** The art windows' names, in WINDOWS order. */
 export const ART_KEYS: string[] = Object.values(WINDOWS).filter(hasTags)
 
+/** A random art window, never `exclude`. */
+export const randomArtKey = (exclude?: string): string => {
+  const pool = ART_KEYS.filter(key => key !== exclude)
+  return pool[Math.floor(Math.random() * pool.length)]
+}
+
 /** The WINDOWS enum key for each window name, e.g. "T3RRA" → "TERRA". */
 const ID_BY_NAME: Record<string, string> = Object.fromEntries(Object.entries(WINDOWS).map(([id, name]) => [name, id]))
 

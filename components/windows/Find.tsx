@@ -1,5 +1,5 @@
 import { WINDOWS, useWindowsContext } from "@/context/WindowsProvider"
-import { ART_KEYS, matchesSearch, selectorWorks, windowFromId } from "@/data/groups"
+import { ART_KEYS, matchesSearch, randomArtKey, selectorWorks, windowFromId } from "@/data/groups"
 import Window from "../Window"
 import WorkSelector from "../WorkSelector"
 import Button from "../Button"
@@ -17,8 +17,7 @@ const FindWindow: FC = () => {
 
   // From all the works, whatever the query, never the previous pick.
   const randomize = () => {
-    const pool = ART_KEYS.filter(key => key !== lastPick.current)
-    const pick = pool[Math.floor(Math.random() * pool.length)]
+    const pick = randomArtKey(lastPick.current)
     lastPick.current = pick
     handleOpen(pick)
   }
