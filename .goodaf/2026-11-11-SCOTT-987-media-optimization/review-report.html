@@ -51,9 +51,9 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h1>SCOTT-987 Serve portfolio images from Vercel Blob with image optimization</h1>
 <div class="status">
   <p class="verdict ok">Ready for your check</p>
-  <p>Built on <code>goodaf/SCOTT-987-media-optimization</code>, not merged · reviewed commit <code>2af9480</code>, final <code>21e23d6</code> · ticket In Review</p>
-  <p>Review: general reviewer; no Codex pass: visual or device diff · 1 fix round</p>
-  <p>Running at <a href="http://localhost:3987">http://localhost:3987</a> (production build)</p>
+  <p>Built on <code>goodaf/SCOTT-987-media-optimization</code>, not merged · reviewed commit <code>2af9480</code>, final <code>21e23d6</code> · follow-up 1 head <code>585792d</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 1 fix round · follow-up 1 (T1): general reviewer, 0 findings</p>
+  <p>Running at <a href="http://localhost:3987">http://localhost:3987</a> (production build of <code>585792d</code>)</p>
 </div>
 
 <h2>Asks</h2>
@@ -63,20 +63,22 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <h2>Worth checking by hand</h2>
 <ul>
   <li>On a Vercel preview deploy, open a 20–40MB image work (e.g. A Single Path → Path Sixteen, or a SEASONS piece) → it loads from <code>/_next/image</code> as AVIF or WebP. Locally the optimizer times out on large PNGs, so only the preview shows this.</li>
+  <li>Open some days (or a T3RRA video such as Ararat) and the window's Menu → no Full Res item between Refresh and About; CEASEFIRE's Menu still has it.</li>
 </ul>
 
 <h2>Outcome</h2>
 <div class="wide"><table>
   <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
-  <tr><td>1</td><td>Image work loads optimized AVIF/WebP via <code>/_next/image</code>; Full Res shows the original PNG</td><td class="pass">pass</td><td><code>windows.test.js</code> → exit 0, 13/13. Browser: dr34m 0f w1nt3r requests <code>/_next/image?url=…winter-ps.png&amp;w=2048&amp;q=90</code>; Full Res swaps to the raw Blob PNG, menu reads Optimized. Locally that request gave 500 at Next's 7s fetch timeout; Path Ten through the same endpoint answers <code>image/avif</code>, 78KB.</td></tr>
-  <tr><td>2</td><td>Video work plays a smaller re-encoded copy; Full Res plays the original</td><td class="pass">pass</td><td><code>curl -sI</code> on 9 pairs → every <code>display</code> 200 and smaller (CEASEFIRE 46.8 → 20.9MB). Browser: CEASEFIRE plays <code>ceasefire/display/…mp4</code>; Full Res plays the original, menu reads Optimized.</td></tr>
+  <tr><td>1</td><td>Image work loads optimized AVIF/WebP via <code>/_next/image</code>; Full Res shows the original PNG</td><td class="pass">pass</td><td><code>windows.test.js</code> → exit 0, 13/13 (after follow-up 1 too; the menu test now checks some days has no Full Res). Browser: dr34m 0f w1nt3r requests <code>/_next/image?url=…winter-ps.png&amp;w=2048&amp;q=90</code>; Full Res swaps to the raw Blob PNG, menu reads Optimized. Locally that request gave 500 at Next's 7s fetch timeout; Path Ten through the same endpoint answers <code>image/avif</code>, 78KB.</td></tr>
+  <tr><td>2</td><td>Video work plays a smaller re-encoded copy; Full Res plays the original</td><td class="pass">pass</td><td><code>curl -sI</code> on 9 pairs → every <code>display</code> 200 and smaller (CEASEFIRE 46.8 → 20.9MB). Browser: CEASEFIRE plays <code>ceasefire/display/…mp4</code>; Full Res plays the original, menu reads Optimized. The 6 videos without <code>display</code> show no Full Res (follow-up 1).</td></tr>
   <tr><td>3</td><td>Icons through <code>next/image</code>; <code>e1/e2/e4.png</code> gone</td><td class="pass">pass</td><td><code>grep -rnE '&lt;img [^&gt;]*(ICONS|small-logo)' components pages; ls public/e1.png public/e2.png public/e4.png</code> → grep prints nothing; all three missing</td></tr>
-  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>yarn test</code> → exit 0, all 5 suites; <code>yarn build</code> → exit 0. Lint: none in this repo.</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>yarn test</code> → exit 0, all 5 suites; <code>yarn build</code> → exit 0, again after follow-up 1. Lint: none in this repo.</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
 <ul>
   <li>Done-when 2 holds for 9 of 15 video works. Five re-encodes came out larger than their originals (the four T3RRA 4096² videos and some days) and Tune Out CH6's copy saved only a few KB, so those six play their originals.</li>
+  <li>Full Res shows only where a higher-res version exists: every image, and the 9 videos with a display copy. The other 6 videos have no Full Res item, at your answer on T1.</li>
   <li>The banner is not converted: its only <code>&lt;img&gt;</code> is commented out (<code>pages/index.tsx:101-103</code>), and <code>big-banner-bg.png</code> is used only as an OG/meta URL.</li>
 </ul>
 
@@ -113,7 +115,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 </div>
 
 <h2>Decided for you</h2>
-<details><summary>8 decisions</summary>
+<details><summary>9 decisions</summary>
 <ul>
   <li>Image <code>sizes</code>: <code>"100vw"</code>, since windows can be maximized and quality comes first</li>
   <li>Full Res state: per window, resets when another item opens, not persisted</li>
@@ -123,6 +125,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Encode originals downloaded to the session scratchpad; display copies kept in <code>&lt;git-dir&gt;/goodaf-video/display/</code></li>
   <li>Blob token supplied through <code>vercel env run</code>, held in the command's memory; no env file written</li>
   <li>Title-bar icon back to 16px (<code>width={16}</code>), matching its <code>w-4 h-4</code> display size (review fix F2)</li>
+  <li>Full Res condition: <code>kind === "image"</code>, or a video with <code>display</code> (follow-up 1, T1)</li>
 </ul>
 </details>
 
@@ -130,7 +133,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <ul>
   <li>Whether Vercel's optimizer serves the 20–40MB source PNGs: the local optimizer times out (Next's 7s upstream fetch) on this machine's link, even for the 4.7MB winter-ps.png. Only a preview deploy shows it.</li>
   <li>Visual quality of the 9 re-encoded videos (CRF 18): nobody has watched them side by side with the originals.</li>
-  <li>Codex pass skipped: visual or device diff.</li>
+  <li>Codex pass skipped: visual or device diff (review and follow-up 1).</li>
+  <li>Follow-up 1: the hidden Full Res item on no-display videos is checked by the markup test only, not in a browser.</li>
   <li>The new F2 test failing at width 20: the fixer reports it failed before the fix; not re-run by the review.</li>
 </ul>
 
@@ -149,13 +153,10 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h2>Tracked follow-ups</h2>
 <p class="muted">Not done unless you pull one in. They don't become tickets.</p>
-<h3>Full Res on videos without display</h3>
-<ul>
-  <li>T1 Six videos with no <code>display</code> (Ararat, Babylon, Gomorrah, Hebron, some days, Tune Out CH6) still show Full Res; it reloads the same original and the label flips to Optimized. Hide the item for them, or give them display copies.</li>
-</ul>
+<p>None open. T1 (Full Res on videos without display) was done in follow-up 1, <code>585792d</code>.</p>
 
 <footer>
-  <p>Answer in the review session, one line: "T1 in", "all as recommended", or a bug you found.</p>
+  <p>Nothing needs an answer from you. Describe any bug you find in the review session.</p>
   <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-987-media-optimization/.goodaf/2026-11-11-SCOTT-987-media-optimization/review.md</code></p>
 </footer>
 
