@@ -104,3 +104,13 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 ## Parked asks
 
 - (none)
+
+## Follow-up 1
+
+Base: d6015e4
+- B4: the Introduction window is named "Welcome" (`WINDOWS.HOME` value; the `HOME` key stays).
+- B3: the Settings window is named "My Computer" (`WINDOWS.SETTINGS` value; the `SETTINGS` key stays), with a pixel SVG traced from `refs/my-computer.png` as its icon.
+- B5: desktop and Start list My Computer, Find, Welcome first, then the folders; `WINDOWS` order stays.
+- B2: the Find icon shifts 1px left, so its art is centered on the 16×16 grid.
+- B1: the folder icon is traced from `refs/folder-dithered.png` (yellow/gray dither).
+- B6: work icons remade at 192px on the longest side for the 96px selector, replacing the old files.
