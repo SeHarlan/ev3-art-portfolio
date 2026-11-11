@@ -127,3 +127,8 @@ Base: d6015e4
 - B2: the Find icon shifts 1px left, so its art is centered on the 16×16 grid.
 - B1: the folder icon is traced from `refs/folder-dithered.png` (yellow/gray dither).
 - B6: work icons remade at 192px on the longest side for the 96px selector, replacing the old files.
+
+## Follow-up 2
+
+Base: 4543823
+- B7: Find's "Named:" field label reads "Search:", its access-key underline moving to the S.
