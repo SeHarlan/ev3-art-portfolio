@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { inflateSync } from "node:zlib";
 import { ICONS, WINDOWS } from "../context/WindowsProvider";
+import { FOLDER_ICON } from "../data/groups";
 
 const file = (path: string) => readFileSync(join(process.cwd(), "public", path));
 
@@ -101,4 +102,12 @@ const rectSpan = (svg: string) => {
 test("B2: the Find icon's art sits one cell left of where it was, centered on the 16-wide grid", () => {
   const { left, right } = rectSpan(file(ICONS[WINDOWS.FIND]).toString());
   assert.equal((left + right) / 2, 7.5, `art spans x ${left}–${right}`);
+});
+
+test("B1: the folder icon is the yellow/gray dithered design, with no solid yellow runs", () => {
+  const svg = file(FOLDER_ICON).toString();
+  const yellow = Array.from(svg.matchAll(/width="(\d+)" height="1" fill="#ffff00"/g), (m) => Number(m[1]));
+  const gray = svg.match(/fill="#c0c0c0"/g) ?? [];
+  assert.ok(yellow.length > 100 && gray.length > 100, `${yellow.length} yellow and ${gray.length} gray cells`);
+  assert.deepEqual(yellow.filter((w) => w > 1), [], "yellow runs wider than one cell");
 });
