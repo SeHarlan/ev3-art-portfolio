@@ -50,7 +50,7 @@ const RememberWindow: FC = () => {
   ]
 
   return (
-    <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} wrapperClassName="bg-windowsPaper">
+    <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} inset={view !== "selector"} wrapperClassName="bg-windowsPaper">
       <div className={clsx("absolute inset-0 bg-black", view !== "work" && "invisible")}>
         {seed !== undefined && (
           <iframe

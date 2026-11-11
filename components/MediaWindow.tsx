@@ -128,7 +128,7 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
   const [startedKey, setStartedKey] = useState<string>()
 
   return (
-    <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} wrapperClassName="bg-windowsPaper">
+    <Window windowKey={windowKey} initSize={data.size} initPosition={data.position} menu={menu} inset={view !== "selector"} wrapperClassName="bg-windowsPaper">
       <div className={clsx("absolute inset-0 bg-black flex items-center justify-center", view !== "work" && "invisible")}>
         {item && (item.kind === "html" ? (
           <iframe

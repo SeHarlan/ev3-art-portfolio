@@ -48,6 +48,7 @@ const OnBeingHumanWindow: FC = () => {
       initSize={initSize}
       initPosition={initPos}
       menu={menu}
+      inset={view !== "selector"}
       wrapperClassName="bg-black"
     >
       <div
