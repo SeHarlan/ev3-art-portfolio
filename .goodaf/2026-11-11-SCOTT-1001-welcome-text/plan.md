@@ -38,6 +38,7 @@ Keep `HomeWindow`'s typewriter in `components/windows/Home.tsx` and replace its 
 - 2026-11-11 user approved `yarn install --frozen-lockfile` in this worktree (yarn.lock matches main's); run by start, done, yarn.lock unchanged
 - 2026-11-11 step 1: Home.tsx rewritten (typed-count typewriter, p/li/element lines, window and href link segments, new text); checks 1, 2 pass for Welcome (typing 6.07 s first char to icons, pauses only at line ends; Skip shows all 576 chars plus icons; Sk3tch, My Computer and click here ×3 open windows; Techtonic href and target right; techtonic window link pending step 2)
 - 2026-11-11 step 2: techtonic `SITE` and JSON-LD at techtonic.ev3.art, Epoch One WebSite, on being human Collection and its workExample removed, description no longer names Epoch One; checks 2, 3 pass (Visit techtonic link `href="https://techtonic.ev3.art/"` `target="_blank"`, social icons link to Instagram and Twitter; grep exit 1, no output); `yarn test` pass
+- 2026-11-11 simplify: 4 edits (shared `TECHTONIC_SITE` in `data/windows.ts`; shared `randomArtKey(exclude?)` in `data/groups.ts`, used by Home and Find; one running counter in `renderContent`; `lineEnds` as a running sum); all checks pass (typing 5.98 s, Skip full text and icons, Sk3tch, My Computer, click here ×3 open windows, Techtonic and Visit techtonic links right, grep exit 1, `yarn test` 43 pass, `yarn build` exit 0). Skipped: requestAnimationFrame typing (optional, measured timing fine)
 
 ## Decisions
 
@@ -48,5 +49,6 @@ Keep `HomeWindow`'s typewriter in `components/windows/Home.tsx` and replace its 
 - Normal: typing state is one typed-character count rendered from `contentList`, replacing the per-segment JSX state; `WindowLink` takes a key or a function returning one, for the random pick. Reverse: git revert step 1.
 - Normal: timing: 8ms per character and 60ms at each line end. Timer and render overhead make a character take about 9.8ms in the browser, so 120ms breaks measured 6.6 s; 60ms measures 6.07 s. Reverse: change `CHAR_DELAY` and `BREAK_DELAY` in `Home.tsx`.
 - Normal: paragraphs are `<p class="mb-3">` and the projects a `list-disc list-outside pl-5` list (hanging indent; other windows use `list-inside`). Reverse: edit the classes in `renderContent`.
+- Normal: simplify moved Find's random pick into `randomArtKey(exclude?)` in `data/groups.ts`. Find still excludes its last pick; Welcome's "click here" doesn't, per the random-pick decision above. Reverse: git revert the simplify commit.
 
 ## Parked asks
