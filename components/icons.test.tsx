@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { inflateSync } from "node:zlib";
 import { ICONS, WINDOWS } from "../context/WindowsProvider";
-import { FOLDER_ICON } from "../data/groups";
+import { ART_KEYS, FOLDER_ICON } from "../data/groups";
 
 const file = (path: string) => readFileSync(join(process.cwd(), "public", path));
 
@@ -67,11 +67,11 @@ const fans = [
   WINDOWS.OBH,
 ];
 
-test("B1.1: each single work's icon keeps its source's aspect, with no square crop, at most 56px", () => {
+test("B1.1: each single work's icon keeps its source's aspect, with no square crop, 192px on its longest side (SCOTT-995 B6)", () => {
   for (const [key, thumb] of singles) {
     const icon = pngSize(file(ICONS[key]));
     const src = jpegSize(file(thumb));
-    assert.equal(Math.max(icon.width, icon.height), 56, `${key} icon's longest side`);
+    assert.equal(Math.max(icon.width, icon.height), 192, `${key} icon's longest side`);
     assert.ok(
       Math.abs(icon.width / icon.height - src.width / src.height) < 0.05,
       `${key} icon is ${icon.width}×${icon.height}, its source ${src.width}×${src.height}`,
@@ -84,6 +84,20 @@ test("B1.2–4: galleries, 3xGP, R3MIX and on being human get a fan-out icon: a 
     assert.match(ICONS[key], /^\/images\/[a-z0-9-]+-icon\.png$/, `${key} icon path`);
     const share = transparentShare(file(ICONS[key]));
     assert.ok(share > 0.1, `${key} icon has ${(share * 100).toFixed(0)}% transparent pixels`);
+  }
+});
+
+// The EV3 logos double as techtonic's and Maurer Expanse's icons and are also the Start button's and Welcome's, so they stay as they are.
+const SHARED_LOGOS = ["/images/small-logo.png", "/images/small-alt-logo.png"];
+
+test("B6: every work's raster icon is 192px on its longest side, 2× the selector's 96px slot", () => {
+  const sizes = ART_KEYS.filter((key) => ICONS[key].endsWith(".png") && !SHARED_LOGOS.includes(ICONS[key]))
+    .map((key) => { const { width, height } = pngSize(file(ICONS[key])); return [key, Math.max(width, height)] as const; });
+  assert.equal(sizes.length, 16);
+  assert.deepEqual(sizes.filter(([, side]) => side !== 192), []);
+  // An SVG with no width and height shrinks to 0×0 in the selector's shrink-to-fit cell.
+  for (const key of ART_KEYS.filter((k) => ICONS[k].endsWith(".svg"))) {
+    assert.match(file(ICONS[key]).toString(), /^<svg [^>]*width="192" height="192"/, `${key} icon's intrinsic size`);
   }
 });
 
