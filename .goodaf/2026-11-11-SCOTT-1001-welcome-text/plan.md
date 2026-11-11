@@ -35,6 +35,7 @@ Keep `HomeWindow`'s typewriter in `components/windows/Home.tsx` and replace its 
 ## Progress
 
 - 2026-11-11 plan written
+- 2026-11-11 user approved `yarn install --frozen-lockfile` in this worktree (yarn.lock matches main's); run by start, done, yarn.lock unchanged
 
 ## Decisions
 
