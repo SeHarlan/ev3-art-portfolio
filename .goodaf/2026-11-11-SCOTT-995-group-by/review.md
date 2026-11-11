@@ -66,6 +66,7 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
   Done: 2026-11-11, 0bd9dee, repro groups.test.tsx "B5: My Computer, Find and Welcome come first on the desktop and in Start, then the folders"
 - B6. 2026-11-11 "the icons in the folders are too small, I'm guessing its because they were made super small for the desktop. They were all too blurry anyways, Lets remake them all better quality and sized for the window selector size, and delete the old ones."
   Done: 2026-11-11, a35adc4, repro icons.test.tsx "B6: every work's raster icon is 192px on its longest side, 2× the selector's 96px slot"
+- B7. 2026-11-11 "in the find window, rename "Named" to "Search", then wrap"
 
 ## Follow-ups
 
