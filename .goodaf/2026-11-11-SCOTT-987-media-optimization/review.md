@@ -21,7 +21,7 @@ none
 ## Tracked follow-ups
 
 - T1. [Full Res on videos without display] Six video works with no `display` (Ararat, Babylon, Gomorrah, Hebron, some days, Tune Out CH6) still show Full Res; choosing it reloads the same original and flips the label to Optimized. Either hide the item for them (`kind === "image" || item.display`, and update the "some days" menu test) or give them display copies (bitrate-capped re-encode, or upload CH6's copy). From F1.
-  Answer: —
+  Answer: 2026-11-11 "hide the full res button when a higher res version doesn't exist" → in
 
 ## Worth checking by hand
 
