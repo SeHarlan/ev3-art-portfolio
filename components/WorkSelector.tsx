@@ -62,7 +62,7 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
       {/* The bar scrolls with the grid, so it sits under the last row and
           sticks to the bottom only once items overflow; the scroll padding
           keeps a keyboard-selected item clear of it. */}
-      <div className="flex-1 min-h-0 overflow-auto scroll-pb-10">
+      <div className="flex-1 min-h-0 overflow-auto scroll-pb-10 flex flex-col">
         <div
           ref={gridRef}
           role="listbox"
@@ -70,7 +70,7 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
           aria-activedescendant={selected ? `work-${selected}` : undefined}
           tabIndex={0}
           onKeyDown={onKeyDown}
-          className="p95-icon-grid outline-none flex flex-wrap content-start gap-y-3 p-2"
+          className="p95-icon-grid outline-none flex-none flex flex-wrap content-start gap-y-3 p-2"
         >
           {works.map((work) => {
             const isSelected = work.id === selected;
@@ -105,22 +105,25 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
           })}
         </div>
 
-        {/* Win95's Open dialog row: File name field with the selection, then Open. */}
-        <div className="sticky bottom-0 flex items-center gap-2 p-1.5 bg-windowsGray">
-          <span id={labelId} className="flex-none">File name:</span>
-          <div
-            aria-labelledby={labelId}
-            className="classic-inset p95-field flex-1 min-w-0 h-[21px] px-1 leading-[17px] truncate"
-          >
-            {selectedTitle}
+        {/* Win95's Open dialog row: File name field with the selection, then Open.
+            It grows to fill any space under a short grid, so that space is gray. */}
+        <div className="sticky bottom-0 grow bg-windowsGray">
+          <div className="flex items-center gap-2 p-1.5">
+            <span id={labelId} className="flex-none">File name:</span>
+            <div
+              aria-labelledby={labelId}
+              className="classic-inset p95-field flex-1 min-w-0 h-[21px] px-1 leading-[17px] truncate"
+            >
+              {selectedTitle}
+            </div>
+            <Button
+              className="[--p95-dots:4px] flex-none min-w-[75px] h-[23px] px-2"
+              disabled={!selected}
+              onClick={() => selected && onOpen(selected)}
+            >
+              <span>Open</span>
+            </Button>
           </div>
-          <Button
-            className="[--p95-dots:4px] flex-none min-w-[75px] h-[23px] px-2"
-            disabled={!selected}
-            onClick={() => selected && onOpen(selected)}
-          >
-            <span>Open</span>
-          </Button>
         </div>
       </div>
     </div>
