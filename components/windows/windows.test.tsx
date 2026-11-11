@@ -139,13 +139,14 @@ test("SCOTT-987: a video work plays its display copy, and Full Res plays the ori
   assert.equal(srcOf(media(original, false).match(/<video [^>]*>/)![0]), original.src);
 });
 
-test("SCOTT-987: image and video works have Full Res after Refresh and before About; HTML pieces don't", () => {
-  for (const name of ["CEASEFIRE (single)", "some days"]) {
-    const labels = menuLabels(windows[name]());
-    assert.deepEqual(labels.slice(labels.indexOf("Refresh"), labels.indexOf("About") + 1), ["Refresh", "Full Res", "About"], `${name}: ${labels.join(", ")}`);
-  }
+test("SCOTT-987: image works and videos with a display copy have Full Res after Refresh and before About; other videos and HTML pieces don't", () => {
+  const labels = menuLabels(windows["CEASEFIRE (single)"]());
+  assert.deepEqual(labels.slice(labels.indexOf("Refresh"), labels.indexOf("About") + 1), ["Refresh", "Full Res", "About"], labels.join(", "));
   const image = menuLabels(singleWork(ZEUMS.SEASONS.items[0]));
   assert.ok(image.includes("Full Res"), image.join(", "));
+  // some days has no display copy, so its original is all there is.
+  const noDisplay = menuLabels(windows["some days"]());
+  assert.ok(!noDisplay.includes("Full Res"), noDisplay.join(", "));
   const piece = menuLabels(html(<MediaWindow windowKey="Progress" data={ZEUMS.PROGRESS} />));
   assert.ok(!piece.includes("Full Res"), piece.join(", "));
 });

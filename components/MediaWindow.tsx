@@ -104,10 +104,13 @@ const MediaWindow: FC<MediaWindowProps> = ({ windowKey, data }) => {
     setView("work")
   }
 
+  // Full Res only where a higher-res version exists: every image, and a video with a display copy.
+  const hasFullRes = item?.kind === "image" || (item?.kind === "video" && !!item.display)
+
   const menu: WindowMenuItem[] = [
     ...(isGallery ? [{ label: "Select Piece", function: () => setView("selector") }] : []),
     { label: "Refresh", function: () => setMountCount(n => n + 1) },
-    ...(item && item.kind !== "html"
+    ...(hasFullRes
       ? [{ label: fullRes ? "Optimized" : "Full Res", function: () => { setFullRes(f => !f); setView("work") } }]
       : []),
     { label: "About", function: () => setView("about") },
