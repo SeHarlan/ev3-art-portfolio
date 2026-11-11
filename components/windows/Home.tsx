@@ -139,8 +139,8 @@ const HomeWindow: FC = () => {
   ]
 
   const initSize = {
-    h: 420,
-    w: 420,
+    h: 460,
+    w: 660,
   }
   const initPos = {
     x: 150,
