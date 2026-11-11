@@ -183,8 +183,8 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
       </div>
 
       {!bare && <div className="p95-chrome flex gap-1 items-end">
-        <div className="w-1/2 h-4 classic-inset"></div>
-        <div className="w-1/2 h-4 classic-inset"></div>
+        <div className="w-1/2 h-4 classic-inset p95-dithered"></div>
+        <div className="w-1/2 h-4 classic-inset p95-dithered"></div>
         {grip}
       </div>}
     </div>
