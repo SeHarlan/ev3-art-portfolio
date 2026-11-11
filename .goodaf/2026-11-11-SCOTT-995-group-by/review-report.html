@@ -53,6 +53,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <p class="verdict ok">Ready for your check</p>
   <p>Built on <code>goodaf/SCOTT-995-group-by</code>, not merged · reviewed commit <code>e217a6b</code>, final <code>7ffe9ff</code> · ticket In Review</p>
   <p>Review: general reviewer; no Codex pass: visual or device diff · 2 fix rounds</p>
+  <p>Follow-up 1 (<code>d6015e4</code>..<code>a35adc4</code>): your bug notes B1–B6 done, each with a repro test; reviewed by a general reviewer, 1 new tracked item (T4), nothing to fix</p>
   <p>Running at <a href="http://localhost:3995">http://localhost:3995</a></p>
 </div>
 
@@ -61,6 +62,8 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 
 <h2>Worth checking by hand</h2>
 <ul>
+  <li>Look at the desktop folders and My Computer on a non-Retina screen → the traced 32×32 designs draw each cell at 1.75 CSS px there, so the folder's dither can look uneven; on Retina it's even. The Find icon stays on the 16×16 grid, so it looks chunkier beside them.</li>
+  <li>Open a folder or Find → techtonic and Maurer Expanse still show the EV3 logos and Sk3tch its pixel palette; the other 16 icons are remade. "Progress" now shows a fresh render of its piece, so its colors differ from its own selector thumb.</li>
   <li>Open Find and click Randomize 5+ times in a row without touching anything else → a new work opens each time. Find now opens at the screen's left edge with Randomize first in its row ([Randomize] Named: [field]), moved there in review so opened works don't cover the button.</li>
   <li>On a phone, tap a desktop folder → its folder window opens (the tap path wasn't re-run in review).</li>
 </ul>
@@ -69,19 +72,21 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <div class="wide"><table>
   <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
   <tr><td>1</td><td>Group by control; rearranges right away; survives reload</td><td class="pass">pass</td><td>Browser: Media and Experience each changed desktop and Start with no reload; open "2023" folder closed on switching to Media; after reload Media still pressed and shown.</td></tr>
-  <tr><td>2</td><td>Year folders 2026→2022 plus top-level icons</td><td class="pass">pass</td><td><code>node …/components/groups.test.js</code> → exit 0, 5/5; browser on a cleared first load: Introduction, 2026–2022, Find, Settings.</td></tr>
+  <tr><td>2</td><td>Year folders 2026→2022 plus top-level icons</td><td class="pass">pass</td><td><code>node …/components/groups.test.js</code> → exit 0, 7/7 (incl. B4, B5); browser on a cleared first load: My Computer, Find, Welcome, 2026–2022 (renamed and reordered by B3–B5).</td></tr>
   <tr><td>3</td><td>Media folders, overlap</td><td class="pass">pass</td><td>Same test → exit 0; browser: code, video, image, audio.</td></tr>
   <tr><td>4</td><td>Experience folders</td><td class="pass">pass</td><td>Same test → exit 0; browser: Interactive, Generative, Fixed.</td></tr>
-  <tr><td>5</td><td>Folder window lists group, opens work</td><td class="pass">pass</td><td>Browser: "2023" lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA; DUET opened on top, folder stayed open.</td></tr>
-  <tr><td>6</td><td>Start cascades</td><td class="pass">pass</td><td>Browser at 800×600, 1280×600 and 375×812: submenus beside their entry and on screen; remember.exe opened and the menu closed.</td></tr>
+  <tr><td>5</td><td>Folder window lists group, opens work</td><td class="pass">pass</td><td>Browser: "2023" lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA; DUET opened on top, folder stayed open. Follow-up 1: every work's thumb fills its 96px slot from a 192px (or larger) image, Sk3tch included; no broken images.</td></tr>
+  <tr><td>6</td><td>Start cascades</td><td class="pass">pass</td><td>Browser at 800×600, 1280×600 and 375×812: submenus beside their entry and on screen; remember.exe opened and the menu closed. Follow-up 1: Start reads My Computer, Find, Welcome, a divider, then the groups.</td></tr>
   <tr><td>7</td><td>Find: opens, filters, Randomize</td><td class="pass">pass</td><td>Same test → exit 0; browser: 19 works, <code>audio</code>, <code>maur</code>, <code>2026</code>, <code>xyz</code> (empty, Open disabled) as expected. Real-mouse Randomize failed before review fixes F3 and F4; after them 144 real clicks each opened a work.</td></tr>
-  <tr><td>8</td><td>Folder, Find, Control Panel icons look like Win95's</td><td class="pass">pass</td><td>By eye in the browser at 56px and 16px; your E2E has the final say.</td></tr>
-  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>yarn test</code> → 0 (32 pass); <code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0.</td></tr>
+  <tr><td>8</td><td>Folder, Find, Control Panel icons look like Win95's</td><td class="pass">pass</td><td>By eye in the browser at 56px and 16px; your E2E has the final say. Follow-up 1: folder and My Computer traced cell for cell from your attached designs; Find moved 1 cell left.</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td>On <code>a35adc4</code>: <code>yarn test</code> → 0 (38 pass); <code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0.</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
 <ul>
   <li>Randomize never repeats the previous pick, so from the second click on it draws from the other 18 works. The spec says "from all 19, whatever is typed"; the build reads that as "not limited by the search field" (tracked as T1).</li>
+  <li>Per your bug notes: Introduction is now Welcome (B4) and Settings is now My Computer (B3), listed first as My Computer, Find, Welcome on the desktop and in Start (B5). My Computer's computer icon replaces the Control Panel icon, and the folder uses your dithered design (B1).</li>
+  <li>Per B6, 16 works' icons are remade, setting aside the spec's "don't change any work's icon" for icons only.</li>
 </ul>
 
 <h2>Elevated decisions</h2>
@@ -96,6 +101,31 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <p>Options: trace the Win9x bitmaps, or draw original pixel art with the same read.</p>
   <p>Chose: original 16×16 art in the Win95 style: a flat yellow closed folder; the same folder with a hammer and screwdriver for Control Panel; a dog-eared page under a magnifier for Find.</p>
   <p>Reverse: redraw in <code>public/svg/</code>, or trace if you accept that.</p>
+  <p>Superseded for the folder and My Computer by follow-up 1 (below).</p>
+</div>
+<div class="elevated">
+  <p><strong>Follow-up 1, B1 and B3: you attached Win95-style designs for the folder and the computer icon.</strong></p>
+  <p>Options: trace them cell for cell, or redraw in their spirit.</p>
+  <p>Chose: traced exactly (both are clean 8px-per-cell Win95-palette art) onto 32×32 grids, so they're twice as fine as the 16×16 Find icon.</p>
+  <p>Reverse: redraw on 16×16, or restore the old SVGs from <code>d6015e4</code>.</p>
+</div>
+<div class="elevated">
+  <p><strong>Follow-up 1, B3: <code>public/svg/settings-icon.svg</code> (the Control Panel icon) was unused once My Computer took the computer icon.</strong></p>
+  <p>Options: delete it, or keep it unused.</p>
+  <p>Chose: deleted.</p>
+  <p>Reverse: <code>git checkout d6015e4 -- public/svg/settings-icon.svg</code>.</p>
+</div>
+<div class="elevated">
+  <p><strong>Follow-up 1, B6 scope: "remake them all".</strong></p>
+  <p>Options: every work icon; or every icon a folder shows small or blurry.</p>
+  <p>Chose: 16 remade at 192px: the 12 that were 56px, plus DUET, ITB, it's just noise and some days, resized down from 400–889px. Left as is: techtonic's and Maurer Expanse's EV3 logos (1000px, shared with Welcome and the Start button) and Sk3tch's vector icon, which only got an intrinsic size because it showed at 0×0 in folders.</p>
+  <p>Reverse: <code>git checkout d6015e4 -- public/images/*-icon.png public/svg/sk3tch-icon.svg</code>.</p>
+</div>
+<div class="elevated">
+  <p><strong>Follow-up 1, B6 sources: the HTML and p5 works (remember.exe, 3xGP, R3MIX, on being human) have no stored image bigger than their 96px selector thumbs.</strong></p>
+  <p>Options: fan cards at 96px from those thumbs; or upscale them; or re-render each piece.</p>
+  <p>Chose: 192px icons, 2× the selector's 96px slot. Fan cards fit 96px so no thumb is upscaled, same fan layout as before, with a gray outline so white cards read on the white selector. CEASEFIRE, Isaac and Flower come from their full-size videos (Isaac and Flower: the frame closest to their thumb); "Progress" from a fresh 60 s render of its piece, so its palette differs from its thumb.</p>
+  <p>Reverse: edit and rerun <code>gen.js</code> (side-session notes folder <code>local_063a660c-…/SCOTT-995-icons/</code>).</p>
 </div>
 <div class="elevated">
   <p><strong>Review fix F4: at the planned spot (160, 80), with Randomize at the right of its row, the work Randomize opened covered the button, so the next real click opened nothing. All 19 works open at x ≥ 60, so no spot keeps a right-side button clear.</strong></p>
@@ -105,13 +135,16 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 </div>
 
 <h2>Decided for you</h2>
-<details><summary>22 decisions</summary>
+<details><summary>25 decisions</summary>
 <ul>
   <li>Saved format: localStorage key <code>ev3-p95-group-by</code>, values <code>year</code>, <code>media</code>, <code>experience</code></li>
   <li>Grouping state lives in <code>WindowsProvider</code>, since switching closes folder windows there</li>
   <li>Folder window keys: the bare group name</li>
   <li>Work selector ids: the <code>WINDOWS</code> enum key (e.g. <code>TERRA</code>), since names have spaces and quotes</li>
-  <li>Desktop and Start order: Introduction, the folders, then Find and Settings</li>
+  <li>Desktop and Start order: My Computer, Find, Welcome, then the folders (follow-up 1 B5; was Introduction, the folders, then Find and Settings); Start has a divider below Welcome</li>
+  <li>Renames change <code>WINDOWS</code> values only; the <code>HOME</code> and <code>SETTINGS</code> keys stay, so <code>?window=</code> links still work (follow-up 1)</li>
+  <li>SCOTT-994's single-icon test now expects 192px, not 56 (follow-up 1 B6)</li>
+  <li>Find icon moved exactly 1 cell left, centering its 13-cell art on the 16-cell grid (follow-up 1 B2)</li>
   <li>No wrong-grouping flash on reload: desktop icons stay invisible until the saved grouping is read</li>
   <li>Switching grouping closes the old grouping's open folder windows</li>
   <li>Find matches case-insensitive substrings of the name and all three tag kinds</li>
@@ -137,11 +170,13 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <li>Folder tap at 375×812 (check 5) wasn't re-run: the browser pane's phone emulation sends mouse clicks, not touch events. Execute's run passed it.</li>
   <li>Randomize after fixes F3 and F4 was checked with real mouse clicks by the fixer's Playwright run (144 clicks at 1024×768 and 1440×900), not re-run here after 7ffe9ff. Review's own first rerun of check 7 used scripted clicks, which can't catch F3; real clicks then found F4.</li>
   <li>Check 8 (icons look like Win95's) is by eye; your E2E has the final say.</li>
+  <li>Follow-up 1: whether the remade fan-out icons read as better quality is by eye; the test checks their size, not their look. The Start order is checked in the browser only (T4).</li>
+  <li>Follow-up 1 browser checks ran in a headless browser at device scale 1, not on a Retina screen.</li>
   <li>Lint: none in this repo (<code>next lint</code> prompts to set up ESLint).</li>
 </ul>
 
 <h2>Review</h2>
-<p>3 fixed · 3 tracked · 0 dropped · 0 asks</p>
+<p>3 fixed · 4 tracked · 0 dropped · 0 asks</p>
 <details><summary>Fixed</summary>
 <ul>
   <li>F2 The "every art window has tags" test re-checked <code>ART_KEYS</code>'s own definition, so it couldn't fail — <code>f2f6a6a</code></li>
@@ -165,6 +200,10 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
 <ul>
   <li>T2 After an In the Beginning pick, its window covers the right ~27px of Randomize; the code comment says no work can cover it.</li>
   <li>T3 The F4 test checks Find's left edge, not the button's right edge, so it wouldn't catch the button sliding under a work.</li>
+</ul>
+<h3>Start menu test coverage</h3>
+<ul>
+  <li>T4 The B5 test pins the top-level order data but not what the Start menu renders, so Start going back to its old order wouldn't fail it.</li>
 </ul>
 
 <footer>
