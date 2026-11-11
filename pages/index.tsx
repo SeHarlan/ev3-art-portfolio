@@ -59,8 +59,7 @@ export default function Home() {
                   jobTitle: "Generative artist",
                   sameAs: ["https://x.com/EV3_art", "https://www.instagram.com/ev3_art/"],
                   workExample: [
-                    { "@id": "https://epoch1.ev3.art/#techtonic" },
-                    { "@id": "https://epoch1.ev3.art/#on-being-human" },
+                    { "@id": "https://techtonic.ev3.art/#techtonic" },
                   ],
                 },
                 {
@@ -69,30 +68,14 @@ export default function Home() {
                   name: "EV3",
                   url: "https://ev3.art/",
                   description:
-                    "Art portfolio of EV3 — generative and interactive works including Epoch One (techtonic, on being human), 3xGP, DUET, ITB, and R3MIX.",
-                  publisher: { "@id": "https://ev3.art/#ev3" },
-                },
-                {
-                  "@type": "WebSite",
-                  "@id": "https://epoch1.ev3.art/#website",
-                  name: "Epoch One",
-                  url: "https://epoch1.ev3.art/",
-                  description:
-                    "The generative WebGL art engine behind “techtonic” and “on being human”, created by EV3.",
+                    "Art portfolio of EV3 — generative and interactive works including techtonic, on being human, 3xGP, DUET, ITB, and R3MIX.",
                   publisher: { "@id": "https://ev3.art/#ev3" },
                 },
                 {
                   "@type": "Collection",
-                  "@id": "https://epoch1.ev3.art/#techtonic",
+                  "@id": "https://techtonic.ev3.art/#techtonic",
                   name: "techtonic",
-                  url: "https://epoch1.ev3.art/?tab=techtonic",
-                  creator: { "@id": "https://ev3.art/#ev3" },
-                },
-                {
-                  "@type": "Collection",
-                  "@id": "https://epoch1.ev3.art/#on-being-human",
-                  name: "on being human",
-                  url: "https://epoch1.ev3.art/?tab=obh",
+                  url: "https://techtonic.ev3.art/",
                   creator: { "@id": "https://ev3.art/#ev3" },
                 },
               ],

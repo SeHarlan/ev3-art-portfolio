@@ -2,7 +2,7 @@ import { WINDOWS } from "@/context/WindowsProvider"
 import Window, { WindowMenuItem } from "../Window"
 import { FC } from "react"
 
-const SITE = "https://epoch1.ev3.art?tab=techtonic"
+const SITE = "https://techtonic.ev3.art/"
 
 const TechtonicWindow: FC = () => {
   const initSize = {

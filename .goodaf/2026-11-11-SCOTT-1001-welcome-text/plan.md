@@ -37,6 +37,7 @@ Keep `HomeWindow`'s typewriter in `components/windows/Home.tsx` and replace its 
 - 2026-11-11 plan written
 - 2026-11-11 user approved `yarn install --frozen-lockfile` in this worktree (yarn.lock matches main's); run by start, done, yarn.lock unchanged
 - 2026-11-11 step 1: Home.tsx rewritten (typed-count typewriter, p/li/element lines, window and href link segments, new text); checks 1, 2 pass for Welcome (typing 6.07 s first char to icons, pauses only at line ends; Skip shows all 576 chars plus icons; Sk3tch, My Computer and click here ×3 open windows; Techtonic href and target right; techtonic window link pending step 2)
+- 2026-11-11 step 2: techtonic `SITE` and JSON-LD at techtonic.ev3.art, Epoch One WebSite, on being human Collection and its workExample removed, description no longer names Epoch One; checks 2, 3 pass (Visit techtonic link `href="https://techtonic.ev3.art/"` `target="_blank"`, social icons link to Instagram and Twitter; grep exit 1, no output); `yarn test` pass
 
 ## Decisions
 
