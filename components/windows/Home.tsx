@@ -14,7 +14,7 @@ type Segment =
   | { type: "href", text: string, href: string }
 
 type Line =
-  | { type: "p" | "li", segments: Segment[] }
+  | { type: "p" | "li", segments: Segment[], tight?: boolean }
   | { type: "element", element: JSX.Element }
 
 const text = (text: string): Segment => ({ type: "text", text })
@@ -22,7 +22,7 @@ const text = (text: string): Segment => ({ type: "text", text })
 const contentList: Line[] = [
   { type: "p", segments: [text("I am EV3.")] },
   { type: "p", segments: [text("I explore art with code.")] },
-  { type: "p", segments: [text("I have recently finished two large projects:")] },
+  { type: "p", segments: [text("I have recently finished two large projects:")], tight: true },
   { type: "li", segments: [
     { type: "window", text: "Sk3tch", windowKey: WINDOWS.SK3TCH },
     text(", an interactive glitch drawing program. Showcased as an interactive installation in London, 2026 for the “mallow x Caravana: A Group Show” exhibit."),
@@ -41,7 +41,7 @@ const contentList: Line[] = [
     { type: "window", text: "My Computer", windowKey: WINDOWS.SETTINGS },
     text(" to sort the works into different groupings and change other elements of the site."),
   ] },
-  { type: "p", segments: [text("Enjoy,")] },
+  { type: "p", segments: [text("Enjoy,")], tight: true },
   { type: "p", segments: [text("EV3")] },
   { type: "element", element: <Links className="p-2 flex gap-2 w-full justify-center" /> },
 ]
@@ -95,7 +95,7 @@ const renderContent = (typed: number) => {
     if (line.type === "li") items.push(<li key={index}>{segments}</li>)
     else {
       flushList()
-      blocks.push(<p key={index} className="mb-3">{segments}</p>)
+      blocks.push(<p key={index} className={line.tight ? undefined : "mb-3"}>{segments}</p>)
     }
   })
   flushList()
