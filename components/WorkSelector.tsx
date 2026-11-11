@@ -59,8 +59,10 @@ const WorkSelector: FC<WorkSelectorProps> = ({ works, selectedId, onOpen }) => {
   return (
     // Fills the window's content box; its window passes inset={false}, so the
     // grid draws its own inset and the bar sits below it on the window's gray.
+    // The well fits the grid, so the bar sits under the last row, and shrinks
+    // to scroll once items overflow, pinning the bar to the bottom.
     <div className="p95-chrome absolute inset-0 flex flex-col bg-windowsGray">
-      <div className="classic-inset p95-field flex-1 min-h-0 flex">
+      <div className="classic-inset p95-field flex-initial min-h-0 flex">
         <div className="flex-1 min-w-0 overflow-auto">
           <div
             ref={gridRef}
