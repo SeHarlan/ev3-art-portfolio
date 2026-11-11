@@ -5,8 +5,8 @@ import { TECHTONIC_SITE } from "../../data/windows"
 import Window, { WindowMenuItem } from "../Window"
 import Links from "../Links"
 
-const CHAR_DELAY = 8
-const BREAK_DELAY = 60
+const CHAR_DELAY = 15
+const BREAK_DELAY = 120
 
 type Segment =
   | { type: "text", text: string }
