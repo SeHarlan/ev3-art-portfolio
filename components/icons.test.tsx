@@ -91,3 +91,14 @@ test("B3: the Settings window is named My Computer, under the same SETTINGS key,
   assert.equal(ICONS[WINDOWS.SETTINGS], "/svg/my-computer-icon.svg");
   assert.match(file(ICONS[WINDOWS.SETTINGS]).toString(), /viewBox="0 0 32 32" shape-rendering="crispEdges"/);
 });
+
+// The horizontal span [left, right) of an SVG's <rect>s.
+const rectSpan = (svg: string) => {
+  const rects = Array.from(svg.matchAll(/<rect x="(\d+)" y="\d+" width="(\d+)"/g), (m) => [Number(m[1]), Number(m[1]) + Number(m[2])]);
+  return { left: Math.min(...rects.map(([l]) => l)), right: Math.max(...rects.map(([, r]) => r)) };
+};
+
+test("B2: the Find icon's art sits one cell left of where it was, centered on the 16-wide grid", () => {
+  const { left, right } = rectSpan(file(ICONS[WINDOWS.FIND]).toString());
+  assert.equal((left + right) / 2, 7.5, `art spans x ${left}–${right}`);
+});
