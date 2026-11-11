@@ -36,7 +36,7 @@ test("Experience: Interactive, Generative, Fixed, each work in exactly one", () 
   ]);
 });
 
-test("every art window has tags; Introduction, Settings and Find don't and aren't art", () => {
+test("every art window has tags; Welcome, Settings and Find don't and aren't art", () => {
   assert.equal(ART_KEYS.length, 19);
   for (const key of ART_KEYS) assert.ok(hasTags(key), key);
   for (const key of [WINDOWS.HOME, WINDOWS.SETTINGS, WINDOWS.FIND]) {
@@ -58,4 +58,8 @@ test("matchesSearch: case-insensitive substring of the name or any tag", () => {
   assert.deepEqual(find("xyz"), []);
   assert.deepEqual(find("fixed"), groupsFor("experience").find(g => g.name === "Fixed")!.keys);
   assert.deepEqual(find("IMAGE"), ["s34s0ns", "A Single Path", "T3RRA"]);
+});
+
+test("B4: the Introduction window is named Welcome, under the same HOME key", () => {
+  assert.equal(WINDOWS.HOME, "Welcome");
 });

@@ -73,6 +73,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 step 8: Find icon was drawn and set as `ICONS[FIND]` in slice 1 (Decisions); no file change; check 8's Find part runs as a browser look (`/svg/find-icon.svg` serves 200 image/svg+xml; reads as a page under a magnifier at 56px on the desktop and 16px in the Find title bar and taskbar), final say is the user's E2E
 - 2026-11-11 simplify: 13 edits (`iconFor` shared by Window, Footer and Icons; desktop icons invisible rather than unrendered before `ready`; groupings built once at module load; `ART_KEYS` derived from the tag table; name-to-id map; `matchesSearch` reuses `tagsOf`; Folder takes a `Group`; mirror `WINDOWS` type and unused exports dropped; Settings rows share an `OptionRow`; Start menu shares a `PANEL` class, highlights an open cascade by `aria-expanded` in CSS, and uses a new `.classic-divider-h`); skipped: WorkSelector building its own DOM ids (shared component outside this diff), a shared dialog-button class (pre-existing pattern), the provider's `?window=` lookup; all checks pass (`yarn test` 30 pass, `npx tsc --noEmit`, `yarn build`; browser: cascade, highlight, divider and both Settings rows render)
 - 2026-11-11 slice 2 done
+- 2026-11-11 follow-up 1 B4: `WINDOWS.HOME` is "Welcome" (key `HOME` stays, so `?window=home` and the default-open window still work); repro `groups.test.tsx` "B4", seen red before: `+ 'Introduction' - 'Welcome'`; green after; checks 2 (test part) pass; `yarn test` exit 0 (33 pass), `npx tsc --noEmit` exit 0
 
 ## Decisions
 

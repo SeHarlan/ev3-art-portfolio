@@ -1,7 +1,7 @@
 // Window names and their desktop icons. Kept apart from WindowsProvider so data/groups.ts
 // can read them without an import cycle.
 export const WINDOWS = {
-  HOME: "Introduction",
+  HOME: "Welcome",
   GP: "3xGP",
   DUET: "DUET",
   NOISE: "it's just noise",
