@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-1001</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-1001 update welcome text</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-1001-welcome-text</code>, not merged · reviewed commit <code>71902bf</code>, final <code>71902bf</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 0 fix rounds</p>
+  <p>Running at <a href="http://localhost:3001">http://localhost:3001</a></p>
+</div>
+
+<h2>Asks</h2>
+<p>None.</p>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Welcome types the new text in about 5–6 s; Skip shows it all</td><td class="pass">pass</td><td>Browser check after Menu → Reset: 5.95 s from first character to the social icons, longest gap 66 ms (line ends only). After Skip, the full text and both icons show at once, word for word with the ticket, projects as bullets.</td></tr>
+  <tr><td>2</td><td>Each link does its job</td><td class="pass">pass</td><td>Sk3tch and My Computer windows open; click here ×3 opened on being human, Maurer Expanse, it's just noise. Techtonic and Visit techtonic links: <code>href="https://techtonic.ev3.art/"</code> <code>target="_blank"</code>. Social icons link to Instagram and Twitter.</td></tr>
+  <tr><td>3</td><td>No <code>epoch1</code> left</td><td class="pass">pass</td><td><code>grep -rn epoch1 components pages data</code> → exit 1, no output</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>yarn test</code> → exit 0, 43 pass; <code>yarn build</code> → exit 0; lint: none in this repo</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<p>None.</p>
+
+<h2>Elevated decisions</h2>
+<p>None.</p>
+
+<h2>Decided for you</h2>
+<details><summary>8 decisions</summary>
+<ul>
+  <li>"click here" pick: uniform over all art windows; it can repeat or land on a window that's already open</li>
+  <li>Techtonic search-engine entry: id <code>https://techtonic.ev3.art/#techtonic</code>, url <code>https://techtonic.ev3.art/</code></li>
+  <li>Site description: "Art portfolio of EV3 — generative and interactive works including techtonic, on being human, 3xGP, DUET, ITB, and R3MIX."</li>
+  <li>Window links reuse the Welcome window's existing link button</li>
+  <li>Typing state is one typed-character count over the content list</li>
+  <li>Timing: 8 ms per character, 60 ms at each line end (measures about 6 s in the browser)</li>
+  <li>Paragraph spacing and a hanging-indent bulleted list for the two projects</li>
+  <li>Find's random pick moved into a shared helper also used by "click here"; Find still avoids repeating its last pick</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>The Visit menu item in the techtonic window wasn't clicked; its code opens <code>https://techtonic.ev3.art/</code> in a new tab (<code>components/windows/Techtonic.tsx:17</code>).</li>
+  <li>The Techtonic and social links weren't clicked through to the outside sites; their <code>href</code> and <code>target</code> were checked.</li>
+  <li>Clicking a link while the text is still typing wasn't tried in the browser; the reviewer confirmed from the code that a link renders as soon as its first character is typed.</li>
+  <li>How the text and bullets look is yours to judge.</li>
+</ul>
+
+<h2>Review</h2>
+<p>0 fixed · 0 tracked · 0 dropped · 0 asks</p>
+<p>The general reviewer found nothing to report.</p>
+
+<h2>Tracked follow-ups</h2>
+<p>None.</p>
+
+<footer>
+  <p>Nothing needs an answer from you. Describe any bug you find in the review session.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-1001-welcome-text/.goodaf/2026-11-11-SCOTT-1001-welcome-text/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>
