@@ -49,7 +49,12 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 
 ## Bug notes
 
-none
+- B1. 2026-11-11 "Use this attached dithered design for the folders, the ones you made are way too bright." Attached design: `refs/folder-dithered.png` in this task folder (540×500 screenshot of a pixel-art folder, yellow/gray dither).
+- B2. 2026-11-11 "The find icon is off center, it should be shifted to the left a little."
+- B3. 2026-11-11 "Ive also attached a computer icon, I want this for the settings window, which I want renamed to My Computer." Attached icon: `refs/my-computer.png` in this task folder (540×500 screenshot of a pixel-art computer).
+- B4. 2026-11-11 "rename the introduction window to "Welcome""
+- B5. 2026-11-11 "move the three top level windows to be first in the desktop list and the start window in this order: "My Computer", "Find", "Welcome""
+- B6. 2026-11-11 "the icons in the folders are too small, I'm guessing its because they were made super small for the desktop. They were all too blurry anyways, Lets remake them all better quality and sized for the window selector size, and delete the old ones."
 
 ## Follow-ups
 
