@@ -85,3 +85,9 @@ test("B1.2–4: galleries, 3xGP, R3MIX and on being human get a fan-out icon: a 
     assert.ok(share > 0.1, `${key} icon has ${(share * 100).toFixed(0)}% transparent pixels`);
   }
 });
+
+test("B3: the Settings window is named My Computer, under the same SETTINGS key, with the computer icon", () => {
+  assert.equal(WINDOWS.SETTINGS, "My Computer");
+  assert.equal(ICONS[WINDOWS.SETTINGS], "/svg/my-computer-icon.svg");
+  assert.match(file(ICONS[WINDOWS.SETTINGS]).toString(), /viewBox="0 0 32 32" shape-rendering="crispEdges"/);
+});

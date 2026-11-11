@@ -22,7 +22,7 @@ export const WINDOWS = {
   FLOWER: "A Flower Blooms in Autumn",
   TUNEOUT: "Tune Out",
   FIND: "Find",
-  SETTINGS: "Settings",
+  SETTINGS: "My Computer",
 }
 
 export const ICONS = {
@@ -47,5 +47,5 @@ export const ICONS = {
   [WINDOWS.FLOWER]: "/images/flower-icon.png",
   [WINDOWS.TUNEOUT]: "/images/tuneout-icon.png",
   [WINDOWS.FIND]: "/svg/find-icon.svg",
-  [WINDOWS.SETTINGS]: "/svg/settings-icon.svg",
+  [WINDOWS.SETTINGS]: "/svg/my-computer-icon.svg",
 };

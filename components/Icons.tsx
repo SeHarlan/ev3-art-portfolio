@@ -7,7 +7,7 @@ import { FC } from "react";
 const Icons: FC = () => {
   const { handleOpen, groupBy, ready } = useWindowsContext()
 
-  // Welcome, then the active grouping's folders, then Find and Settings.
+  // Welcome, then the active grouping's folders, then Find and My Computer.
   const windowKeys = [WINDOWS.HOME, ...groupsFor(groupBy).map(group => group.name), WINDOWS.FIND, WINDOWS.SETTINGS]
 
   return (

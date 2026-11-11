@@ -36,7 +36,7 @@ test("Experience: Interactive, Generative, Fixed, each work in exactly one", () 
   ]);
 });
 
-test("every art window has tags; Welcome, Settings and Find don't and aren't art", () => {
+test("every art window has tags; Welcome, My Computer and Find don't and aren't art", () => {
   assert.equal(ART_KEYS.length, 19);
   for (const key of ART_KEYS) assert.ok(hasTags(key), key);
   for (const key of [WINDOWS.HOME, WINDOWS.SETTINGS, WINDOWS.FIND]) {
