@@ -90,6 +90,13 @@ const GROUPS = Object.fromEntries(GROUP_BYS.map(groupBy => [
 
 export const groupsFor = (groupBy: GroupBy): Group[] => GROUPS[groupBy]
 
+/** The windows outside every folder, first on the desktop and in Start. */
+export const TOP_LEVEL: string[] = [WINDOWS.SETTINGS, WINDOWS.FIND, WINDOWS.HOME]
+
+/** The desktop's icons: My Computer, Find and Welcome, then the grouping's folders. */
+export const desktopKeys = (groupBy: GroupBy): string[] =>
+  [...TOP_LEVEL, ...groupsFor(groupBy).map(group => group.name)]
+
 /** Case-insensitive substring match on the work's name or any of its tags, whatever the grouping. */
 export const matchesSearch = (key: string, query: string) => {
   const q = query.trim().toLowerCase()

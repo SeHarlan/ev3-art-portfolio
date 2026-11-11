@@ -1,14 +1,13 @@
 import Image from "next/image";
-import { useWindowsContext, WINDOWS } from "../context/WindowsProvider";
-import { groupsFor, iconFor } from "../data/groups";
+import { useWindowsContext } from "../context/WindowsProvider";
+import { desktopKeys, iconFor } from "../data/groups";
 import clsx from "clsx";
 import { FC } from "react";
 
 const Icons: FC = () => {
   const { handleOpen, groupBy, ready } = useWindowsContext()
 
-  // Welcome, then the active grouping's folders, then Find and My Computer.
-  const windowKeys = [WINDOWS.HOME, ...groupsFor(groupBy).map(group => group.name), WINDOWS.FIND, WINDOWS.SETTINGS]
+  const windowKeys = desktopKeys(groupBy)
 
   return (
     // Invisible until the saved grouping is read, so the wrong grouping never shows,

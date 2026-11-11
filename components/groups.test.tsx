@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { WINDOWS } from "../context/WindowsProvider";
-import { ART_KEYS, groupsFor, hasTags, matchesSearch } from "../data/groups";
+import { ART_KEYS, desktopKeys, groupsFor, hasTags, matchesSearch, TOP_LEVEL } from "../data/groups";
 
 const asObject = (groups: { name: string; keys: string[] }[]) =>
   groups.map(({ name, keys }) => [name, keys] as const);
@@ -62,4 +62,10 @@ test("matchesSearch: case-insensitive substring of the name or any tag", () => {
 
 test("B4: the Introduction window is named Welcome, under the same HOME key", () => {
   assert.equal(WINDOWS.HOME, "Welcome");
+});
+
+test("B5: My Computer, Find and Welcome come first on the desktop and in Start, then the folders", () => {
+  assert.deepEqual(TOP_LEVEL, ["My Computer", "Find", "Welcome"]);
+  assert.deepEqual(desktopKeys("year"), ["My Computer", "Find", "Welcome", "2026", "2025", "2024", "2023", "2022"]);
+  assert.deepEqual(desktopKeys("media").slice(3), ["code", "video", "image", "audio"]);
 });

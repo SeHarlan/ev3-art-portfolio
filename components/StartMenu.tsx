@@ -1,5 +1,5 @@
-import { useWindowsContext, WINDOWS } from "@/context/WindowsProvider";
-import { Group, groupsFor } from "@/data/groups";
+import { useWindowsContext } from "@/context/WindowsProvider";
+import { Group, groupsFor, TOP_LEVEL } from "@/data/groups";
 import { FC, useLayoutEffect, useRef, useState } from "react";
 import { Menu } from '@headlessui/react'
 import Button from "./Button";
@@ -68,7 +68,8 @@ const StartMenuList: FC = () => {
 
   return (
     <div>
-      {item(WINDOWS.HOME)}
+      {TOP_LEVEL.map(item)}
+      <div className="classic-divider-h mx-0.5 my-1" />
       {/* Group entries are plain elements, not Menu.Items: a Menu.Item click closes the whole menu. */}
       {groupsFor(groupBy).map(group => {
         const open = openGroup === group.name
@@ -89,9 +90,6 @@ const StartMenuList: FC = () => {
           </div>
         )
       })}
-      <div className="classic-divider-h mx-0.5 my-1" />
-      {item(WINDOWS.FIND)}
-      {item(WINDOWS.SETTINGS)}
     </div>
   )
 }

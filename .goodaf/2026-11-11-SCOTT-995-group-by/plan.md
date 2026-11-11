@@ -75,6 +75,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - 2026-11-11 slice 2 done
 - 2026-11-11 follow-up 1 B4: `WINDOWS.HOME` is "Welcome" (key `HOME` stays, so `?window=home` and the default-open window still work); repro `groups.test.tsx` "B4", seen red before: `+ 'Introduction' - 'Welcome'`; green after; checks 2 (test part) pass; `yarn test` exit 0 (33 pass), `npx tsc --noEmit` exit 0
 - 2026-11-11 follow-up 1 B3: `WINDOWS.SETTINGS` is "My Computer" (key `SETTINGS` stays) with `ICONS` → `/svg/my-computer-icon.svg`, traced cell for cell from `refs/my-computer.png` (8px cells, 31×32, 0 pixels off their cell's color) onto a 32×32 crispEdges grid; `settings-icon.svg` deleted; repro `icons.test.tsx` "B3", seen red before: `+ 'Settings' - 'My Computer'`; green after; checks 8 (My Computer part, by eye at 8× beside the reference) pass; `yarn test` exit 0 (34 pass), `npx tsc --noEmit` exit 0
+- 2026-11-11 follow-up 1 B5: `TOP_LEVEL` (My Computer, Find, Welcome) and `desktopKeys(groupBy)` in `data/groups.ts`; the desktop lists `desktopKeys`, Start lists `TOP_LEVEL`, a divider, then the group cascades; `WINDOWS` order unchanged; repro `groups.test.tsx` "B5", seen red before: `+ 'Welcome', + 'Find', 'My Computer'` against `'My Computer', - 'Find', - 'Welcome'`; green after; checks 2, 3 (test parts) pass; `yarn test` exit 0 (35 pass), `npx tsc --noEmit` exit 0
 
 ## Decisions
 
@@ -105,6 +106,7 @@ One data module holds the spec's tag table, keyed by `WINDOWS` values, and deriv
 - Elevated (follow-up 1 B3, B1): the user's attached designs replace the earlier "original art, don't trace" call. Situation: B1 and B3 attach Win95-style pixel icons and ask to use them. Options: trace them cell for cell, or redraw in their spirit. Choice: traced exactly (the references are clean 8px-per-cell Win95-palette art), on a 32×32 grid, so these two are twice as fine as the 16×16 Find icon and the desktop draws a cell at 1.75 CSS px. Reverse: redraw on 16×16, or restore the old SVGs from d6015e4.
 - Elevated (follow-up 1 B3): whole-file deletion. `public/svg/settings-icon.svg` (the Control Panel icon) is deleted, since My Computer's icon replaces it and nothing else uses it. Reverse: `git checkout d6015e4 -- public/svg/settings-icon.svg`.
 - Normal (follow-up 1 B3, B4): renames change `WINDOWS` values only; keys `HOME` and `SETTINGS` stay, so `?window=` links, `defaultOpen` and the WorkSelector ids are unchanged. The Settings component and file keep their names. Reverse: the two values in `data/windows.ts`.
+- Normal (follow-up 1 B5): Start reads My Computer, Find, Welcome, a divider, then the groups; the divider moved from above Find to below Welcome. This replaces the earlier "Find and Settings below the folders" order. Reverse: `TOP_LEVEL` and `desktopKeys` in `data/groups.ts`, and the divider in `StartMenu.tsx`.
 
 ## Parked asks
 
