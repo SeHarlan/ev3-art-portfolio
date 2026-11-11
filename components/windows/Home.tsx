@@ -1,222 +1,142 @@
-import Image from "next/image"
 import { FC, useState, useEffect, useRef } from "react"
 import { WINDOWS, useWindowsContext } from "../../context/WindowsProvider"
+import { ART_KEYS } from "../../data/groups"
 import Window, { WindowMenuItem } from "../Window"
 import Links from "../Links"
 
-const web3Links = [
-  { label: "it's just noise", windowKey: WINDOWS.NOISE },
-  { label: "Maurer Expanse", windowKey: WINDOWS.MAURER },
-]
-const personalLinks = [
-  {label: "Cards Against Humanity", windowKey: "HAC"}
-]
-// as an artist i aim to disassemble and reconstruct the filters we place on reality
-//  
-// allowing myself and the viewer to reexamine the ordinary and cliche as well as confront the challenging or ignored
-//  
-// finding beauty
-// evoking emotion
-// exploring ideas
-//  
-// hoping this helps us in our journey to better the internal and external worlds we live in
-const contentList = [
-  { text: "hello my name is EV3" },
-  { type: "break", text: "" },
-  { text: "i like "},
-  { type: "delete", text: "experimenting and pushing boundaries" },
-  { type: "delete", text: "finding beauty in the chaos" },
-  { type: "delete", text: "exploring emotion" },
-  { text: "making art with code" },
-  { type: "break", text: "" },
-  { type: "break", text: "" },
+const TECHTONIC_SITE = "https://techtonic.ev3.art/"
 
+const CHAR_DELAY = 8
+const BREAK_DELAY = 60
 
-  { text: "as an artist i aim to disassemble and reconstruct the filters we place on reality" },
-  { type: "break", text: "" },
-  { type: "break", text: "" },
-  { text: "to reexamine the ordinary and cliche"},
-  { type: "break", text: "" },
-  {text : "to confront the challenging or ignored"},
-  { type: "break", text: "" },
-  { text: "to evoke emotion" },
-  { type: "break", text: "" },
-  { text: "to find beauty" },
-  { type: "break", text: "" },
-  { type: "break", text: "" },
+const randomArtKey = () => ART_KEYS[Math.floor(Math.random() * ART_KEYS.length)]
 
-  // { text: "hoping this helps us on our journey to better the internal and external worlds we live in" },
-  // { type: "break", text: "" },
-  // { type: "break", text: "" },
-  // { text: "- - -"},
-  // { type: "break", text: "" },
+type Segment =
+  | { type: "text", text: string }
+  | { type: "window", text: string, windowKey: string | (() => string) }
+  | { type: "href", text: string, href: string }
 
-  // { text: "thank you for visiting and viewing my art" },
-  // { type: "break", text: "" },
-  // { text: "it really means so much to me"},
-  // { type: "break", text: "" },
-  // { text: "please enjoy and feel free to reach out any time" },
+type Line =
+  | { type: "p" | "li", segments: Segment[] }
+  | { type: "element", element: JSX.Element }
 
-  // { type: "break", text: "" },
-  // { type: "break", text: "" },
-  // { text: "you can follow me on social media below as well as check out my Collector gallery page which houses all of my other artworks." },
-  { type: "element", text: "", element: <Links className="p-2 flex gap-2 w-full justify-center" /> },
+const text = (text: string): Segment => ({ type: "text", text })
+
+const contentList: Line[] = [
+  { type: "p", segments: [text("I am EV3.")] },
+  { type: "p", segments: [text("I explore art with code.")] },
+  { type: "p", segments: [text("I have recently finished two large projects:")] },
+  { type: "li", segments: [
+    { type: "window", text: "Sk3tch", windowKey: WINDOWS.SK3TCH },
+    text(", an interactive glitch drawing program. Showcased as an interactive installation in London, 2026 for the “mallow x Caravana: A Group Show” exhibit."),
+  ] },
+  { type: "li", segments: [
+    { type: "href", text: "Techtonic", href: TECHTONIC_SITE },
+    text(", a long-form generative art project that combines pixel and glitch elements with organic movements, ebbing and flowing over time."),
+  ] },
+  { type: "p", segments: [
+    text("To explore my full portfolio double click on any of the folders, or "),
+    { type: "window", text: "click here", windowKey: randomArtKey },
+    text(" for a random piece."),
+  ] },
+  { type: "p", segments: [
+    text("Click "),
+    { type: "window", text: "My Computer", windowKey: WINDOWS.SETTINGS },
+    text(" to sort the works into different groupings and change other elements of the site."),
+  ] },
+  { type: "p", segments: [text("Enjoy,")] },
+  { type: "p", segments: [text("EV3")] },
+  { type: "element", element: <Links className="p-2 flex gap-2 w-full justify-center" /> },
 ]
 
+// Each line types as one run of characters; an element counts as one.
+const lineLength = (line: Line) =>
+  line.type === "element" ? 1 : line.segments.reduce((sum, segment) => sum + segment.text.length, 0)
 
+const lineEnds = contentList.reduce<number[]>((ends, line) => [...ends, (ends[ends.length - 1] ?? 0) + lineLength(line)], [])
+const totalLength = lineEnds[lineEnds.length - 1]
+
+const renderSegment = (segment: Segment, shown: number, key: number) => {
+  const visible = segment.text.slice(0, shown)
+  switch (segment.type) {
+    case "window": return <WindowLink key={key} windowKey={segment.windowKey} label={visible} />
+    case "href": return <a key={key} href={segment.href} target="_blank" rel="noreferrer" className="underline">{visible}</a>
+    default: return <span key={key}>{visible}</span>
+  }
+}
+
+/** The lines as far as `typed` characters, consecutive list items grouped into one list. */
+const renderContent = (typed: number) => {
+  const blocks: JSX.Element[] = []
+  let items: JSX.Element[] = []
+  const flushList = () => {
+    if (!items.length) return
+    blocks.push(<ul key={`list-${blocks.length}`} className="list-disc list-outside pl-5 mb-3">{items}</ul>)
+    items = []
+  }
+
+  contentList.forEach((line, index) => {
+    const start = index ? lineEnds[index - 1] : 0
+    let remaining = Math.min(typed - start, lineLength(line))
+    if (remaining <= 0) return
+
+    if (line.type === "element") {
+      flushList()
+      blocks.push(<div key={index}>{line.element}</div>)
+      return
+    }
+
+    const segments: JSX.Element[] = []
+    line.segments.forEach((segment, segmentIndex) => {
+      if (remaining <= 0) return
+      const shown = Math.min(remaining, segment.text.length)
+      segments.push(renderSegment(segment, shown, segmentIndex))
+      remaining -= shown
+    })
+
+    if (line.type === "li") items.push(<li key={index}>{segments}</li>)
+    else {
+      flushList()
+      blocks.push(<p key={index} className="mb-3">{segments}</p>)
+    }
+  })
+  flushList()
+  return blocks
+}
 
 const HomeWindow: FC = () => {
-  const [display, setDisplay] = useState<(JSX.Element | null)[]>([])
-  const [contentIndex, setContentIndex] = useState(0)
-  const [textIndex, setTextIndex] = useState(0)
+  const [typed, setTyped] = useState(0)
   const [isSkipping, setIsSkipping] = useState(false)
-
-  const delay = useRef(50);
-  const delayBuffer = 0.8
-  const elComplete = useRef(false);
-  const reverse = useRef(false);
   const myDivRef = useRef<HTMLDivElement>(null);
-  const timerId = useRef<NodeJS.Timeout>();
-
-  const makeKey = (index: number) => `content-${index}-${Math.random()}`
 
   useEffect(() => {
-    if (isSkipping) return;
-    timerId.current = setTimeout(() => {
-      if(contentIndex >= contentList.length) return
+    if (typed >= totalLength) return
+    // Pause only after a line ends, never between segments of one line.
+    const delay = lineEnds.includes(typed) ? BREAK_DELAY : CHAR_DELAY
+    const timerId = setTimeout(() => setTyped(prev => prev + 1), delay)
+    return () => clearTimeout(timerId)
+  }, [typed])
 
-      const contentObj = contentList[contentIndex];
-      elComplete.current = false;
-      const newDisplay = [...display];
-
-      switch (contentObj.type) {
-        case "element": { 
-          newDisplay[contentIndex] = <div key={makeKey(contentIndex)}>{contentObj.element}</div>
-          setDisplay(newDisplay)
-
-          setTimeout(() => handleNextContent(), 2500)
-          break;
-        }
-        // case "links": { 
-        //   if (!contentObj.links || textIndex > contentObj.links.length) elComplete.current = true;
-        //   else {
-        //     const el = (<WindowLinksWrapper key={makeKey(contentIndex)}>
-        //       {contentObj.links?.map((linkProps, index) => {
-        //         if (index > textIndex) return null
-        //         return <WindowLink key={linkProps.label} {...linkProps} />
-        //       })}
-        //     </WindowLinksWrapper>)
-
-        //     newDisplay[contentIndex] = el
-        //     setDisplay(newDisplay)
-        //     setTextIndex(prev => prev + 1)
-        //     delay.current = 400
-        //   }
-        //   break;
-        // };
-        case "delete": { 
-          const text = contentObj.text.slice(0, textIndex)
-          const el = <span key={makeKey(contentIndex)}>{text}</span>
-          newDisplay[contentIndex] = el
-          setDisplay(newDisplay)
-
-          if (reverse.current) {
-            setTextIndex(prev => prev - 1)
-            //end condition
-            if (textIndex <= 0) {
-              elComplete.current = true
-              reverse.current = false;
-            }
-            delay.current = 15
-          } else {
-            setTextIndex(prev => prev + 1)
-            delay.current = 50
-            // middle condition (start the delete)
-            if (textIndex > contentObj.text.length) {
-              delay.current = 550
-              reverse.current = true;
-            }
-          }
-          break;
-        };
-        case "break": { 
-          delay.current = 80
-          const el = <br key={makeKey(contentIndex)} />
-          newDisplay[contentIndex] = el
-          setDisplay(newDisplay)    
-          elComplete.current = true;
-          break;
-        };
-        default: {
-          if (textIndex > contentObj.text.length) elComplete.current = true;
-          else {
-            const text = contentObj.text.slice(0, textIndex)
-   
-            const el = <span key={makeKey(contentIndex)}>{text}</span>
-            newDisplay[contentIndex] = el
-            setDisplay(newDisplay)
-            setTextIndex(prev => prev + 1)
-            delay.current = 30
-          }
-          break;
-        }
-      }
-
-      function handleNextContent() {
-        delay.current = 300;
-        setTextIndex(0)
-        setContentIndex(prev => prev + 1)
-      }
-
-      if (elComplete.current) handleNextContent();
-      if (myDivRef.current) myDivRef.current.scrollTop = myDivRef?.current.scrollHeight;
-    }, delay.current * delayBuffer)
-
-
-    return () => clearTimeout(timerId.current)
-  }, [contentIndex, textIndex])
-  
   useEffect(() => {
-    if (!myDivRef.current || isSkipping || contentIndex >= contentList.length) return;
-    // Scroll to the bottom of the div when the component updates
+    if (!myDivRef.current || isSkipping) return;
+    // Scroll to the bottom of the div while typing
     myDivRef.current.scrollTop = myDivRef.current.scrollHeight;
-  });
-
-  const skip = () => {
-    if(isSkipping) return
-    clearTimeout(timerId.current)
-    setIsSkipping(true)
-    setDisplay([])
-    const content: (JSX.Element | null)[] = contentList.map((contentObj) => {
-      switch (contentObj.type) {
-        case "element": return <div key={makeKey(contentIndex)}>{contentObj.element}</div>;
-        // case "links": return (
-        //   <WindowLinksWrapper key={makeKey(contentIndex)}>
-        //     {contentObj.links?.map((linkProps) => <WindowLink key={linkProps.label} {...linkProps} />)}
-        //   </WindowLinksWrapper>
-        // );
-        case "delete": return null;
-        case "break": return <br key={makeKey(contentIndex)} />
-        default: return <span key={makeKey(contentIndex)}>{contentObj.text}</span>
-      }
-    })
-    setDisplay(content)
-  }
-  const reset = () => { 
-    setIsSkipping(false)
-    setDisplay([])
-    setContentIndex(0)
-    setTextIndex(0)
-  }
+  }, [typed, isSkipping]);
 
   const menu: WindowMenuItem[] = [
     {
       label: "Skip",
-      function: skip
+      function: () => {
+        setIsSkipping(true)
+        setTyped(totalLength)
+      }
     },
     {
       label: "Reset",
-      function: reset
+      function: () => {
+        setIsSkipping(false)
+        setTyped(0)
+      }
     }
   ]
 
@@ -228,11 +148,11 @@ const HomeWindow: FC = () => {
     x: 150,
     y: 100
   }
-  
+
   return (
     <Window windowKey={WINDOWS.HOME} initSize={initSize} initPosition={initPos} menu={menu}>
       <div className="bg-windowsPaper h-full overflow-x-hidden p-3" ref={myDivRef}>
-        {display}      
+        {renderContent(typed)}
       </div>
     </Window>
   )
@@ -240,18 +160,10 @@ const HomeWindow: FC = () => {
 
 export default HomeWindow
 
-const WindowLinksWrapper: FC<{children?: (JSX.Element| null)[]}> = ({children}) => {
-  return (
-    <div className="flex gap-3">
-      {children}
-    </div>
-  )
-}
-
-const WindowLink: FC<{ windowKey: string, label: string }> = ({ windowKey, label }) => {
+const WindowLink: FC<{ windowKey: string | (() => string), label: string }> = ({ windowKey, label }) => {
   const { handleOpen } = useWindowsContext()
 
-  const open = () => handleOpen(windowKey);
+  const open = () => handleOpen(typeof windowKey === "function" ? windowKey() : windowKey);
   return (
     <button onClick={open} className="underline">
       {label}

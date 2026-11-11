@@ -36,6 +36,7 @@ Keep `HomeWindow`'s typewriter in `components/windows/Home.tsx` and replace its 
 
 - 2026-11-11 plan written
 - 2026-11-11 user approved `yarn install --frozen-lockfile` in this worktree (yarn.lock matches main's); run by start, done, yarn.lock unchanged
+- 2026-11-11 step 1: Home.tsx rewritten (typed-count typewriter, p/li/element lines, window and href link segments, new text); checks 1, 2 pass for Welcome (typing 6.07 s first char to icons, pauses only at line ends; Skip shows all 576 chars plus icons; Sk3tch, My Computer and click here ×3 open windows; Techtonic href and target right; techtonic window link pending step 2)
 
 ## Decisions
 
@@ -43,5 +44,8 @@ Keep `HomeWindow`'s typewriter in `components/windows/Home.tsx` and replace its 
 - Normal: techtonic JSON-LD: `@id` `https://techtonic.ev3.art/#techtonic`, `url` `https://techtonic.ev3.art/`, keeping the existing `#fragment` id pattern. Reverse: edit the two strings.
 - Normal: site description: "Art portfolio of EV3 — generative and interactive works including techtonic, on being human, 3xGP, DUET, ITB, and R3MIX.", the old text minus the Epoch One naming. Reverse: edit the string.
 - Normal: window links reuse `Home.tsx`'s existing `WindowLink` button rather than a new component. Reverse: replace with a new link component.
+- Normal: typing state is one typed-character count rendered from `contentList`, replacing the per-segment JSX state; `WindowLink` takes a key or a function returning one, for the random pick. Reverse: git revert step 1.
+- Normal: timing: 8ms per character and 60ms at each line end. Timer and render overhead make a character take about 9.8ms in the browser, so 120ms breaks measured 6.6 s; 60ms measures 6.07 s. Reverse: change `CHAR_DELAY` and `BREAK_DELAY` in `Home.tsx`.
+- Normal: paragraphs are `<p class="mb-3">` and the projects a `list-disc list-outside pl-5` list (hanging indent; other windows use `list-inside`). Reverse: edit the classes in `renderContent`.
 
 ## Parked asks
