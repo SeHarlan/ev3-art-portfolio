@@ -43,7 +43,7 @@ const contentList: Line[] = [
   ] },
   { type: "p", segments: [text("Enjoy,")], tight: true },
   { type: "p", segments: [text("EV3")] },
-  { type: "element", element: <Links className="p-2 flex gap-2 w-full justify-center" /> },
+  { type: "element", element: <Links className="flex gap-2" /> },
 ]
 
 // Each line types as one run of characters; an element counts as one.
