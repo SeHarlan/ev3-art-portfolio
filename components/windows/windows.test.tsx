@@ -134,5 +134,10 @@ test("F4: Find's Randomize sits left of where every work opens, so the work it o
   const find = html(<FindWindow />);
   const workLeft = Math.min(...works.map(left));
   assert.ok(left(find) < workLeft, `Find left ${left(find)}, leftmost work ${workLeft}`);
-  assert.ok(find.indexOf("<span>Randomize</span>") < find.indexOf("<input"), "Randomize comes before the Named field");
+  assert.ok(find.indexOf("<span>Randomize</span>") < find.indexOf("<input"), "Randomize comes before the Search field");
+});
+
+test("SCOTT-995 B7: Find's search field is labeled Search, not Named", () => {
+  const label = html(<FindWindow />).match(/<label [^>]*>(.*?)<\/label>/)![1].replace(/<[^>]+>/g, "");
+  assert.equal(label, "Search:");
 });

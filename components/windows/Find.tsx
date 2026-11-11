@@ -34,7 +34,7 @@ const FindWindow: FC = () => {
             <span>Randomize</span>
           </Button>
           <label htmlFor={inputId} className="flex-none">
-            <span className="underline">N</span>amed:
+            <span className="underline">S</span>earch:
           </label>
           <div className="classic-inset p95-field flex-1 min-w-0 h-[21px]">
             <input
