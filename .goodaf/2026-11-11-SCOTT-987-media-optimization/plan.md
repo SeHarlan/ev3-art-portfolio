@@ -71,3 +71,8 @@ Every full-size work is already a Blob URL in `data/zeums.ts` (plus `components/
 
 ## Parked asks
 
+
+## Follow-up 1
+
+Base: 53de6ee
+- T1: Full Res shows only when a higher-res version exists: on every image, and on a video only when it has a `display` copy (the user: "hide the full res button when a higher res version doesn't exist"); update the menu test so "some days" (no `display`) has no Full Res.
