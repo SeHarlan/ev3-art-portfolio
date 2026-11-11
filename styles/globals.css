@@ -24,6 +24,12 @@
     font-smooth: never;
     -webkit-font-smoothing : none;
   }
+  /* The static icon (Introduction, Start, favicon art) is pure-color pixels:
+     scale it by whole pixels so small sizes don't blend them into gray.
+     Matches next/image's /_next/image?url=%2Fimages%2Fstatic-icon.png too. */
+  img[src*="static-icon.png"] {
+    image-rendering: pixelated;
+  }
 }
 /* Sk3tch's Win95 palettes (sk3tch paint.css). Classic (win95) is the base;
    [data-p95-theme] on <html> swaps to gray (Standard) or bw (1-Bit). */
@@ -252,7 +258,9 @@ html, body {
 }
 
 /* Pressed, and toggled on (taskbar item, open Start, aria-pressed): the
-   sunken bevel, a 50% dither when toggled, and the label 1 down-right. */
+   sunken bevel, a 50% dither when toggled, and the label 1 down-right.
+   .p95-dithered gives another sunken box (a window's status panes) the
+   toggled dither. */
 .classic-button:active:not(:disabled):not(.disabled),
 .classic-button.active,
 .classic-button[aria-pressed='true'],
@@ -260,7 +268,8 @@ html, body {
   box-shadow: var(--p95-bevel-sunken);
 }
 .classic-button.active,
-.classic-button[aria-pressed='true'] {
+.classic-button[aria-pressed='true'],
+.p95-dithered {
   background: var(--p95-dither), var(--p95-face);
 }
 .classic-button:active:not(:disabled):not(.disabled) > *,

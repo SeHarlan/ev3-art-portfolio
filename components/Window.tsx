@@ -1,5 +1,6 @@
 import useDragResize, { Position, Size } from "../hooks/useDragResize";
 import clsx from "clsx";
+import Image from "next/image";
 import { FC, MouseEventHandler, ReactNode, useEffect, useRef, useState } from "react";
 import { WINDOWS, useWindowsContext } from "../context/WindowsProvider";
 import { iconFor } from "../data/groups";
@@ -118,7 +119,7 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
         ref={dragRef}
       >
         <div className="flex items-center gap-[5px] min-w-0">
-          <img src={iconFor(windowKey)} alt="" className="w-4 h-4 object-contain flex-none" style={{filter: invertIcon ? "invert(1)" : ""}} />
+          <Image src={iconFor(windowKey)} width={16} height={16} alt="" className="w-4 h-4 object-contain flex-none" style={{filter: invertIcon ? "invert(1)" : ""}} />
           <p className="translate-y-px whitespace-nowrap min-w-0 overflow-x-clip">{title ?? windowKey}</p>
         </div>
         <div className="flex items-center">
@@ -183,8 +184,8 @@ const Window: FC<WindowProps> = ({ children, initPosition, windowKey, title, bar
       </div>
 
       {!bare && <div className="p95-chrome flex gap-1 items-end">
-        <div className="w-1/2 h-4 classic-inset"></div>
-        <div className="w-1/2 h-4 classic-inset"></div>
+        <div className="w-1/2 h-4 classic-inset p95-dithered"></div>
+        <div className="w-1/2 h-4 classic-inset p95-dithered"></div>
         {grip}
       </div>}
     </div>

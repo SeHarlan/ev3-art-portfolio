@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    // Full-size works live in the project's Vercel Blob store.
+    remotePatterns: [{ protocol: 'https', hostname: 'k4xw43ajr4eh6re3.public.blob.vercel-storage.com', pathname: '/**' }],
+    formats: ['image/avif', 'image/webp'],
+    qualities: [75, 90],
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // Replace Node modules with empty mocks for client-side bundles

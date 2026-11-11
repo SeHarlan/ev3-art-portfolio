@@ -1,11 +1,14 @@
 import "../testAlias";
 import assert from "node:assert/strict";
+import { join } from "node:path";
 import { test } from "node:test";
 import { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { ZEUMS, ZeumsKey } from "../../data/zeums";
+import { imageConfigDefault } from "next/dist/shared/lib/image-config";
+import { ImageConfigContext } from "next/dist/shared/lib/image-config-context.shared-runtime";
+import { ZEUMS, ZeumsItem, ZeumsKey } from "../../data/zeums";
 import { WINDOWS } from "../../data/windows";
-import MediaWindow from "../MediaWindow";
+import MediaWindow, { WorkMedia } from "../MediaWindow";
 import DUETWindow from "./DUET";
 import FindWindow from "./Find";
 import InTheBeginningWindow from "./InTheBeginning";
@@ -19,7 +22,11 @@ import Sk3tchWindow from "./Sk3tch";
 import SomeDaysWindow from "./SomeDays";
 import TechtonicWindow from "./Techtonic";
 
-const html = (el: ReactElement) => renderToStaticMarkup(el);
+// next/image reads the app's image config from the build; give the test render the same config.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const imageConfig = { ...imageConfigDefault, ...require(join(process.cwd(), "next.config.js")).images };
+const html = (el: ReactElement) =>
+  renderToStaticMarkup(<ImageConfigContext.Provider value={imageConfig}>{el}</ImageConfigContext.Provider>);
 // A menu item renders its first letter underlined, then the rest of its label (then any dropdown).
 const menuLabels = (markup: string) =>
   Array.from(markup.matchAll(/<button class="ev3-menu-item[^"]*"><span class="underline">(.)<\/span>([^<]*)/g), (m) => m[1] + m[2]);
@@ -37,6 +44,10 @@ const windows: Record<string, () => string> = {
   ITB: () => html(<InTheBeginningWindow />),
   "some days": () => html(<SomeDaysWindow />),
 };
+// A window showing just this work, open.
+const singleWork = (work: ZeumsItem) => html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [work] }} />);
+// The open work's <img> when a single image work is shown (the Window's own icon is an <img> too).
+const workImage = (work: ZeumsItem) => singleWork(work).match(/<img [^>]*>/g)?.find((tag) => tag.includes(`alt="${work.title}"`));
 const selectorWindows = ["Tune Out (gallery)", "remember.exe", "R3MIX", "3xGP", "on being human"];
 
 test("B2: the content box's scroll wrapper is positioned, so absolutely placed content sits inside the inset bevel instead of covering it", () => {
@@ -101,10 +112,7 @@ test("F7: a work's image or video that isn't ready yet takes no clicks, so click
   const video = windows["CEASEFIRE (single)"]().match(/<video [^>]*>/)?.[0];
   assert.ok(video, "CEASEFIRE renders its video");
   assert.match(video!, /class="[^"]*\bpointer-events-none\b/, `video: ${video}`);
-  const work = ZEUMS.SEASONS.items[0];
-  const image = html(<MediaWindow windowKey="CEASEFIRE" data={{ ...ZEUMS.CEASEFIRE, items: [work] }} />)
-    .match(/<img [^>]*>/g)
-    ?.find((tag) => tag.includes(`src="${work.src}"`));
+  const image = workImage(ZEUMS.SEASONS.items[0]);
   assert.ok(image, "a single image work renders its image");
   assert.match(image!, /class="[^"]*\bpointer-events-none\b/, `image: ${image}`);
 });
@@ -140,4 +148,43 @@ test("F4: Find's Randomize sits left of where every work opens, so the work it o
 test("SCOTT-995 B7: Find's search field is labeled Search, not Named", () => {
   const label = html(<FindWindow />).match(/<label [^>]*>(.*?)<\/label>/)![1].replace(/<[^>]+>/g, "");
   assert.equal(label, "Search:");
+});
+
+const media = (item: ZeumsItem, fullRes: boolean) =>
+  html(<WorkMedia item={item} fullRes={fullRes} ready={false} onReady={() => {}} onPlaying={() => {}} videoRef={null} />);
+const srcOf = (tag: string) => tag.match(/\bsrc="([^"]*)"/)?.[1].replace(/&amp;/g, "&");
+
+test("SCOTT-987: an image work loads its Blob original through /_next/image at quality 90, and Full Res shows the original", () => {
+  const work = ZEUMS.SEASONS.items[0];
+  const optimized = srcOf(media(work, false).match(/<img [^>]*>/)![0])!;
+  assert.ok(optimized.startsWith(`/_next/image?url=${encodeURIComponent(work.src)}&`), `src: ${optimized}`);
+  assert.match(optimized, /&q=90$/, `src: ${optimized}`);
+  assert.equal(srcOf(media(work, true).match(/<img [^>]*>/)![0]), work.src);
+});
+
+test("SCOTT-987: a video work plays its display copy, and Full Res plays the original", () => {
+  const work: ZeumsItem = { ...ZEUMS.CEASEFIRE.items[0], display: "https://k4xw43ajr4eh6re3.public.blob.vercel-storage.com/ceasefire/display/x.mp4" };
+  assert.equal(srcOf(media(work, false).match(/<video [^>]*>/)![0]), work.display);
+  assert.equal(srcOf(media(work, true).match(/<video [^>]*>/)![0]), work.src);
+  const original: ZeumsItem = { ...work, display: undefined };
+  assert.equal(srcOf(media(original, false).match(/<video [^>]*>/)![0]), original.src);
+});
+
+test("SCOTT-987: image works and videos with a display copy have Full Res after Refresh and before About; other videos and HTML pieces don't", () => {
+  const labels = menuLabels(windows["CEASEFIRE (single)"]());
+  assert.deepEqual(labels.slice(labels.indexOf("Refresh"), labels.indexOf("About") + 1), ["Refresh", "Full Res", "About"], labels.join(", "));
+  const image = menuLabels(singleWork(ZEUMS.SEASONS.items[0]));
+  assert.ok(image.includes("Full Res"), image.join(", "));
+  // some days has no display copy, so its original is all there is.
+  const noDisplay = menuLabels(windows["some days"]());
+  assert.ok(!noDisplay.includes("Full Res"), noDisplay.join(", "));
+  const piece = menuLabels(html(<MediaWindow windowKey="Progress" data={ZEUMS.PROGRESS} />));
+  assert.ok(!piece.includes("Full Res"), piece.join(", "));
+});
+
+test("SCOTT-987: the title-bar icon is requested at its 16px display size", () => {
+  const icon = windows["CEASEFIRE (single)"]().match(/<img [^>]*>/g)?.find((tag) => tag.includes("w-4 h-4"));
+  assert.ok(icon, "no title-bar icon");
+  assert.match(icon, /\bwidth="16"/, icon);
+  assert.match(icon, /\bheight="16"/, icon);
 });

@@ -5,6 +5,7 @@ import { Menu } from '@headlessui/react'
 import Button from "./Button";
 import PixelGlyph from "./PixelGlyph";
 import clsx from "clsx";
+import Image from "next/image";
 
 const ITEM = "ev3-menu-item px-2 py-1 select-none"
 const PANEL = "p95-chrome absolute z-10 bg-windowsGray text-windowsText classic-border p-1"
@@ -105,7 +106,7 @@ const StartMenu: FC = () => {
               active: open,
             })}
           >
-            <img src="/images/small-logo.png" alt="" className="w-5" />
+            <Image src="/images/static-icon.png" width={20} height={20} alt="" className="w-5 h-5" />
             <p className="-mb-0.5">Start</p>
           </Menu.Button>
 

@@ -118,6 +118,7 @@ const STEV3_Window: FC = () => {
       initSize={initSize}
       initPosition={initPos}
       menu={menu}
+      inset={view !== "selector"}
       wrapperClassName="bg-windowsPaper"
     >
       <div

@@ -26,7 +26,7 @@ export const WINDOWS = {
 }
 
 export const ICONS = {
-  [WINDOWS.HOME]: "/images/small-logo.png",
+  [WINDOWS.HOME]: "/images/static-icon.png",
   [WINDOWS.GP]: "/images/3xgp-icon.png",
   [WINDOWS.DUET]: "/images/DUET-icon.png",
   [WINDOWS.MAURER]: "/images/small-alt-logo.png",

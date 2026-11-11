@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review SCOTT-987</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --line: #e3e3e6; --panel: #f6f6f8;
+  --accent: #2856d8; --bad: #b3261e; --bad-bg: #fdecea; --ok: #1e7b34; --ok-bg: #e7f4ea; --warn: #8a5a00; --warn-bg: #fdf3dc;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161618; --fg: #e8e8ea; --muted: #a0a0a8; --line: #2e2e33; --panel: #1f1f23;
+    --accent: #8aa8ff; --bad: #ff8a80; --bad-bg: #3a1d1b; --ok: #7fd18f; --ok-bg: #18301e; --warn: #f0c060; --warn-bg: #352b14;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 8px; }
+h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.status { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+.status p { margin: 2px 0; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--ok); } .verdict.bad { color: var(--bad); }
+.ask { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.ask.must { border-left-color: var(--bad); }
+.ask p { margin: 4px 0; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 10px; background: var(--panel); color: var(--muted); margin-right: 6px; }
+.tag.must { background: var(--bad-bg); color: var(--bad); }
+.rec { font-weight: 600; }
+.pass { color: var(--ok); font-weight: 600; } .fail { color: var(--bad); font-weight: 600; }
+.elevated { background: var(--warn-bg); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.elevated p { margin: 3px 0; }
+details { margin: 6px 0; }
+summary { cursor: pointer; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+.wide { overflow-x: auto; }
+ul { padding-left: 20px; }
+.muted { color: var(--muted); }
+footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>SCOTT-987 Serve portfolio images from Vercel Blob with image optimization</h1>
+<div class="status">
+  <p class="verdict ok">Ready for your check</p>
+  <p>Built on <code>goodaf/SCOTT-987-media-optimization</code>, not merged · reviewed commit <code>2af9480</code>, final <code>21e23d6</code> · follow-up 1 head <code>585792d</code> · ticket In Review</p>
+  <p>Review: general reviewer; no Codex pass: visual or device diff · 1 fix round · follow-up 1 (T1): general reviewer, 0 findings</p>
+  <p>Running at <a href="http://localhost:3987">http://localhost:3987</a> (production build of <code>585792d</code>)</p>
+</div>
+
+<h2>Asks</h2>
+<p class="muted">The recommendation happens unless you say otherwise.</p>
+<p>None.</p>
+
+<h2>Worth checking by hand</h2>
+<ul>
+  <li>On a Vercel preview deploy, open a 20–40MB image work (e.g. A Single Path → Path Sixteen, or a SEASONS piece) → it loads from <code>/_next/image</code> as AVIF or WebP. Locally the optimizer times out on large PNGs, so only the preview shows this.</li>
+  <li>Open some days (or a T3RRA video such as Ararat) and the window's Menu → no Full Res item between Refresh and About; CEASEFIRE's Menu still has it.</li>
+</ul>
+
+<h2>Outcome</h2>
+<div class="wide"><table>
+  <tr><th>#</th><th>Done when</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>1</td><td>Image work loads optimized AVIF/WebP via <code>/_next/image</code>; Full Res shows the original PNG</td><td class="pass">pass</td><td><code>windows.test.js</code> → exit 0, 13/13 (after follow-up 1 too; the menu test now checks some days has no Full Res). Browser: dr34m 0f w1nt3r requests <code>/_next/image?url=…winter-ps.png&amp;w=2048&amp;q=90</code>; Full Res swaps to the raw Blob PNG, menu reads Optimized. Locally that request gave 500 at Next's 7s fetch timeout; Path Ten through the same endpoint answers <code>image/avif</code>, 78KB.</td></tr>
+  <tr><td>2</td><td>Video work plays a smaller re-encoded copy; Full Res plays the original</td><td class="pass">pass</td><td><code>curl -sI</code> on 9 pairs → every <code>display</code> 200 and smaller (CEASEFIRE 46.8 → 20.9MB). Browser: CEASEFIRE plays <code>ceasefire/display/…mp4</code>; Full Res plays the original, menu reads Optimized. The 6 videos without <code>display</code> show no Full Res (follow-up 1).</td></tr>
+  <tr><td>3</td><td>Icons through <code>next/image</code>; <code>e1/e2/e4.png</code> gone</td><td class="pass">pass</td><td><code>grep -rnE '&lt;img [^&gt;]*(ICONS|small-logo)' components pages; ls public/e1.png public/e2.png public/e4.png</code> → grep prints nothing; all three missing</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td><code>yarn test</code> → exit 0, all 5 suites; <code>yarn build</code> → exit 0, again after follow-up 1. Lint: none in this repo.</td></tr>
+</table></div>
+
+<h2>Deviations from the spec</h2>
+<ul>
+  <li>Done-when 2 holds for 9 of 15 video works. Five re-encodes came out larger than their originals (the four T3RRA 4096² videos and some days) and Tune Out CH6's copy saved only a few KB, so those six play their originals.</li>
+  <li>Full Res shows only where a higher-res version exists: every image, and the 9 videos with a display copy. The other 6 videos have no Full Res item, at your answer on T1.</li>
+  <li>The banner is not converted: its only <code>&lt;img&gt;</code> is commented out (<code>pages/index.tsx:101-103</code>), and <code>big-banner-bg.png</code> is used only as an OG/meta URL.</li>
+</ul>
+
+<h2>Elevated decisions</h2>
+<div class="elevated">
+  <p><strong>The spec's "banner" has no live call site</strong></p>
+  <p>Options: convert the commented-out block, or leave it.</p>
+  <p>Chose: leave both, since neither is rendered as an <code>&lt;img&gt;</code>.</p>
+  <p>Reverse: convert the block if it's un-commented.</p>
+</div>
+<div class="elevated">
+  <p><strong>Vercel's optimizer has no documented source file-size limit; 40MB PNGs are untested</strong></p>
+  <p>Options: runtime <code>next/image</code> (chosen with you), or write-time display copies.</p>
+  <p>Chose: runtime <code>next/image</code>; a preview deploy settles it. Fallback is write-time copies (<code>vercel blob put-image</code>).</p>
+  <p>Reverse: set <code>unoptimized</code> on any item that fails.</p>
+</div>
+<div class="elevated">
+  <p><strong>Four T3RRA videos (Ararat, Babylon, Gomorrah, Hebron) re-encoded larger: 40–41MB → 64–72MB at CRF 18</strong></p>
+  <p>Options: keep the larger copy, or no <code>display</code>.</p>
+  <p>Chose: no <code>display</code>, per plan step 4; they play their originals.</p>
+  <p>Reverse: re-encode with a bitrate cap (e.g. <code>-maxrate 15M -bufsize 30M</code>), upload, set <code>display</code>.</p>
+</div>
+<div class="elevated">
+  <p><strong>some days re-encoded larger: 67.9MB → 68.3MB</strong></p>
+  <p>Options: keep it, or no <code>display</code>.</p>
+  <p>Chose: no <code>display</code>; it plays its original.</p>
+  <p>Reverse: re-encode with a cap near 6Mbps.</p>
+</div>
+<div class="elevated">
+  <p><strong>Tune Out CH6's copy saved only 1,660 bytes</strong></p>
+  <p>Options: upload it, or leave it out.</p>
+  <p>Chose: left out, at your answer 1a; CH6 plays its original. Done-when 2 holds for 9 of 15 videos.</p>
+  <p>Reverse: upload <code>tuneout/display/CH6 - The Mystic.mp4</code> and set its <code>display</code>.</p>
+</div>
+
+<h2>Decided for you</h2>
+<details><summary>9 decisions</summary>
+<ul>
+  <li>Image <code>sizes</code>: <code>"100vw"</code>, since windows can be maximized and quality comes first</li>
+  <li>Full Res state: per window, resets when another item opens, not persisted</li>
+  <li><code>display</code>: optional and video-only; images get their optimized copy from <code>next/image</code></li>
+  <li>Image and video rendering: moved into an exported <code>WorkMedia</code> component in <code>MediaWindow.tsx</code>, so tests can drive Full Res</li>
+  <li>Choosing Full Res/Optimized from Select Piece or About also switches back to the work</li>
+  <li>Encode originals downloaded to the session scratchpad; display copies kept in <code>&lt;git-dir&gt;/goodaf-video/display/</code></li>
+  <li>Blob token supplied through <code>vercel env run</code>, held in the command's memory; no env file written</li>
+  <li>Title-bar icon back to 16px (<code>width={16}</code>), matching its <code>w-4 h-4</code> display size (review fix F2)</li>
+  <li>Full Res condition: <code>kind === "image"</code>, or a video with <code>display</code> (follow-up 1, T1)</li>
+</ul>
+</details>
+
+<h2>Not verified or skipped</h2>
+<ul>
+  <li>Whether Vercel's optimizer serves the 20–40MB source PNGs: the local optimizer times out (Next's 7s upstream fetch) on this machine's link, even for the 4.7MB winter-ps.png. Only a preview deploy shows it.</li>
+  <li>Visual quality of the 9 re-encoded videos (CRF 18): nobody has watched them side by side with the originals.</li>
+  <li>Codex pass skipped: visual or device diff (review and follow-up 1).</li>
+  <li>Follow-up 1: the hidden Full Res item on no-display videos is checked by the markup test only, not in a browser.</li>
+  <li>The new F2 test failing at width 20: the fixer reports it failed before the fix; not re-run by the review.</li>
+</ul>
+
+<h2>Review</h2>
+<p>1 fixed · 1 tracked · 0 dropped · 0 asks</p>
+<details><summary>Fixed</summary>
+<ul>
+  <li>F2 Title-bar icon requested at 20px while shown at 16px — <code>21e23d6</code></li>
+</ul>
+</details>
+<details><summary>Dropped</summary>
+<ul>
+  <li>None.</li>
+</ul>
+</details>
+
+<h2>Tracked follow-ups</h2>
+<p class="muted">Not done unless you pull one in. They don't become tickets.</p>
+<p>None open. T1 (Full Res on videos without display) was done in follow-up 1, <code>585792d</code>.</p>
+
+<footer>
+  <p>Nothing needs an answer from you. Describe any bug you find in the review session.</p>
+  <p>Full record: <code>/Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/SCOTT-987-media-optimization/.goodaf/2026-11-11-SCOTT-987-media-optimization/review.md</code></p>
+</footer>
+
+</main>
+</body>
+</html>
