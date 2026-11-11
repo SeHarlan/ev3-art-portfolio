@@ -54,6 +54,7 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <p>Built on <code>goodaf/SCOTT-995-group-by</code>, not merged · reviewed commit <code>e217a6b</code>, final <code>7ffe9ff</code> · ticket In Review</p>
   <p>Review: general reviewer; no Codex pass: visual or device diff · 2 fix rounds</p>
   <p>Follow-up 1 (<code>d6015e4</code>..<code>a35adc4</code>): your bug notes B1–B6 done, each with a repro test; reviewed by a general reviewer, 1 new tracked item (T4), nothing to fix</p>
+  <p>Follow-up 2 (<code>4543823</code>..<code>09651fe</code>): B7, Find's "Named:" label now reads "Search:", with a repro test; reviewed by a general reviewer, no findings</p>
   <p>Running at <a href="http://localhost:3995">http://localhost:3995</a></p>
 </div>
 
@@ -77,15 +78,16 @@ footer { margin-top: 40px; color: var(--muted); font-size: 13px; }
   <tr><td>4</td><td>Experience folders</td><td class="pass">pass</td><td>Same test → exit 0; browser: Interactive, Generative, Fixed.</td></tr>
   <tr><td>5</td><td>Folder window lists group, opens work</td><td class="pass">pass</td><td>Browser: "2023" lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA; DUET opened on top, folder stayed open. Follow-up 1: every work's thumb fills its 96px slot from a 192px (or larger) image, Sk3tch included; no broken images.</td></tr>
   <tr><td>6</td><td>Start cascades</td><td class="pass">pass</td><td>Browser at 800×600, 1280×600 and 375×812: submenus beside their entry and on screen; remember.exe opened and the menu closed. Follow-up 1: Start reads My Computer, Find, Welcome, a divider, then the groups.</td></tr>
-  <tr><td>7</td><td>Find: opens, filters, Randomize</td><td class="pass">pass</td><td>Same test → exit 0; browser: 19 works, <code>audio</code>, <code>maur</code>, <code>2026</code>, <code>xyz</code> (empty, Open disabled) as expected. Real-mouse Randomize failed before review fixes F3 and F4; after them 144 real clicks each opened a work.</td></tr>
+  <tr><td>7</td><td>Find: opens, filters, Randomize</td><td class="pass">pass</td><td>Same test → exit 0; browser: 19 works, <code>audio</code>, <code>maur</code>, <code>2026</code>, <code>xyz</code> (empty, Open disabled) as expected. Real-mouse Randomize failed before review fixes F3 and F4; after them 144 real clicks each opened a work. Follow-up 2: the row reads [Randomize] Search: [field].</td></tr>
   <tr><td>8</td><td>Folder, Find, Control Panel icons look like Win95's</td><td class="pass">pass</td><td>By eye in the browser at 56px and 16px; your E2E has the final say. Follow-up 1: folder and My Computer traced cell for cell from your attached designs; Find moved 1 cell left.</td></tr>
-  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td>On <code>a35adc4</code>: <code>yarn test</code> → 0 (38 pass); <code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0.</td></tr>
+  <tr><td>—</td><td>Full check</td><td class="pass">pass</td><td>On <code>09651fe</code>: <code>yarn test</code> → 0 (39 pass); <code>npx tsc --noEmit</code> → 0; <code>yarn build</code> → 0.</td></tr>
 </table></div>
 
 <h2>Deviations from the spec</h2>
 <ul>
   <li>Randomize never repeats the previous pick, so from the second click on it draws from the other 18 works. The spec says "from all 19, whatever is typed"; the build reads that as "not limited by the search field" (tracked as T1).</li>
   <li>Per your bug notes: Introduction is now Welcome (B4) and Settings is now My Computer (B3), listed first as My Computer, Find, Welcome on the desktop and in Start (B5). My Computer's computer icon replaces the Control Panel icon, and the folder uses your dithered design (B1).</li>
+  <li>Per B7, Find's field is labeled "Search:" rather than Win95's "Named:".</li>
   <li>Per B6, 16 works' icons are remade, setting aside the spec's "don't change any work's icon" for icons only.</li>
 </ul>
 

@@ -1,8 +1,8 @@
 # Review: SCOTT-995 add a "group by" option in settings
 
 Tier: Feature (no risk modifier) · Tags: visual: desktop folder icons, folder and Find windows, Start menu cascades, Settings Group by row, the three SVG icons
-Reviewed: 2026-11-11 · main at 88b0cd8 · reviewed e217a6b · final 7ffe9ff · follow-up 1 d6015e4..a35adc4
-Panel: general; no Codex pass: visual or device diff (follow-up 1: general; no Codex pass: visual or device diff)
+Reviewed: 2026-11-11 · main at 88b0cd8 · reviewed e217a6b · final 7ffe9ff · follow-up 1 d6015e4..a35adc4 · follow-up 2 4543823..09651fe
+Panel: general; no Codex pass: visual or device diff (follow-ups 1 and 2: general; no Codex pass: visual or device diff)
 Oracle check: no oracles
 Rounds: 2 (round 2's re-review said F4 is only partly fixed, and two rounds is the limit; both hand-backs matched their commits); follow-up 1: 0 (no finding admitted)
 Counts: 3 fixed, 0 asks, 4 tracked, 0 dropped
@@ -15,9 +15,9 @@ Counts: 3 fixed, 0 asks, 4 tracked, 0 dropped
 - 4 Experience folders: pass — same test → exit 0; browser: Interactive, Generative, Fixed.
 - 5 Folder window lists group, opens work: pass — browser double-click on 2023: window "2023" with the folder title-bar and taskbar icon lists DUET, it's just noise, Maurer Expanse, "Progress", A Single Path, T3RRA with their icons; double-click DUET opened it on top and the folder stayed open. Follow-up 1: the code and video folders show every work's thumb filling its 96px slot from a 192px (or larger) image, Sk3tch included, no broken images. The 375×812 tap was not re-run (see Not verified).
 - 6 Start cascades: pass — browser at 800×600 and 1280×600: hover 2025 → CEASEFIRE, remember.exe, s34s0ns, Exaltation of Isaac beside it, on screen; clicking remember.exe opened it and closed the menu. At 375×812, 2023's submenu fits inside the screen (right edge 356px). Follow-up 1 browser at 1280×800: Start reads My Computer, Find, Welcome, a divider, then 2026…2022; clicking My Computer opened it.
-- 7 Find: opens from desktop and Start; filters; Randomize: pass after fixes F3 and F4 — same test → exit 0; browser: Find opened from Start with the field focused, 19 works when empty, `audio` and `AUDIO` → DUET, A Flower Blooms in Autumn, Tune Out; `maur` → Maurer Expanse; `2026` → techtonic, on being human, Sk3tch; `xyz` → empty with Open disabled; cleared → 19. Randomize with real mouse clicks at 1024×768 on e217a6b/271e799: the opened work covered the button and the next click opened nothing (F3, F4); after 7ffe9ff the fixer's 144 real clicks at 1024×768 and 1440×900 each opened a work. Follow-up 1 didn't change Find; its list shows all 19 thumbs at 96px.
+- 7 Find: opens from desktop and Start; filters; Randomize: pass after fixes F3 and F4 — same test → exit 0; browser: Find opened from Start with the field focused, 19 works when empty, `audio` and `AUDIO` → DUET, A Flower Blooms in Autumn, Tune Out; `maur` → Maurer Expanse; `2026` → techtonic, on being human, Sk3tch; `xyz` → empty with Open disabled; cleared → 19. Randomize with real mouse clicks at 1024×768 on e217a6b/271e799: the opened work covered the button and the next click opened nothing (F3, F4); after 7ffe9ff the fixer's 144 real clicks at 1024×768 and 1440×900 each opened a work. Follow-up 1 didn't change Find; its list shows all 19 thumbs at 96px. Follow-up 2 (B7): the field's label reads "Search:"; browser at 1280×800: the row reads [Randomize] Search: [field] and `audio` lists 3 works.
 - 8 Folder, Find and Control Panel icons look like Win95's: pass (by eye; your E2E has the final say) — follow-up 1: the folder (B1) and My Computer (B3, replacing Control Panel) icons are traced cell for cell from your attached designs, the Find icon moved 1 cell left (B2); all three render crisp on the desktop at 56px and in title bars and the taskbar at 16px.
-- Full check on a35adc4: `yarn test` → exit 0, 38 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0 (run on a `git archive` copy so the dev server's `.next` stayed intact); lint: none in this repo.
+- Full check on 09651fe: `yarn test` → exit 0, 39 pass, 0 fail; `npx tsc --noEmit` → exit 0; `yarn build` → exit 0 (run on a `git archive` copy so the dev server's `.next` stayed intact); lint: none in this repo.
 
 ## Asks
 
@@ -67,7 +67,9 @@ Worktree: /Users/scottharlan/Scottys art/ev3-art-portfolio-95/.claude/worktrees/
 - B6. 2026-11-11 "the icons in the folders are too small, I'm guessing its because they were made super small for the desktop. They were all too blurry anyways, Lets remake them all better quality and sized for the window selector size, and delete the old ones."
   Done: 2026-11-11, a35adc4, repro icons.test.tsx "B6: every work's raster icon is 192px on its longest side, 2× the selector's 96px slot"
 - B7. 2026-11-11 "in the find window, rename "Named" to "Search", then wrap"
+  Done: 2026-11-11, 09651fe, repro windows.test.tsx "SCOTT-995 B7: Find's search field is labeled Search, not Named"
 
 ## Follow-ups
 
 - 2026-11-11 follow-up 1: base d6015e4, head a35adc4; did B1, B2, B3, B4, B5, B6; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 1 tracked (T4), 0 dropped
+- 2026-11-11 follow-up 2: base 4543823, head 09651fe; did B7; review: general, no Codex pass: visual or device diff, 0 fixed, 0 new asks, 0 tracked, 0 dropped
