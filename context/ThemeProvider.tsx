@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
-// Sk3tch's palette keys: gray is Standard, win95 is Classic, bw is 1-Bit.
-export const THEMES = ["gray", "win95", "bw"] as const
+// Sk3tch's palette keys: gray is Standard, win95 is Classic.
+export const THEMES = ["gray", "win95"] as const
 export type Theme = typeof THEMES[number]
 
 export const THEME_STORAGE_KEY = "ev3-p95-theme"

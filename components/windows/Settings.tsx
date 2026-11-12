@@ -9,7 +9,6 @@ import { FC } from "react"
 const PALETTES: { value: Theme, label: string }[] = [
   { value: "gray", label: "Standard" },
   { value: "win95", label: "Classic" },
-  { value: "bw", label: "1-Bit" },
 ]
 
 const GROUP_BY_OPTIONS: { value: GroupBy, label: string }[] = [

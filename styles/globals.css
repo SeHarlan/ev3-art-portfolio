@@ -32,7 +32,7 @@
   }
 }
 /* Sk3tch's Win95 palettes (sk3tch paint.css). Classic (win95) is the base;
-   [data-p95-theme] on <html> swaps to gray (Standard) or bw (1-Bit). */
+   [data-p95-theme] on <html> swaps to gray (Standard). */
 :root {
   /* fallback for the useVHOverride hook */
   --vh: 1vh; 
@@ -68,8 +68,8 @@
   /* One Win95 pixel. */
   --u: 1px;
 
-  /* Win95's white text field (no Sk3tch token; black in 1-Bit via the icon
-     ink), and a filter that keeps black chrome bitmaps visible. */
+  /* Win95's white text field (no Sk3tch token), and a filter for black
+     chrome bitmaps (none in both palettes). */
   --p95-field-bg: var(--p95-icon-light);
   --p95-bitmap-filter: none;
 
@@ -119,37 +119,6 @@
   --p95-paper: #f7f7f7;
 }
 
-/* Black and white. The dither is gray, so the white icons stay visible on an
-   active button. */
-:root[data-p95-theme='bw'] {
-  --p95-face: #000000;
-  --p95-light: #808080;
-  --p95-hilight: #ffffff;
-  --p95-shadow: #404040;
-  --p95-dark: #ffffff;
-  --p95-text: #ffffff;
-  --p95-text-disabled: #606060;
-  --p95-title-bg: #ffffff;
-  --p95-title-fg: #000000;
-  --p95-select-bg: #ffffff;
-  --p95-select-fg: #000000;
-  --p95-workspace: #000000;
-  --p95-desktop: #808080;
-  --p95-dither-ink: #606060;
-  --p95-paper: #ffffff;
-  --p95-icon-ink: #ffffff;
-  --p95-icon-shadow: #808080;
-  --p95-icon-silver: #808080;
-  --p95-icon-light: #000000;
-  --p95-icon-blue: #ffffff;
-  --p95-icon-cyan: #ffffff;
-  --p95-icon-aqua: #808080;
-  --p95-icon-yellow: #808080;
-  --p95-icon-olive: #808080;
-  --p95-icon-red: #ffffff;
-  --p95-icon-maroon: #ffffff;
-  --p95-bitmap-filter: invert(1);
-}
 html, body {
   overflow: hidden;
 
@@ -160,18 +129,12 @@ html, body {
 }
 /* ---------- Scrollbars: Win95's on the palette tokens ---------- */
 
-/* Arrow glyphs (Sk3tch's up/down/left/right), black, white in 1-Bit. */
+/* Arrow glyphs (Sk3tch's up/down/left/right), black. */
 :root {
   --p95-arrow-up: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='7' y='6' width='1' height='1'/><rect x='6' y='7' width='3' height='1'/><rect x='5' y='8' width='5' height='1'/><rect x='4' y='9' width='7' height='1'/></svg>");
   --p95-arrow-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='4' y='6' width='7' height='1'/><rect x='5' y='7' width='5' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='7' y='9' width='1' height='1'/></svg>");
   --p95-arrow-left: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='9' y='4' width='1' height='1'/><rect x='8' y='5' width='2' height='1'/><rect x='7' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='7' y='8' width='3' height='1'/><rect x='8' y='9' width='2' height='1'/><rect x='9' y='10' width='1' height='1'/></svg>");
   --p95-arrow-right: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' shape-rendering='crispEdges'><rect x='6' y='4' width='1' height='1'/><rect x='6' y='5' width='2' height='1'/><rect x='6' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='6' y='9' width='2' height='1'/><rect x='6' y='10' width='1' height='1'/></svg>");
-}
-:root[data-p95-theme='bw'] {
-  --p95-arrow-up: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='7' y='6' width='1' height='1'/><rect x='6' y='7' width='3' height='1'/><rect x='5' y='8' width='5' height='1'/><rect x='4' y='9' width='7' height='1'/></svg>");
-  --p95-arrow-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='4' y='6' width='7' height='1'/><rect x='5' y='7' width='5' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='7' y='9' width='1' height='1'/></svg>");
-  --p95-arrow-left: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='9' y='4' width='1' height='1'/><rect x='8' y='5' width='2' height='1'/><rect x='7' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='7' y='8' width='3' height='1'/><rect x='8' y='9' width='2' height='1'/><rect x='9' y='10' width='1' height='1'/></svg>");
-  --p95-arrow-right: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' shape-rendering='crispEdges'><rect x='6' y='4' width='1' height='1'/><rect x='6' y='5' width='2' height='1'/><rect x='6' y='6' width='3' height='1'/><rect x='6' y='7' width='4' height='1'/><rect x='6' y='8' width='3' height='1'/><rect x='6' y='9' width='2' height='1'/><rect x='6' y='10' width='1' height='1'/></svg>");
 }
 
 ::-webkit-scrollbar {
@@ -223,8 +186,7 @@ html, body {
 
 /* ---------- Text field ---------- */
 
-/* Win95's white field (black in 1-Bit) for a text input, in a classic-inset
-   well. */
+/* Win95's white field for a text input, in a classic-inset well. */
 .p95-field {
   background: var(--p95-field-bg);
   color: var(--p95-text);
@@ -250,8 +212,8 @@ html, body {
   background: var(--p95-face);
   box-shadow: var(--p95-bevel-raised);
 }
-/* The black EV3 logos on a button face (Start, taskbar items), kept visible
-   on 1-Bit's black face. Art-thumbnail icons have their own backgrounds. */
+/* The black EV3 logos on a button face (Start, taskbar items), under the
+   bitmap filter. Art-thumbnail icons have their own backgrounds. */
 .classic-button img[src='/images/small-logo.png'],
 .classic-button img[src='/images/small-alt-logo.png'] {
   filter: var(--p95-bitmap-filter);
