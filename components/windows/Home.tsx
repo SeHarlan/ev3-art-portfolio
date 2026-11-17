@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, useRef } from "react"
 import { WINDOWS, useWindowsContext } from "../../context/WindowsProvider"
 import { randomArtKey } from "../../data/groups"
-import { TECHTONIC_SITE } from "../../data/windows"
+import { TECHTONIC_MINT } from "../../data/windows"
 import Window, { WindowMenuItem } from "../Window"
 import Links from "../Links"
 
@@ -28,7 +28,7 @@ const contentList: Line[] = [
     text(", an interactive glitch drawing program. Showcased as an interactive installation in London, 2026 for the “mallow x Caravana: A Group Show” exhibit."),
   ] },
   { type: "li", segments: [
-    { type: "href", text: "Techtonic", href: TECHTONIC_SITE },
+    { type: "href", text: "Techtonic", href: TECHTONIC_MINT },
     text(", a long-form generative art project that combines pixel and glitch elements with organic movements, ebbing and flowing over time."),
   ] },
   { type: "p", segments: [

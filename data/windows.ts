@@ -25,7 +25,7 @@ export const WINDOWS = {
   SETTINGS: "My Computer",
 }
 
-export const TECHTONIC_SITE = "https://techtonic.ev3.art/"
+export const TECHTONIC_MINT = "https://mallow.art/gumball/8BkX4tDH57VVdLNVpzyt1k3TFAUiHfsyVQ6NjD2MrKoX"
 
 export const ICONS = {
   [WINDOWS.HOME]: "/images/static-icon.png",

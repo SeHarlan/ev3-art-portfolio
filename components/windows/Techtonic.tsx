@@ -1,6 +1,6 @@
 import { WINDOWS } from "@/context/WindowsProvider"
 import Window, { WindowMenuItem } from "../Window"
-import { TECHTONIC_SITE as SITE } from "@/data/windows"
+import { TECHTONIC_MINT as SITE } from "@/data/windows"
 import { FC } from "react"
 
 const TechtonicWindow: FC = () => {
@@ -28,7 +28,7 @@ const TechtonicWindow: FC = () => {
     <Window windowKey={WINDOWS.TECHTONIC} initSize={initSize} initPosition={initPos} menu={menu} wrapperClassName="bg-black">
       <div className="w-full h-full flex items-center justify-center">
         <a href={SITE} target="_blank" rel="noreferrer" className="classic-button px-4 py-1">
-          <span>Visit techtonic</span>
+          <span>Mint now</span>
         </a>
       </div>
     </Window>
